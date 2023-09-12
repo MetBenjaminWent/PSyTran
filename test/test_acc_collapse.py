@@ -6,6 +6,36 @@ import code_snippets as cs
 import pytest
 
 
+def test_get_ancestors_single_loop(parser):
+    """
+    Test that :func:`get_ancestors` correctly finds no ancestors.
+    """
+    code = parser(FortranStringReader(cs.loop_with_1_assignment))
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    assert len(get_ancestors(loops[-1])) == 0
+
+
+def test_get_ancestors_double_loop(parser):
+    """
+    Test that :func:`get_ancestors` correctly finds one ancestor.
+    """
+    code = parser(FortranStringReader(cs.double_loop_with_1_assignment))
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    assert len(get_ancestors(loops[-1])) == 1
+
+
+def test_get_ancestors_triple_loop(parser):
+    """
+    Test that :func:`get_ancestors` correctly finds two ancestors.
+    """
+    code = parser(FortranStringReader(cs.triple_loop_with_1_assignment))
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    assert len(get_ancestors(loops[-1])) == 2
+
+
 def test_get_ancestors_typeerror(parser):
     """
     Test that a :class:`TypeError` is raised when :func:`get_ancestors`
