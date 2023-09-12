@@ -45,3 +45,19 @@ def test_has_loop_directive(parser):
     apply_loop_directive(loops[0])
     loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     assert has_loop_directive(loops[0])
+
+
+def test_apply_loop_directive_typeerror(parser):
+    """
+    Test that a :class:`TypeError` is raised when :func:`apply_loop_directive`
+    is called with something other than a :class:`Loop`.
+    """
+    code = parser(FortranStringReader(cs.double_loop_with_1_assignment))
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    assignments = psy.invokes.invoke_list[0].schedule.walk(nodes.Assignment)
+    expected = (
+        "Expected a Loop, not"
+        " '<class 'psyclone.psyir.nodes.assignment.Assignment'>'."
+    )
+    with pytest.raises(TypeError, match=expected):
+        apply_loop_directive(assignments[0])
