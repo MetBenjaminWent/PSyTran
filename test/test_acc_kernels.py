@@ -1,7 +1,7 @@
 from fparser.common.readfortran import FortranStringReader
 from psyclone.psyGen import PSyFactory
 from psyclone.psyir import nodes
-from psyacc.acc_kernels import is_outer_loop
+from psyacc.acc_kernels import is_outer_loop, has_kernels_directive
 import code_snippets as cs
 import pytest
 
@@ -36,3 +36,15 @@ def test_is_outer_loop_typeerror(parser):
     )
     with pytest.raises(TypeError, match=expected):
         is_outer_loop(assignments[0])
+
+
+def test_has_no_kernels_directive(parser):
+    """
+    Test that :func:`has_kernels_directive` correctly identifies no OpenACC
+    kernels directives.
+    """
+    code = parser(FortranStringReader(cs.loop_with_1_assignment))
+    psy = PSyFactory(API, distributed_memory=False).create(code)
+    schedule = psy.invokes.invoke_list[0].schedule
+    loops = schedule.walk(nodes.Loop)
+    assert not has_kernels_directive(loops[0])

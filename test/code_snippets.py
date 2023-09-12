@@ -1,3 +1,14 @@
+loop_with_1_assignment = """
+    PROGRAM test
+      REAL :: a(10)
+      INTEGER :: i
+
+      DO i = 1, 10
+        a(i) = 0.0
+      END DO
+    END PROGRAM test
+    """
+
 double_loop_with_1_assignment = """
     PROGRAM test
       REAL :: a(10,10)
