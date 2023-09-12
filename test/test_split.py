@@ -1,7 +1,7 @@
 from fparser.common.readfortran import FortranStringReader
 from psyclone.psyGen import PSyFactory
 from psyclone.psyir import nodes
-from psyacc.split import follows
+from psyacc.split import follows, split_consecutive
 
 API = "nemo"
 
@@ -32,3 +32,15 @@ def test_follows(parser):
     assert follows(*assignments[:2])
     assert follows(*assignments[1:])
     assert not follows(*assignments[::2])
+
+
+def test_split_consecutive(parser):
+    """
+    Test that :func:`split_consecutive` correctly determines consecutive nodes.
+    """
+    code = parser(FortranStringReader(_loop_with_3_assignments))
+    psy = PSyFactory(API, distributed_memory=False).create(code)
+    schedule = psy.invokes.invoke_list[0].schedule
+    assignments = schedule.walk(nodes.Assignment)
+    assert len(split_consecutive(assignments)) == 1
+    assert len(split_consecutive(assignments[::2])) == 2
