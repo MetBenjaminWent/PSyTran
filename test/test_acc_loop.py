@@ -7,8 +7,6 @@ from psyacc.acc_loop import has_loop_directive, apply_loop_directive
 import code_snippets as cs
 import pytest
 
-API = "nemo"
-
 
 def test_has_no_loop_directive(parser):
     """
@@ -16,9 +14,8 @@ def test_has_no_loop_directive(parser):
     directives.
     """
     code = parser(FortranStringReader(cs.loop_with_1_assignment))
-    psy = PSyFactory(API, distributed_memory=False).create(code)
-    schedule = psy.invokes.invoke_list[0].schedule
-    loops = schedule.walk(nodes.Loop)
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     assert not has_loop_directive(loops[0])
 
 
@@ -28,17 +25,11 @@ def test_apply_loop_directive(parser):
     directives to a loop.
     """
     code = parser(FortranStringReader(cs.loop_with_1_assignment))
-    psy = PSyFactory(API, distributed_memory=False).create(code)
-    schedule = psy.invokes.invoke_list[0].schedule
-    loops = schedule.walk(nodes.Loop)
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
-
-    schedule = psy.invokes.invoke_list[0].schedule
-    loops = schedule.walk(nodes.Loop)
     apply_loop_directive(loops[0])
-
-    schedule = psy.invokes.invoke_list[0].schedule
-    loops = schedule.walk(nodes.Loop)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     assert isinstance(loops[0].parent.parent, ACCLoopDirective)
 
 
@@ -48,11 +39,9 @@ def test_has_loop_directive(parser):
     directives.
     """
     code = parser(FortranStringReader(cs.loop_with_1_assignment))
-    psy = PSyFactory(API, distributed_memory=False).create(code)
-    schedule = psy.invokes.invoke_list[0].schedule
-    loops = schedule.walk(nodes.Loop)
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
     apply_loop_directive(loops[0])
-    schedule = psy.invokes.invoke_list[0].schedule
-    loops = schedule.walk(nodes.Loop)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     assert has_loop_directive(loops[0])

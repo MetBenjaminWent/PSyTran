@@ -2,11 +2,13 @@ from fparser.common.readfortran import FortranStringReader
 from psyclone.psyGen import PSyFactory
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCKernelsDirective
-from psyacc.acc_kernels import is_outer_loop, has_kernels_directive, apply_kernels_directive
+from psyacc.acc_kernels import (
+    is_outer_loop,
+    has_kernels_directive,
+    apply_kernels_directive,
+)
 import code_snippets as cs
 import pytest
-
-API = "nemo"
 
 
 def test_is_outer_loop(parser):
@@ -15,9 +17,8 @@ def test_is_outer_loop(parser):
     outer-most in its nest.
     """
     code = parser(FortranStringReader(cs.double_loop_with_1_assignment))
-    psy = PSyFactory(API, distributed_memory=False).create(code)
-    schedule = psy.invokes.invoke_list[0].schedule
-    loops = schedule.walk(nodes.Loop)
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     assert is_outer_loop(loops[0])
     assert not is_outer_loop(loops[1])
 
@@ -28,9 +29,8 @@ def test_is_outer_loop_typeerror(parser):
     called with something other than a :class:`Loop`.
     """
     code = parser(FortranStringReader(cs.double_loop_with_1_assignment))
-    psy = PSyFactory(API, distributed_memory=False).create(code)
-    schedule = psy.invokes.invoke_list[0].schedule
-    assignments = schedule.walk(nodes.Assignment)
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    assignments = psy.invokes.invoke_list[0].schedule.walk(nodes.Assignment)
     expected = (
         "Expected a Loop, not"
         " '<class 'psyclone.psyir.nodes.assignment.Assignment'>'."
@@ -45,9 +45,8 @@ def test_has_no_kernels_directive(parser):
     kernels directives.
     """
     code = parser(FortranStringReader(cs.loop_with_1_assignment))
-    psy = PSyFactory(API, distributed_memory=False).create(code)
-    schedule = psy.invokes.invoke_list[0].schedule
-    loops = schedule.walk(nodes.Loop)
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     assert not has_kernels_directive(loops[0])
 
 
@@ -58,9 +57,8 @@ def test_apply_kernels_directive_loop(parser):
     directives to a loop.
     """
     code = parser(FortranStringReader(cs.loop_with_1_assignment))
-    psy = PSyFactory(API, distributed_memory=False).create(code)
-    schedule = psy.invokes.invoke_list[0].schedule
-    loops = schedule.walk(nodes.Loop)
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
     assert isinstance(psy.invokes.invoke_list[0].schedule[0], ACCKernelsDirective)
 
@@ -71,10 +69,8 @@ def test_has_kernels_directive(parser):
     kernels directives.
     """
     code = parser(FortranStringReader(cs.loop_with_1_assignment))
-    psy = PSyFactory(API, distributed_memory=False).create(code)
-    schedule = psy.invokes.invoke_list[0].schedule
-    loops = schedule.walk(nodes.Loop)
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
-    schedule = psy.invokes.invoke_list[0].schedule
-    loops = schedule.walk(nodes.Loop)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     assert has_kernels_directive(loops[0])
