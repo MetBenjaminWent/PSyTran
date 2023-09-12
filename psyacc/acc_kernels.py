@@ -1,5 +1,5 @@
 from psyclone.psyir import nodes
-from psyclone.transformations import ACCKernelsDirective
+from psyclone.transformations import ACCKernelsDirective, ACCKernelsTrans
 
 
 def is_outer_loop(loop):
@@ -17,3 +17,12 @@ def has_kernels_directive(node):
     """
     assert isinstance(node, nodes.Node)
     return node.ancestor(ACCKernelsDirective)
+
+
+def apply_kernels_directive(block, **kwargs):
+    """
+    Apply OpenACC kernels directives around a block of code.
+
+    Any keyword arguments are passed to :meth:`apply`.
+    """
+    ACCKernelsTrans().apply(block, **kwargs)
