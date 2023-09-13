@@ -40,6 +40,26 @@ triple_loop_with_1_assignment = """
     END PROGRAM test
     """
 
+quadruple_loop_with_1_assignment = """
+    PROGRAM test
+      REAL :: a(10,10)
+      INTEGER :: i
+      INTEGER :: j
+      INTEGER :: k
+      INTEGER :: l
+
+      DO l = 1, 10
+        DO k = 1, 10
+          DO j = 1, 10
+            DO i = 1, 10
+              a(i,j,k,l) = 0.0
+            END DO
+          END DO
+        END DO
+      END DO
+    END PROGRAM test
+    """
+
 loop_with_3_assignments = """
     PROGRAM test
       REAL :: a(10)

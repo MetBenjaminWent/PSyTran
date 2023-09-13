@@ -22,6 +22,8 @@ def simple_loop_code(depth):
         return cs.double_loop_with_1_assignment
     elif depth == 3:
         return cs.triple_loop_with_1_assignment
+    elif depth == 4:
+        return cs.quadruple_loop_with_1_assignment
     else:
         raise NotImplementedError
 
