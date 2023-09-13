@@ -2,8 +2,8 @@ from fparser.common.readfortran import FortranStringReader
 from psyclone.psyGen import PSyFactory
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective
-from psyacc.acc_kernels import apply_kernels_directive
-from psyacc.acc_loop import has_loop_directive, apply_loop_directive
+from psyacc.kernels import apply_kernels_directive
+from psyacc.loop import has_loop_directive, apply_loop_directive
 import code_snippets as cs
 import pytest
 

@@ -1,6 +1,6 @@
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective, ACCLoopTrans
-from psyacc.acc_kernels import has_kernels_directive
+from psyacc.kernels import has_kernels_directive
 
 
 def has_loop_directive(node):

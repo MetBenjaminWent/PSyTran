@@ -1,6 +1,6 @@
 from psyclone.psyir import nodes
-from psyacc.acc_kernels import has_kernels_directive
-from psyacc.acc_loop import has_loop_directive, apply_loop_directive
+from psyacc.kernels import has_kernels_directive
+from psyacc.loop import has_loop_directive, apply_loop_directive
 
 
 def get_ancestors(loop, inclusive=False):

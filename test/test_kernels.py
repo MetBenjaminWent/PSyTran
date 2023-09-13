@@ -2,7 +2,7 @@ from fparser.common.readfortran import FortranStringReader
 from psyclone.psyGen import PSyFactory
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCKernelsDirective
-from psyacc.acc_kernels import (
+from psyacc.kernels import (
     is_outer_loop,
     has_kernels_directive,
     apply_kernels_directive,

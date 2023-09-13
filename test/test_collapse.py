@@ -2,9 +2,9 @@ from fparser.common.readfortran import FortranStringReader
 from psyclone.psyGen import PSyFactory
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective
-from psyacc.acc_kernels import apply_kernels_directive
-from psyacc.acc_loop import apply_loop_directive
-from psyacc.acc_collapse import get_ancestors, apply_loop_collapse, is_collapsed
+from psyacc.kernels import apply_kernels_directive
+from psyacc.loop import apply_loop_directive
+from psyacc.collapse import get_ancestors, apply_loop_collapse, is_collapsed
 import code_snippets as cs
 from parameterized import parameterized
 import pytest
