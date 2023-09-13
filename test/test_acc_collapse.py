@@ -1,7 +1,7 @@
 from fparser.common.readfortran import FortranStringReader
 from psyclone.psyGen import PSyFactory
 from psyclone.psyir import nodes
-from psyacc.acc_collapse import get_ancestors
+from psyacc.acc_collapse import get_ancestors, is_collapsed
 import code_snippets as cs
 import pytest
 
@@ -50,3 +50,14 @@ def test_get_ancestors_typeerror(parser):
     )
     with pytest.raises(TypeError, match=expected):
         get_ancestors(assignments[0])
+
+
+def test_is_collapsed_no_kernels(parser):
+    """
+    Test that :func:`is_collapsed` returns ``False`` for a loop which doesn't
+    have a kernels directive.
+    """
+    code = parser(FortranStringReader(cs.loop_with_1_assignment))
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    assert not is_collapsed(loops[0])
