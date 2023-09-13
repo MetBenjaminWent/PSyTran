@@ -74,6 +74,44 @@ def test_get_ancestors_typeerror(parser):
         get_ancestors(assignments[0])
 
 
+def test_is_collapsed_no_kernels(parser):
+    """
+    Test that :func:`is_collapsed` returns ``False`` for a loop which doesn't
+    have a kernels directive.
+    """
+    code = parser(FortranStringReader(cs.loop_with_1_assignment))
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    assert not is_collapsed(loops[0])
+
+
+def test_is_collapsed_kernels_no_loop(parser):
+    """
+    Test that :func:`is_collapsed` returns ``False`` for a loop with a kernels
+    directive but no loop directives.
+    """
+    code = parser(FortranStringReader(cs.loop_with_1_assignment))
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    assert not is_collapsed(loops[0])
+
+
+def test_is_collapsed_loop_no_collapse(parser):
+    """
+    Test that :func:`is_collapsed` returns ``False`` for a loop with a loop
+    directive but no collapse clause.
+    """
+    code = parser(FortranStringReader(cs.loop_with_1_assignment))
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_directive(loops[0])
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    assert not is_collapsed(loops[0])
+
+
 def test_apply_loop_collapse_typeerror1(parser):
     """
     Test that a :class:`TypeError` is raised when :func:`apply_loop_directive`
@@ -156,6 +194,8 @@ def test_apply_loop_collapse_no_loop_dir(parser, collapse):
     apply_loop_collapse(loops[0], collapse)
     assert isinstance(loops[0].parent.parent, ACCLoopDirective)
     assert loops[0].parent.parent.collapse == collapse
+    for loop in loops:
+        assert is_collapsed(loop)
 
 
 def test_apply_loop_collapse(parser, collapse):
@@ -170,41 +210,23 @@ def test_apply_loop_collapse(parser, collapse):
     apply_loop_directive(loops[0])
     apply_loop_collapse(loops[0], collapse)
     assert loops[0].parent.parent.collapse == collapse
+    for loop in loops:
+        assert is_collapsed(loop)
 
 
-def test_is_collapsed_no_kernels(parser):
+def test_apply_loop_collapse_subnest(parser, collapse):
     """
-    Test that :func:`is_collapsed` returns ``False`` for a loop which doesn't
-    have a kernels directive.
+    Test that :func:`apply_loop_collapse` is correctly applied to a sub-nest.
     """
-    code = parser(FortranStringReader(cs.loop_with_1_assignment))
-    psy = PSyFactory("nemo", distributed_memory=False).create(code)
-    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
-    assert not is_collapsed(loops[0])
-
-
-def test_is_collapsed_kernels_no_loop(parser):
-    """
-    Test that :func:`is_collapsed` returns ``False`` for a loop with a kernels
-    directive but no loop directives.
-    """
-    code = parser(FortranStringReader(cs.loop_with_1_assignment))
-    psy = PSyFactory("nemo", distributed_memory=False).create(code)
-    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
-    assert not is_collapsed(loops[0])
-
-
-def test_is_collapsed_loop_no_collapse(parser):
-    """
-    Test that :func:`is_collapsed` returns ``False`` for a loop with a loop
-    directive but no collapse clause.
-    """
-    code = parser(FortranStringReader(cs.loop_with_1_assignment))
+    code = parser(FortranStringReader(simple_loop_code(collapse + 1)))
     psy = PSyFactory("nemo", distributed_memory=False).create(code)
     loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
     apply_loop_directive(loops[0])
-    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
-    assert not is_collapsed(loops[0])
+    apply_loop_directive(loops[-1])
+    apply_loop_collapse(loops[0], collapse)
+    assert loops[0].parent.parent.collapse == collapse
+    for i in range(collapse):
+        assert is_collapsed(loops[i])
+    assert loops[-1].parent.parent.collapse is None
+    assert not is_collapsed(loops[-1])
