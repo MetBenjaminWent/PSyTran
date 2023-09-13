@@ -36,13 +36,9 @@ def apply_loop_collapse(loop, collapse):
     if not isinstance(collapse, int):
         raise TypeError(f"Expected an integer, not '{type(collapse)}'.")
     if collapse <= 1:
-        raise ValueError(
-            f"Expected an integer greater than one, not {collapse}."
-        )
+        raise ValueError(f"Expected an integer greater than one, not {collapse}.")
     if not has_kernels_directive(loop):
-        raise ValueError(
-            "Cannot apply loop collapse without a kernels directive."
-        )
+        raise ValueError("Cannot apply loop collapse without a kernels directive.")
     if len(loop.walk(nodes.Loop)) < collapse:
         raise ValueError(
             f"Cannot apply collapse to {collapse} loops in a sub-nest of"
