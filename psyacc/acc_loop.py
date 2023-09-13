@@ -5,10 +5,10 @@ from psyacc.acc_kernels import has_kernels_directive
 
 def has_loop_directive(node):
     """
-    Determine whether a node is inside an OpenACC loop directive.
+    Determine whether a node has an OpenACC loop directive.
     """
     assert isinstance(node, nodes.Node)
-    return node.ancestor(ACCLoopDirective)
+    return isinstance(node.parent.parent, ACCLoopDirective)
 
 
 def apply_loop_directive(loop, **kwargs):
