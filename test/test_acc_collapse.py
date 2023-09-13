@@ -1,11 +1,29 @@
 from fparser.common.readfortran import FortranStringReader
 from psyclone.psyGen import PSyFactory
 from psyclone.psyir import nodes
+from psyclone.transformations import ACCLoopDirective
 from psyacc.acc_kernels import apply_kernels_directive
 from psyacc.acc_loop import apply_loop_directive
 from psyacc.acc_collapse import get_ancestors, apply_loop_collapse, is_collapsed
 import code_snippets as cs
+from parameterized import parameterized
 import pytest
+
+
+@pytest.fixture(params=[2, 3])
+def collapse(request):
+    return request.param
+
+
+def simple_loop_code(depth):
+    if depth == 1:
+        return cs.loop_with_1_assignment
+    elif depth == 2:
+        return cs.double_loop_with_1_assignment
+    elif depth == 3:
+        return cs.triple_loop_with_1_assignment
+    else:
+        raise NotImplementedError
 
 
 def test_get_ancestors_single_loop(parser):
@@ -122,6 +140,34 @@ def test_apply_loop_collapse_too_large_error(parser):
     expected = "Cannot apply collapse to 3 loops in a sub-nest of 2."
     with pytest.raises(ValueError, match=expected):
         apply_loop_collapse(loops[0], 3)
+
+
+def test_apply_loop_collapse_no_loop_dir(parser, collapse):
+    """
+    Test that :func:`apply_loop_collapse` is correctly applied when there is no
+    loop directive.
+    """
+    code = parser(FortranStringReader(simple_loop_code(collapse)))
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_collapse(loops[0], collapse)
+    assert isinstance(loops[0].parent.parent, ACCLoopDirective)
+    assert loops[0].parent.parent.collapse == collapse
+
+
+def test_apply_loop_collapse(parser, collapse):
+    """
+    Test that :func:`apply_loop_collapse` is correctly applied when there is a
+    loop directive.
+    """
+    code = parser(FortranStringReader(simple_loop_code(collapse)))
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_directive(loops[0])
+    apply_loop_collapse(loops[0], collapse)
+    assert loops[0].parent.parent.collapse == collapse
 
 
 def test_is_collapsed_no_kernels(parser):
