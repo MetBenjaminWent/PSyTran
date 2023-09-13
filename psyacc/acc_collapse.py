@@ -3,14 +3,19 @@ from psyacc.acc_kernels import has_kernels_directive
 from psyacc.acc_loop import has_loop_directive, apply_loop_directive
 
 
-def get_ancestors(loop):
+def get_ancestors(loop, inclusive=False):
     """
     Get all ancestors of a loop which are also loops.
+
+    :arg loop: the :class:`Loop` node.
+    :arg inclusive: if ``True``, the current loop is included.
     """
     if not isinstance(loop, nodes.Loop):
         raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
     ancestors = []
     current = loop
+    if inclusive:
+        ancestors.append(current)
     while current.ancestor(nodes.Loop) is not None:
         current = current.ancestor(nodes.Loop)
         ancestors.append(current)
