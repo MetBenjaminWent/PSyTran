@@ -3,7 +3,7 @@ from psyacc.kernels import has_kernels_directive
 from psyacc.loop import has_loop_directive, apply_loop_directive
 
 
-def _apply_loop_clause(loop):
+def _prepare_loop_for_clause(loop):
     """
     Apply a loop clause to a loop.
 
@@ -23,7 +23,7 @@ def apply_loop_seq(loop):
 
     :arg loop: the :class:`Loop` node.
     """
-    _apply_loop_clause(loop)
+    _prepare_loop_for_clause(loop)
     loop.parent.parent._sequential = True
 
 
@@ -33,7 +33,7 @@ def apply_loop_gang(loop):
 
     :arg loop: the :class:`Loop` node.
     """
-    _apply_loop_clause(loop)
+    _prepare_loop_for_clause(loop)
     loop.parent.parent._gang = True
 
 
@@ -43,5 +43,5 @@ def apply_loop_vector(loop):
 
     :arg loop: the :class:`Loop` node.
     """
-    _apply_loop_clause(loop)
+    _prepare_loop_for_clause(loop)
     loop.parent.parent._vector = True

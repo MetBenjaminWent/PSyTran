@@ -1,7 +1,7 @@
 from psyclone.psyir import nodes
 from psyacc.kernels import has_kernels_directive
 from psyacc.loop import has_loop_directive, apply_loop_directive
-from psyacc.loop_clauses import _apply_loop_clause
+from psyacc.loop_clauses import _prepare_loop_for_clause
 
 
 def get_ancestors(loop, inclusive=False):
@@ -32,7 +32,7 @@ def apply_loop_collapse(loop, collapse):
     :arg loop: the :class:`Loop` node.
     :arg collapse: the number of loops to collapse
     """
-    _apply_loop_clause(loop)
+    _prepare_loop_for_clause(loop)
     if not isinstance(collapse, int):
         raise TypeError(f"Expected an integer, not '{type(collapse)}'.")
     if collapse <= 1:
