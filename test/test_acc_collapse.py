@@ -50,7 +50,7 @@ def test_get_ancestors(parser, nest_depth, inclusive):
     assert len(get_ancestors(loops[-1], inclusive=inclusive)) == expected
 
 
-def test_get_ancestors_typeerror(parser):
+def test_get_ancestors_typeerror1(parser):
     """
     Test that a :class:`TypeError` is raised when :func:`get_ancestors`
     is called with something other than a :class:`Loop`.
@@ -64,6 +64,19 @@ def test_get_ancestors_typeerror(parser):
     )
     with pytest.raises(TypeError, match=expected):
         get_ancestors(assignments[0])
+
+
+def test_get_ancestors_typeerror2(parser):
+    """
+    Test that a :class:`TypeError` is raised when :func:`get_ancestors`
+    is called with a non-Boolean ``inclusive`` flag.
+    """
+    code = parser(FortranStringReader(cs.double_loop_with_1_assignment))
+    psy = PSyFactory("nemo", distributed_memory=False).create(code)
+    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    expected = "Expected a bool, not '<class 'int'>'."
+    with pytest.raises(TypeError, match=expected):
+        get_ancestors(loops[0], inclusive=0)
 
 
 def test_is_collapsed_no_kernels(parser):

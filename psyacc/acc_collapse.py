@@ -12,6 +12,8 @@ def get_ancestors(loop, inclusive=False):
     """
     if not isinstance(loop, nodes.Loop):
         raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
+    if not isinstance(inclusive, bool):
+        raise TypeError(f"Expected a bool, not '{type(inclusive)}'.")
     ancestors = []
     current = loop
     if inclusive:
