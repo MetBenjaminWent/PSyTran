@@ -124,7 +124,10 @@ def test_apply_loop_collapse_typeerror1(parser):
     """
     code = parser(FortranStringReader(cs.double_loop_with_1_assignment))
     psy = PSyFactory("nemo", distributed_memory=False).create(code)
-    assignments = psy.invokes.invoke_list[0].schedule.walk(nodes.Assignment)
+    schedule = psy.invokes.invoke_list[0].schedule
+    assignments = schedule.walk(nodes.Assignment)
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
     expected = (
         "Expected a Loop, not"
         " '<class 'psyclone.psyir.nodes.assignment.Assignment'>'."
@@ -141,6 +144,7 @@ def test_apply_loop_collapse_typeerror2(parser):
     code = parser(FortranStringReader(cs.double_loop_with_1_assignment))
     psy = PSyFactory("nemo", distributed_memory=False).create(code)
     loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
     expected = "Expected an integer, not '<class 'float'>'."
     with pytest.raises(TypeError, match=expected):
         apply_loop_collapse(loops[0], 2.0)
@@ -154,6 +158,7 @@ def test_apply_loop_collapse_valueerror(parser):
     code = parser(FortranStringReader(cs.double_loop_with_1_assignment))
     psy = PSyFactory("nemo", distributed_memory=False).create(code)
     loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
     expected = "Expected an integer greater than one, not 1."
     with pytest.raises(ValueError, match=expected):
         apply_loop_collapse(loops[0], 1)
@@ -167,7 +172,7 @@ def test_apply_loop_collapse_no_kernels_error(parser):
     code = parser(FortranStringReader(cs.double_loop_with_1_assignment))
     psy = PSyFactory("nemo", distributed_memory=False).create(code)
     loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
-    expected = "Cannot apply loop collapse without a kernels directive."
+    expected = "Cannot apply a loop clause without a kernels directive."
     with pytest.raises(ValueError, match=expected):
         apply_loop_collapse(loops[0], 2)
 
@@ -181,7 +186,6 @@ def test_apply_loop_collapse_too_large_error(parser):
     psy = PSyFactory("nemo", distributed_memory=False).create(code)
     loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
-    loops = psy.invokes.invoke_list[0].schedule.walk(nodes.Loop)
     expected = "Cannot apply collapse to 3 loops in a sub-nest of 2."
     with pytest.raises(ValueError, match=expected):
         apply_loop_collapse(loops[0], 3)
