@@ -1,6 +1,19 @@
 from fparser.common.readfortran import FortranStringReader
 from psyclone.psyGen import PSyFactory
+from psyacc import *
 import code_snippets as cs
+
+has_clause = {
+    "sequential": has_seq_clause,
+    "gang": has_gang_clause,
+    "vector": has_vector_clause,
+}
+
+apply_clause = {
+    "sequential": apply_loop_seq,
+    "gang": apply_loop_gang,
+    "vector": apply_loop_vector,
+}
 
 
 def get_schedule(parser, code_string):

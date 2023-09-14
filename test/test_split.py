@@ -1,7 +1,5 @@
 from psyclone.psyir import nodes
-from psyacc.split import follows, split_consecutive
-import code_snippets as cs
-from utils import get_schedule
+from utils import *
 import pytest
 
 

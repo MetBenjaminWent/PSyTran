@@ -1,12 +1,6 @@
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCKernelsDirective
-from psyacc.kernels import (
-    is_outer_loop,
-    has_kernels_directive,
-    apply_kernels_directive,
-)
-import code_snippets as cs
-from utils import get_schedule, simple_loop_code
+from utils import *
 import pytest
 
 

@@ -1,9 +1,6 @@
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective
-from psyacc.kernels import apply_kernels_directive
-from psyacc.loop import *
-import code_snippets as cs
-from utils import get_schedule, simple_loop_code
+from utils import *
 import pytest
 
 
@@ -79,7 +76,7 @@ def test_force_apply_loop_directive_with_seq_clause(parser):
 def test_apply_loop_directive_with_clause(parser, clause):
     """
     Test that :func:`apply_loop_directive` correctly applies a ``loop``
-    directive with a ``seq`` clause.
+    directive with a clause.
     """
     schedule = get_schedule(parser, cs.loop_with_1_assignment)
     loops = schedule.walk(nodes.Loop)

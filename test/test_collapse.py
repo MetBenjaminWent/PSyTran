@@ -1,9 +1,5 @@
 from psyclone.psyir import nodes
-from psyacc.kernels import apply_kernels_directive
-from psyacc.loop import apply_loop_directive
-from psyacc.collapse import get_ancestors, apply_loop_collapse, is_collapsed
-import code_snippets as cs
-from utils import get_schedule, simple_loop_code
+from utils import *
 import pytest
 
 

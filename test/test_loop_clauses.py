@@ -1,10 +1,7 @@
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective
-from psyacc.kernels import apply_kernels_directive
-import code_snippets as cs
-from utils import get_schedule, simple_loop_code
-from psyacc.loop_clauses import *
 from psyacc.loop_clauses import _prepare_loop_for_clause
+from utils import *
 import pytest
 
 
@@ -16,19 +13,6 @@ def nest_depth(request):
 @pytest.fixture(params=["sequential", "gang", "vector"])
 def clause(request):
     return request.param
-
-
-has_clause = {
-    "sequential": has_seq_clause,
-    "gang": has_gang_clause,
-    "vector": has_vector_clause,
-}
-
-apply_clause = {
-    "sequential": apply_loop_seq,
-    "gang": apply_loop_gang,
-    "vector": apply_loop_vector,
-}
 
 
 def test_prepare_loop_for_clause_typeerror(parser):
