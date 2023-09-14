@@ -1,8 +1,14 @@
 from psyclone.psyir import nodes
+from psyclone.nemo import NemoKern
 from psyclone.transformations import ACCLoopDirective, ACCLoopTrans
 from psyacc.kernels import has_kernels_directive, is_outer_loop
 
-__all__ = ["has_loop_directive", "apply_loop_directive", "is_perfectly_nested"]
+__all__ = [
+    "has_loop_directive",
+    "apply_loop_directive",
+    "is_perfectly_nested",
+    "is_simple_loop",
+]
 
 
 def has_loop_directive(node):
@@ -48,3 +54,22 @@ def is_perfectly_nested(loop):
         assert isinstance(nodes_at_depth[0], nodes.Loop)
     else:
         return True
+
+
+def is_simple_loop(loop):
+    """
+    Determine whether a loop nest is simple, i.e., perfectly nested, with a
+    single assignment at the deepest level.
+
+    :arg loop: the outer-most loop of the nest
+    """
+    if not is_perfectly_nested(loop):
+        return False
+    innermost_loop = loop.walk(nodes.Loop)[-1]
+    depth = innermost_loop.depth
+    child_nodes = innermost_loop.walk(nodes.Node)
+    nodes_next = [node for node in child_nodes if node.depth == depth + 2]
+    if len(nodes_next) != 1 or not isinstance(nodes_next[0], NemoKern):
+        return False
+    nodes_next = [node for node in child_nodes if node.depth == depth + 4]
+    return len(nodes_next) == 1 and isinstance(nodes_next[0], nodes.Assignment)
