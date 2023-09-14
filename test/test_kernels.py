@@ -58,24 +58,23 @@ def test_apply_kernels_directive_typeerror(parser):
         apply_kernels_directive(loops[0], options=0)
 
 
-# TODO: Account for more generic blocks, too
+def test_apply_kernels_directive_schedule(parser):
+    """
+    Test that :func:`apply_kernels_directive` correctly applies a ``kernels``
+    directive to a schedule.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    apply_kernels_directive(schedule)
+    assert isinstance(schedule[0], ACCKernelsDirective)
+
+
 def test_apply_kernels_directive_loop(parser):
     """
-    Test that :func:`apply_kernels_directive` correctly applies OpenACC kernels
+    Test that :func:`apply_kernels_directive` correctly applies a ``kernels``
     directives to a loop.
     """
     schedule = get_schedule(parser, cs.loop_with_1_assignment)
     loops = schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
-    assert isinstance(schedule[0], ACCKernelsDirective)
-
-
-def test_has_kernels_directive(parser):
-    """
-    Test that :func:`has_kernels_directive` correctly identifies an OpenACC
-    kernels directives.
-    """
-    schedule = get_schedule(parser, cs.loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
+    assert isinstance(loops[0].parent.parent, ACCKernelsDirective)
     assert has_kernels_directive(loops[0])
