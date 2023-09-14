@@ -1,10 +1,15 @@
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective
 from psyacc.kernels import apply_kernels_directive
-from psyacc.loop import has_loop_directive, apply_loop_directive
+from psyacc.loop import *
 import code_snippets as cs
-from utils import get_schedule
+from utils import get_schedule, simple_loop_code
 import pytest
+
+
+@pytest.fixture(params=[1, 2, 3, 4])
+def nest_depth(request):
+    return request.param
 
 
 def test_has_no_loop_directive(parser):
@@ -54,3 +59,33 @@ def test_apply_loop_directive_typeerror(parser):
     )
     with pytest.raises(TypeError, match=expected):
         apply_loop_directive(assignments[0])
+
+
+def test_is_perfectly_nested(parser):
+    """
+    Test that :func:`is_perfectly_nested` correctly identifies a perfectly
+    nested loop.
+    """
+    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    loops = schedule.walk(nodes.Loop)
+    assert is_perfectly_nested(loops[0])
+
+
+def test_is_perfectly_nested_simple(parser, nest_depth):
+    """
+    Test that :func:`is_perfectly_nested` correctly identifies a perfectly
+    nested loop.
+    """
+    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    loops = schedule.walk(nodes.Loop)
+    assert is_perfectly_nested(loops[0])
+
+
+def test_is_not_perfectly_nested(parser):
+    """
+    Test that :func:`is_perfectly_nested` correctly identifies an imperfectly
+    nested loop.
+    """
+    schedule = get_schedule(parser, cs.imperfectly_nested_double_loop)
+    loops = schedule.walk(nodes.Loop)
+    assert not is_perfectly_nested(loops[0])
