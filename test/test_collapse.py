@@ -3,11 +3,6 @@ from utils import *
 import pytest
 
 
-@pytest.fixture(params=[2, 3])
-def collapse(request):
-    return request.param
-
-
 def test_is_collapsed_no_kernels(parser):
     """
     Test that :func:`is_collapsed` returns ``False`` for a loop which doesn't
@@ -39,73 +34,3 @@ def test_is_collapsed_loop_no_collapse(parser):
     apply_kernels_directive(loops[0])
     apply_loop_directive(loops[0])
     assert not is_collapsed(loops[0])
-
-
-def test_apply_loop_collapse_typeerror(parser):
-    """
-    Test that a :class:`TypeError` is raised when :func:`apply_loop_directive`
-    is called with a non-integer collapse.
-    """
-    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    expected = "Expected an integer, not '<class 'float'>'."
-    with pytest.raises(TypeError, match=expected):
-        apply_loop_collapse(loops[0], 2.0)
-
-
-def test_apply_loop_collapse_valueerror(parser):
-    """
-    Test that a :class:`ValueError` is raised when :func:`apply_loop_directive`
-    is called with an invalid collapse.
-    """
-    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    expected = "Expected an integer greater than one, not 1."
-    with pytest.raises(ValueError, match=expected):
-        apply_loop_collapse(loops[0], 1)
-
-
-def test_apply_loop_collapse_too_large_error(parser):
-    """
-    Test that a :class:`ValueError` is raised when :func:`apply_loop_directive`
-    is called with too large a collapse.
-    """
-    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    expected = "Cannot apply collapse to 3 loops in a sub-nest of 2."
-    with pytest.raises(ValueError, match=expected):
-        apply_loop_collapse(loops[0], 3)
-
-
-def test_apply_loop_collapse(parser, collapse):
-    """
-    Test that :func:`apply_loop_collapse` is correctly applied to a full nest.
-    """
-    schedule = get_schedule(parser, simple_loop_code(collapse))
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    apply_loop_directive(loops[0])
-    apply_loop_collapse(loops[0], collapse)
-    assert loops[0].parent.parent.collapse == collapse
-    for loop in loops:
-        assert is_collapsed(loop)
-
-
-def test_apply_loop_collapse_subnest(parser, collapse):
-    """
-    Test that :func:`apply_loop_collapse` is correctly applied to a sub-nest.
-    """
-    schedule = get_schedule(parser, simple_loop_code(collapse + 1))
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    apply_loop_directive(loops[0])
-    apply_loop_directive(loops[-1])
-    apply_loop_collapse(loops[0], collapse)
-    assert loops[0].parent.parent.collapse == collapse
-    for i in range(collapse):
-        assert is_collapsed(loops[i])
-    assert loops[-1].parent.parent.collapse is None
-    assert not is_collapsed(loops[-1])

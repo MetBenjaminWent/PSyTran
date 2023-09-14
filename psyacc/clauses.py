@@ -8,6 +8,7 @@ __all__ = [
     "apply_loop_gang",
     "has_vector_clause",
     "apply_loop_vector",
+    "apply_loop_collapse",
 ]
 
 
@@ -88,3 +89,23 @@ def apply_loop_vector(loop):
     if has_seq_clause(loop):
         raise ValueError("Cannot apply vector to a loop with a seq clause.")
     loop.parent.parent._vector = True
+
+
+def apply_loop_collapse(loop, collapse):
+    """
+    Apply a ``collapse`` clause to a loop.
+
+    :arg loop: the :class:`Loop` node.
+    :arg collapse: the number of loops to collapse
+    """
+    _prepare_loop_for_clause(loop)
+    if not isinstance(collapse, int):
+        raise TypeError(f"Expected an integer, not '{type(collapse)}'.")
+    if collapse <= 1:
+        raise ValueError(f"Expected an integer greater than one, not {collapse}.")
+    if len(loop.walk(nodes.Loop)) < collapse:
+        raise ValueError(
+            f"Cannot apply collapse to {collapse} loops in a sub-nest of"
+            f" {len(loop.walk(nodes.Loop))}."
+        )
+    loop.parent.parent._collapse = collapse

@@ -1,29 +1,8 @@
 from psyclone.psyir import nodes
 from psyacc.family import get_ancestors
 from psyacc.directives import has_kernels_directive, has_loop_directive
-from psyacc.clauses import _prepare_loop_for_clause
 
-__all__ = ["apply_loop_collapse", "is_collapsed"]
-
-
-def apply_loop_collapse(loop, collapse):
-    """
-    Apply a ``collapse`` clause to a loop.
-
-    :arg loop: the :class:`Loop` node.
-    :arg collapse: the number of loops to collapse
-    """
-    _prepare_loop_for_clause(loop)
-    if not isinstance(collapse, int):
-        raise TypeError(f"Expected an integer, not '{type(collapse)}'.")
-    if collapse <= 1:
-        raise ValueError(f"Expected an integer greater than one, not {collapse}.")
-    if len(loop.walk(nodes.Loop)) < collapse:
-        raise ValueError(
-            f"Cannot apply collapse to {collapse} loops in a sub-nest of"
-            f" {len(loop.walk(nodes.Loop))}."
-        )
-    loop.parent.parent._collapse = collapse
+__all__ = ["is_collapsed"]
 
 
 def is_collapsed(loop):
