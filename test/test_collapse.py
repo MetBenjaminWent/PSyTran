@@ -136,8 +136,7 @@ def test_apply_loop_collapse_too_large_error(parser):
 
 def test_apply_loop_collapse(parser, collapse):
     """
-    Test that :func:`apply_loop_collapse` is correctly applied when there is a
-    loop directive.
+    Test that :func:`apply_loop_collapse` is correctly applied to a full nest.
     """
     schedule = get_schedule(parser, simple_loop_code(collapse))
     loops = schedule.walk(nodes.Loop)

@@ -1,10 +1,17 @@
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective
 from psyacc.kernels import apply_kernels_directive
+from psyacc.loop import apply_loop_directive
 import code_snippets as cs
-from utils import get_schedule
+from utils import get_schedule, simple_loop_code
+from psyacc.loop_clauses import *
 from psyacc.loop_clauses import _prepare_loop_for_clause
 import pytest
+
+
+@pytest.fixture(params=[1, 2, 3, 4])
+def nest_depth(request):
+    return request.param
 
 
 def test_prepare_loop_for_clause_typeerror(parser):
@@ -47,3 +54,42 @@ def test_prepare_loop_for_clause_no_loop_dir(parser):
     apply_kernels_directive(loops[0])
     _prepare_loop_for_clause(loops[0])
     assert isinstance(loops[0].parent.parent, ACCLoopDirective)
+
+
+def test_apply_loop_seq(parser, nest_depth):
+    """
+    Test that :func:`apply_loop_seq` is correctly applied.
+    """
+    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    for i in range(nest_depth):
+        apply_loop_seq(loops[i])
+        assert loops[i].parent.parent.sequential
+        assert has_seq_clause(loops[i])
+
+
+def test_apply_loop_gang(parser, nest_depth):
+    """
+    Test that :func:`apply_loop_gang` is correctly applied.
+    """
+    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    for i in range(nest_depth):
+        apply_loop_gang(loops[i])
+        assert loops[i].parent.parent.gang
+        assert has_gang_clause(loops[i])
+
+
+def test_apply_loop_vector(parser, nest_depth):
+    """
+    Test that :func:`apply_loop_vector` is correctly applied.
+    """
+    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    for i in range(nest_depth):
+        apply_loop_vector(loops[i])
+        assert loops[i].parent.parent.vector
+        assert has_vector_clause(loops[i])
