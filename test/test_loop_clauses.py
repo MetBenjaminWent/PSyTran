@@ -93,3 +93,59 @@ def test_apply_loop_vector(parser, nest_depth):
         apply_loop_vector(loops[i])
         assert loops[i].parent.parent.vector
         assert has_vector_clause(loops[i])
+
+
+def test_apply_loop_seq_gang_error(parser):
+    """
+    Test that a :class:`ValueError` is raised when :func:`apply_loop_seq` is
+    applied to a loop with a ``gang`` clause.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_gang(loops[0])
+    expected = "Cannot apply seq to a loop with a gang clause."
+    with pytest.raises(ValueError, match=expected):
+        apply_loop_seq(loops[0])
+
+
+def test_apply_loop_seq_vector_error(parser):
+    """
+    Test that a :class:`ValueError` is raised when :func:`apply_loop_seq` is
+    applied to a loop with a ``vector`` clause.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_vector(loops[0])
+    expected = "Cannot apply seq to a loop with a vector clause."
+    with pytest.raises(ValueError, match=expected):
+        apply_loop_seq(loops[0])
+
+
+def test_apply_loop_gang_seq_error(parser):
+    """
+    Test that a :class:`ValueError` is raised when :func:`apply_loop_gang` is
+    applied to a loop with a ``seq`` clause.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_seq(loops[0])
+    expected = "Cannot apply gang to a loop with a seq clause."
+    with pytest.raises(ValueError, match=expected):
+        apply_loop_gang(loops[0])
+
+
+def test_apply_loop_vector_seq_error(parser):
+    """
+    Test that a :class:`ValueError` is raised when :func:`apply_loop_vector` is
+    applied to a loop with a ``seq`` clause.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_seq(loops[0])
+    expected = "Cannot apply vector to a loop with a seq clause."
+    with pytest.raises(ValueError, match=expected):
+        apply_loop_vector(loops[0])

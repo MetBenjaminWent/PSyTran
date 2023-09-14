@@ -42,6 +42,10 @@ def apply_loop_seq(loop):
     :arg loop: the :class:`Loop` node.
     """
     _prepare_loop_for_clause(loop)
+    if has_gang_clause(loop):
+        raise ValueError("Cannot apply seq to a loop with a gang clause.")
+    if has_vector_clause(loop):
+        raise ValueError("Cannot apply seq to a loop with a vector clause.")
     loop.parent.parent._sequential = True
 
 
@@ -61,6 +65,8 @@ def apply_loop_gang(loop):
     :arg loop: the :class:`Loop` node.
     """
     _prepare_loop_for_clause(loop)
+    if has_seq_clause(loop):
+        raise ValueError("Cannot apply gang to a loop with a seq clause.")
     loop.parent.parent._gang = True
 
 
@@ -80,4 +86,6 @@ def apply_loop_vector(loop):
     :arg loop: the :class:`Loop` node.
     """
     _prepare_loop_for_clause(loop)
+    if has_seq_clause(loop):
+        raise ValueError("Cannot apply vector to a loop with a seq clause.")
     loop.parent.parent._vector = True
