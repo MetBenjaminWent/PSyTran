@@ -42,10 +42,12 @@ def test_get_relatives_loop(parser, nest_depth, inclusive, relative):
     the right number of children/ancestors of a loop.
     """
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
-    loop = schedule.walk(nodes.Loop)[0 if relative == "child" else -1]
-    num_relatives = len(get_relative[relative](loop, inclusive=inclusive))
-    expected = nest_depth if inclusive else nest_depth - 1
-    assert num_relatives == expected
+    loops = schedule.walk(nodes.Loop)
+    for i in range(nest_depth):
+        loop = loops[i if relative == "child" else nest_depth - 1 - i]
+        num_relatives = len(get_relative[relative](loop, inclusive=inclusive))
+        expected = nest_depth - i if inclusive else nest_depth - 1 - i
+        assert num_relatives == expected
 
 
 def test_get_relatives_assignment(parser, nest_depth, inclusive, relative):
