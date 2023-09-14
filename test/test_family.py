@@ -45,7 +45,8 @@ def test_get_relatives_loop(parser, nest_depth, inclusive, relative):
     loops = schedule.walk(nodes.Loop)
     for i in range(nest_depth):
         loop = loops[i if relative == "child" else nest_depth - 1 - i]
-        num_relatives = len(get_relative[relative](loop, inclusive=inclusive))
+        kwargs = dict(inclusive=inclusive, node_type=nodes.Loop)
+        num_relatives = len(get_relative[relative](loop, **kwargs))
         expected = nest_depth - i if inclusive else nest_depth - 1 - i
         assert num_relatives == expected
 
@@ -57,9 +58,9 @@ def test_get_relatives_assignment(parser, nest_depth, inclusive, relative):
     """
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
     assignment = schedule.walk(nodes.Assignment)[0]
-    num_relatives = len(get_relative[relative](assignment, inclusive=inclusive))
-    expected = 0 if relative == "child" else nest_depth
-    assert len(get_children(assignment, inclusive=inclusive)) == 0
+    kwargs = dict(inclusive=inclusive, node_type=nodes.Loop)
+    num_relatives = len(get_relative[relative](assignment, **kwargs))
+    assert num_relatives == 0 if relative == "child" else nest_depth
 
 
 def test_is_next_sibling(parser):

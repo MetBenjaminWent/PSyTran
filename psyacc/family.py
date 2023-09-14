@@ -3,7 +3,7 @@ from psyclone.psyir import nodes
 __all__ = ["get_children", "get_ancestors", "is_next_sibling"]
 
 
-def get_children(node, inclusive=False, node_type=nodes.Loop):
+def get_children(node, inclusive=False, node_type=nodes.Node):
     """
     Get all ancestors of a node with a given type.
 
