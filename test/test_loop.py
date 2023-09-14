@@ -14,7 +14,7 @@ def nest_depth(request):
 
 def test_has_no_loop_directive(parser):
     """
-    Test that :func:`has_loop_directive` correctly identifies no OpenACC loop
+    Test that :func:`has_loop_directive` correctly identifies no ``loop``
     directives.
     """
     schedule = get_schedule(parser, cs.loop_with_1_assignment)
@@ -24,8 +24,8 @@ def test_has_no_loop_directive(parser):
 
 def test_apply_loop_directive(parser):
     """
-    Test that :func:`apply_loop_directive` correctly applies OpenACC kernels
-    directives to a loop.
+    Test that :func:`apply_loop_directive` correctly applies a ``loop``
+    directive.
     """
     schedule = get_schedule(parser, cs.loop_with_1_assignment)
     loops = schedule.walk(nodes.Loop)
@@ -36,7 +36,7 @@ def test_apply_loop_directive(parser):
 
 def test_has_loop_directive(parser):
     """
-    Test that :func:`has_loop_directive` correctly identifies an OpenACC loop
+    Test that :func:`has_loop_directive` correctly identifies a ``loop``
     directives.
     """
     schedule = get_schedule(parser, cs.loop_with_1_assignment)
@@ -44,6 +44,18 @@ def test_has_loop_directive(parser):
     apply_kernels_directive(loops[0])
     apply_loop_directive(loops[0])
     assert has_loop_directive(loops[0])
+
+
+def test_force_apply_loop_directive(parser):
+    """
+    Test that :func:`apply_loop_directive` correctly force-applies a ``loop``
+    directive.
+    """
+    schedule = get_schedule(parser, cs.serial_loop)
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_directive(loops[0], options={"force": True})
+    assert isinstance(loops[0].parent.parent, ACCLoopDirective)
 
 
 def test_apply_loop_directive_typeerror(parser):

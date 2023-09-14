@@ -88,3 +88,15 @@ imperfectly_nested_double_loop = """
       END DO
     END PROGRAM test
     """
+
+serial_loop = """
+    PROGRAM test
+      REAL :: a(10)
+      INTEGER :: i
+
+      a(1) = 0.0
+      DO i = 2, 10
+        a(i) = a(i-1)
+      END DO
+    END PROGRAM test
+    """
