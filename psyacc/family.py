@@ -1,11 +1,29 @@
 from psyclone.psyir import nodes
 
-__all__ = ["get_ancestors", "is_next_sibling"]
+__all__ = ["get_children", "get_ancestors", "is_next_sibling"]
+
+
+def get_children(node, inclusive=False, node_type=nodes.Loop):
+    """
+    Get all ancestors of a node with a given type.
+
+    :arg loop: the node to search for children of.
+    :arg inclusive: if ``True``, the current loop is included.
+    :arg node_type: the type of node to search for.
+    """
+    assert isinstance(node, nodes.Node)
+    if not isinstance(inclusive, bool):
+        raise TypeError(f"Expected a bool, not '{type(inclusive)}'.")
+    assert issubclass(node_type, nodes.Node)
+    children = list(node.walk(node_type))
+    if not inclusive and isinstance(node, node_type):
+        children.pop(0)
+    return children
 
 
 def get_ancestors(node, inclusive=False, node_type=nodes.Loop):
     """
-    Get all ancestors of a node.
+    Get all ancestors of a node with a given type.
 
     :arg loop: the node to search for ancestors of.
     :arg inclusive: if ``True``, the current loop is included.
