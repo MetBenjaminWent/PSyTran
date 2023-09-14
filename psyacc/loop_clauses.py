@@ -2,6 +2,15 @@ from psyclone.psyir import nodes
 from psyacc.kernels import has_kernels_directive
 from psyacc.loop import has_loop_directive, apply_loop_directive
 
+__all__ = [
+    "has_seq_clause",
+    "apply_loop_seq",
+    "has_gang_clause",
+    "apply_loop_gang",
+    "has_vector_clause",
+    "apply_loop_vector",
+]
+
 
 def _prepare_loop_for_clause(loop):
     """
@@ -17,6 +26,15 @@ def _prepare_loop_for_clause(loop):
         apply_loop_directive(loop)
 
 
+def has_seq_clause(loop):
+    """
+    Determine whether a loop has a ``seq`` clause.
+
+    :arg loop: the :class:`Loop` node.
+    """
+    return has_loop_directive(loop) and loop.parent.parent.sequential
+
+
 def apply_loop_seq(loop):
     """
     Apply a seq clause to a loop.
@@ -27,6 +45,15 @@ def apply_loop_seq(loop):
     loop.parent.parent._sequential = True
 
 
+def has_gang_clause(loop):
+    """
+    Determine whether a loop has a ``gang`` clause.
+
+    :arg loop: the :class:`Loop` node.
+    """
+    return has_loop_directive(loop) and loop.parent.parent.gang
+
+
 def apply_loop_gang(loop):
     """
     Apply a gang clause to a loop.
@@ -35,6 +62,15 @@ def apply_loop_gang(loop):
     """
     _prepare_loop_for_clause(loop)
     loop.parent.parent._gang = True
+
+
+def has_vector_clause(loop):
+    """
+    Determine whether a loop has a ``vector`` clause.
+
+    :arg loop: the :class:`Loop` node.
+    """
+    return has_loop_directive(loop) and loop.parent.parent.vector
 
 
 def apply_loop_vector(loop):
