@@ -7,7 +7,7 @@ __all__ = ["has_loop_directive", "apply_loop_directive"]
 
 def has_loop_directive(node):
     """
-    Determine whether a node has an OpenACC loop directive.
+    Determine whether a node has an OpenACC ``loop`` directive.
     """
     assert isinstance(node, nodes.Node)
     return isinstance(node.parent.parent, ACCLoopDirective)
@@ -15,7 +15,7 @@ def has_loop_directive(node):
 
 def apply_loop_directive(loop, **kwargs):
     """
-    Apply OpenACC loop directives around a block of code.
+    Apply ``loop`` directives around a block of code.
 
     Any keyword arguments are passed to :meth:`apply`.
     """

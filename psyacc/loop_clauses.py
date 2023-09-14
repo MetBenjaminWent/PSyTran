@@ -14,7 +14,7 @@ __all__ = [
 
 def _prepare_loop_for_clause(loop):
     """
-    Apply a loop clause to a loop.
+    Prepare to apply a clause to a ``loop`` directive.
 
     :arg loop: the :class:`Loop` node.
     """
@@ -37,7 +37,7 @@ def has_seq_clause(loop):
 
 def apply_loop_seq(loop):
     """
-    Apply a seq clause to a loop.
+    Apply a ``seq`` clause to a loop.
 
     :arg loop: the :class:`Loop` node.
     """
@@ -60,7 +60,7 @@ def has_gang_clause(loop):
 
 def apply_loop_gang(loop):
     """
-    Apply a gang clause to a loop.
+    Apply a ``gang`` clause to a loop.
 
     :arg loop: the :class:`Loop` node.
     """
@@ -81,7 +81,7 @@ def has_vector_clause(loop):
 
 def apply_loop_vector(loop):
     """
-    Apply a vector clause to a loop.
+    Apply a ``vector`` clause to a loop.
 
     :arg loop: the :class:`Loop` node.
     """

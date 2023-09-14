@@ -16,7 +16,8 @@ def follows(node1, node2):
 
 def split_consecutive(block):
     """
-    Given a block of nodes at some depth, separate out those which follow one another.
+    Given a block of nodes at some depth, separate out those which follow one
+    another.
     """
     blocks = []
     current = []

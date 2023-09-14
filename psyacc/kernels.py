@@ -15,7 +15,7 @@ def is_outer_loop(loop):
 
 def has_kernels_directive(node):
     """
-    Determine whether a node is inside an OpenACC kernels directive.
+    Determine whether a node is inside a ``kernels`` directive.
     """
     assert isinstance(node, nodes.Node)
     return node.ancestor(ACCKernelsDirective)
@@ -23,7 +23,7 @@ def has_kernels_directive(node):
 
 def apply_kernels_directive(block, **kwargs):
     """
-    Apply OpenACC kernels directives around a block of code.
+    Apply a ``kernels`` directive around a block of code.
 
     Any keyword arguments are passed to :meth:`apply`.
     """

@@ -29,7 +29,7 @@ def get_ancestors(loop, inclusive=False):
 
 def apply_loop_collapse(loop, collapse):
     """
-    Apply a collapse clause to a loop.
+    Apply a ``collapse`` clause to a loop.
 
     :arg loop: the :class:`Loop` node.
     :arg collapse: the number of loops to collapse
