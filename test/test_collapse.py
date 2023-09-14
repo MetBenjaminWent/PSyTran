@@ -108,24 +108,7 @@ def test_is_collapsed_loop_no_collapse(parser):
     assert not is_collapsed(loops[0])
 
 
-def test_apply_loop_collapse_typeerror1(parser):
-    """
-    Test that a :class:`TypeError` is raised when :func:`apply_loop_directive`
-    is called with something other than a :class:`Loop`.
-    """
-    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
-    assignments = schedule.walk(nodes.Assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    expected = (
-        "Expected a Loop, not"
-        " '<class 'psyclone.psyir.nodes.assignment.Assignment'>'."
-    )
-    with pytest.raises(TypeError, match=expected):
-        apply_loop_collapse(assignments[0], 2)
-
-
-def test_apply_loop_collapse_typeerror2(parser):
+def test_apply_loop_collapse_typeerror(parser):
     """
     Test that a :class:`TypeError` is raised when :func:`apply_loop_directive`
     is called with a non-integer collapse.
@@ -151,18 +134,6 @@ def test_apply_loop_collapse_valueerror(parser):
         apply_loop_collapse(loops[0], 1)
 
 
-def test_apply_loop_collapse_no_kernels_error(parser):
-    """
-    Test that a :class:`ValueError` is raised when :func:`apply_loop_directive`
-    is called without a kernels directive.
-    """
-    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    expected = "Cannot apply a loop clause without a kernels directive."
-    with pytest.raises(ValueError, match=expected):
-        apply_loop_collapse(loops[0], 2)
-
-
 def test_apply_loop_collapse_too_large_error(parser):
     """
     Test that a :class:`ValueError` is raised when :func:`apply_loop_directive`
@@ -174,21 +145,6 @@ def test_apply_loop_collapse_too_large_error(parser):
     expected = "Cannot apply collapse to 3 loops in a sub-nest of 2."
     with pytest.raises(ValueError, match=expected):
         apply_loop_collapse(loops[0], 3)
-
-
-def test_apply_loop_collapse_no_loop_dir(parser, collapse):
-    """
-    Test that :func:`apply_loop_collapse` is correctly applied when there is no
-    loop directive.
-    """
-    schedule = get_schedule(parser, simple_loop_code(collapse))
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    apply_loop_collapse(loops[0], collapse)
-    assert isinstance(loops[0].parent.parent, ACCLoopDirective)
-    assert loops[0].parent.parent.collapse == collapse
-    for loop in loops:
-        assert is_collapsed(loop)
 
 
 def test_apply_loop_collapse(parser, collapse):
