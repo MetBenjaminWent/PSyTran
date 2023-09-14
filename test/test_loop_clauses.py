@@ -13,6 +13,18 @@ def nest_depth(request):
     return request.param
 
 
+@pytest.fixture(params=["sequential", "gang", "vector"])
+def clause(request):
+    return request.param
+
+
+has_clause = {
+    "sequential": has_seq_clause,
+    "gang": has_gang_clause,
+    "vector": has_vector_clause,
+}
+
+
 def test_prepare_loop_for_clause_typeerror(parser):
     """
     Test that a :class:`TypeError` is raised when
@@ -53,6 +65,17 @@ def test_prepare_loop_for_clause_no_loop_dir(parser):
     apply_kernels_directive(loops[0])
     _prepare_loop_for_clause(loops[0])
     assert isinstance(loops[0].parent.parent, ACCLoopDirective)
+
+
+def test_no_loop_clause(parser, nest_depth, clause):
+    """
+    Test that a lack of each clause is correctly identified.
+    """
+    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    for i in range(nest_depth):
+        assert not has_clause[clause](loops[i])
 
 
 def test_apply_loop_seq(parser, nest_depth):
