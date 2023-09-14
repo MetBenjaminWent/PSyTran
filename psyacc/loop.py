@@ -2,11 +2,21 @@ from psyclone.psyir import nodes
 from psyclone.nemo import NemoKern
 
 __all__ = [
+    "is_outer_loop",
     "is_perfectly_nested",
     "is_simple_loop",
     "get_loop_variable_name",
     "get_loop_nest_variable_names",
 ]
+
+
+def is_outer_loop(loop):
+    """
+    Determine whether a loop is outer-most in its nest.
+    """
+    if not isinstance(loop, nodes.Loop):
+        raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
+    return loop.ancestor(nodes.Loop) is None
 
 
 def is_perfectly_nested(loop):
