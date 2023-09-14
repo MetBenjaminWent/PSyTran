@@ -2,6 +2,8 @@ from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective, ACCLoopTrans
 from psyacc.kernels import has_kernels_directive
 
+__all__ = ["has_loop_directive", "apply_loop_directive"]
+
 
 def has_loop_directive(node):
     """

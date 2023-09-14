@@ -1,3 +1,6 @@
+__all__ = ["follows", "split_consecutive"]
+
+
 def follows(node1, node2):
     """
     Determine whether two nodes immediately follow one another.

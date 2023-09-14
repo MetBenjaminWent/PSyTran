@@ -1,6 +1,8 @@
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCKernelsDirective, ACCKernelsTrans
 
+__all__ = ["is_outer_loop", "has_kernels_directive", "apply_kernels_directive"]
+
 
 def is_outer_loop(loop):
     """
