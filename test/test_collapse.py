@@ -22,10 +22,10 @@ def collapse(request):
     return request.param
 
 
-def test_get_ancestors(parser, nest_depth, inclusive):
+def test_get_ancestors_loop(parser, nest_depth, inclusive):
     """
     Test that :func:`get_ancestors` correctly finds the right number of
-    ancestors.
+    ancestors of a loop.
     """
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
     loops = schedule.walk(nodes.Loop)
@@ -33,22 +33,18 @@ def test_get_ancestors(parser, nest_depth, inclusive):
     assert len(get_ancestors(loops[-1], inclusive=inclusive)) == expected
 
 
-def test_get_ancestors_typeerror1(parser):
+def test_get_ancestors_assignment(parser, nest_depth, inclusive):
     """
-    Test that a :class:`TypeError` is raised when :func:`get_ancestors`
-    is called with something other than a :class:`Loop`.
+    Test that :func:`get_ancestors` correctly finds the right number of
+    ancestors of an assignment.
     """
-    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
-    assignments = schedule.walk(nodes.Assignment)
-    expected = (
-        "Expected a Loop, not"
-        " '<class 'psyclone.psyir.nodes.assignment.Assignment'>'."
-    )
-    with pytest.raises(TypeError, match=expected):
-        get_ancestors(assignments[0])
+    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    assignment = schedule.walk(nodes.Assignment)[0]
+    num_ancestors = len(get_ancestors(assignment, inclusive=inclusive))
+    assert num_ancestors == nest_depth
 
 
-def test_get_ancestors_typeerror2(parser):
+def test_get_ancestors_typeerror(parser):
     """
     Test that a :class:`TypeError` is raised when :func:`get_ancestors`
     is called with a non-Boolean ``inclusive`` flag.
