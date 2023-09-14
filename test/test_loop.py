@@ -142,19 +142,6 @@ def test_is_perfectly_nested_typeerror(parser):
         is_perfectly_nested(assignments[0])
 
 
-def test_is_perfectly_nested_valueerror(parser):
-    """
-    Test that a :class:`ValueError` is raised when :func:`is_perfectly_nested`
-    is called on a loop other than the outer-most.
-    """
-    schedule = get_schedule(parser, cs.quadruple_loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    expected = "is_perfectly_nested should be applied to outer-most loop."
-    for i in range(1, 4):
-        with pytest.raises(ValueError, match=expected):
-            is_perfectly_nested(loops[i])
-
-
 def test_is_perfectly_nested(parser):
     """
     Test that :func:`is_perfectly_nested` correctly identifies a perfectly
@@ -165,15 +152,6 @@ def test_is_perfectly_nested(parser):
     assert is_perfectly_nested(loops[0])
 
 
-def test_is_simple_loop(parser, nest_depth):
-    """
-    Test that :func:`is_simple_loop` correctly identifies a simple loop.
-    """
-    schedule = get_schedule(parser, simple_loop_code(nest_depth))
-    loops = schedule.walk(nodes.Loop)
-    assert is_simple_loop(loops[0])
-
-
 def test_is_not_perfectly_nested(parser):
     """
     Test that :func:`is_perfectly_nested` correctly identifies an imperfectly
@@ -182,6 +160,26 @@ def test_is_not_perfectly_nested(parser):
     schedule = get_schedule(parser, cs.imperfectly_nested_double_loop)
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
+
+
+def test_is_perfectly_nested_subnest(parser):
+    """
+    Test that :func:`is_perfectly_nested` correctly identifies a perfectly
+    sub-nest.
+    """
+    schedule = get_schedule(parser, cs.imperfectly_nested_triple_loop)
+    loops = schedule.walk(nodes.Loop)
+    assert not is_perfectly_nested(loops[0])
+    assert is_perfectly_nested(loops[1])
+
+
+def test_is_simple_loop(parser, nest_depth):
+    """
+    Test that :func:`is_simple_loop` correctly identifies a simple loop.
+    """
+    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    loops = schedule.walk(nodes.Loop)
+    assert is_simple_loop(loops[0])
 
 
 def test_is_not_simple_loop(parser):

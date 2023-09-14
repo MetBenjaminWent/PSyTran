@@ -46,8 +46,6 @@ def is_perfectly_nested(loop):
     """
     if not isinstance(loop, nodes.Loop):
         raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
-    if not is_outer_loop(loop):
-        raise ValueError("is_perfectly_nested should be applied to outer-most loop.")
     loops = loop.walk(nodes.Loop)
     depth = loop.depth
     for i in range(1, len(loops)):
