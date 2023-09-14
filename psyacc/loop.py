@@ -1,5 +1,6 @@
 from psyclone.psyir import nodes
 from psyclone.nemo import NemoKern
+from psyacc.family import get_children
 
 __all__ = [
     "is_outer_loop",
@@ -52,11 +53,10 @@ def is_simple_loop(loop):
         return False
     innermost_loop = loop.walk(nodes.Loop)[-1]
     depth = innermost_loop.depth
-    child_nodes = innermost_loop.walk(nodes.Node)
-    nodes_next = [node for node in child_nodes if node.depth == depth + 2]
+    nodes_next = get_children(innermost_loop, depth=depth + 2)
     if len(nodes_next) != 1 or not isinstance(nodes_next[0], NemoKern):
         return False
-    nodes_next = [node for node in child_nodes if node.depth == depth + 4]
+    nodes_next = get_children(innermost_loop, depth=depth + 4)
     return len(nodes_next) == 1 and isinstance(nodes_next[0], nodes.Assignment)
 
 
