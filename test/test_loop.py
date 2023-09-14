@@ -202,3 +202,14 @@ def test_get_loop_variable_name(parser):
     loops = schedule.walk(nodes.Loop)
     for i, expected in enumerate(["l", "k", "j", "i"]):
         assert get_loop_variable_name(loops[i]) == expected
+
+
+def test_get_loop_nest_variable_names(parser):
+    """
+    Test that :func:`get_loop_nest_variable_names` correctly determines all loop
+    variable names in a nest.
+    """
+    schedule = get_schedule(parser, cs.quadruple_loop_with_1_assignment)
+    indices = ["l", "k", "j", "i"]
+    for i, loop in enumerate(schedule.walk(nodes.Loop)):
+        assert get_loop_nest_variable_names(loop) == indices[i:]

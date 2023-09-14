@@ -9,6 +9,7 @@ __all__ = [
     "is_perfectly_nested",
     "is_simple_loop",
     "get_loop_variable_name",
+    "get_loop_nest_variable_names",
 ]
 
 
@@ -85,3 +86,12 @@ def get_loop_variable_name(loop):
     """
     assert isinstance(loop, nodes.Loop)
     return loop.variable.name
+
+
+def get_loop_nest_variable_names(loop):
+    """
+    Given a :class:`Loop` node, return the variable names of each loop it
+    contains.
+    """
+    assert isinstance(loop, nodes.Loop)
+    return [get_loop_variable_name(loop) for loop in loop.walk(nodes.Loop)]
