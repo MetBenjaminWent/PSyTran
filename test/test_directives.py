@@ -86,3 +86,13 @@ def test_apply_loop_directive_typeerror2(parser):
     expected = "Expected a dict, not '<class 'int'>'."
     with pytest.raises(TypeError, match=expected):
         apply_loop_directive(loops[0], options=0)
+
+
+def test_has_no_loop_directive(parser):
+    """
+    Test that :func:`has_loop_directive` correctly identifies no ``loop``
+    directives.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    assert not has_loop_directive(loops[0])

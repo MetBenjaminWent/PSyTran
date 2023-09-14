@@ -1,5 +1,4 @@
 from psyclone.psyir import nodes
-from psyclone.transformations import ACCLoopDirective
 from utils import *
 import pytest
 
@@ -7,16 +6,6 @@ import pytest
 @pytest.fixture(params=[1, 2, 3, 4])
 def nest_depth(request):
     return request.param
-
-
-def test_has_no_loop_directive(parser):
-    """
-    Test that :func:`has_loop_directive` correctly identifies no ``loop``
-    directives.
-    """
-    schedule = get_schedule(parser, cs.loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    assert not has_loop_directive(loops[0])
 
 
 def test_is_perfectly_nested_typeerror(parser):

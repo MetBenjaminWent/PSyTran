@@ -1,8 +1,8 @@
 from psyclone.psyir import nodes
-from psyclone.transformations import ACCLoopTrans
+from psyclone.transformations import ACCLoopDirective, ACCLoopTrans
 from psyacc.kernels import has_kernels_directive
 
-__all__ = ["apply_loop_directive"]
+__all__ = ["apply_loop_directive", "has_loop_directive"]
 
 
 def apply_loop_directive(loop, options={}):
@@ -19,3 +19,11 @@ def apply_loop_directive(loop, options={}):
     if not has_kernels_directive(loop):
         raise ValueError("Cannot apply a loop directive without a kernels directive.")
     ACCLoopTrans().apply(loop, options=options)
+
+
+def has_loop_directive(node):
+    """
+    Determine whether a node has an OpenACC ``loop`` directive.
+    """
+    assert isinstance(node, nodes.Node)
+    return isinstance(node.parent.parent, ACCLoopDirective)

@@ -1,22 +1,12 @@
 from psyclone.psyir import nodes
 from psyclone.nemo import NemoKern
-from psyclone.transformations import ACCLoopDirective
 
 __all__ = [
-    "has_loop_directive",
     "is_perfectly_nested",
     "is_simple_loop",
     "get_loop_variable_name",
     "get_loop_nest_variable_names",
 ]
-
-
-def has_loop_directive(node):
-    """
-    Determine whether a node has an OpenACC ``loop`` directive.
-    """
-    assert isinstance(node, nodes.Node)
-    return isinstance(node.parent.parent, ACCLoopDirective)
 
 
 def is_perfectly_nested(loop):
