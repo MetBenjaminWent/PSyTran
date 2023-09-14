@@ -71,14 +71,13 @@ def test_is_perfectly_nested(parser):
     assert is_perfectly_nested(loops[0])
 
 
-def test_is_perfectly_nested_simple(parser, nest_depth):
+def test_is_simple_loop(parser, nest_depth):
     """
-    Test that :func:`is_perfectly_nested` correctly identifies a perfectly
-    nested loop.
+    Test that :func:`is_simple_loop` correctly identifies a simple loop.
     """
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
     loops = schedule.walk(nodes.Loop)
-    assert is_perfectly_nested(loops[0])
+    assert is_simple_loop(loops[0])
 
 
 def test_is_not_perfectly_nested(parser):
@@ -89,3 +88,12 @@ def test_is_not_perfectly_nested(parser):
     schedule = get_schedule(parser, cs.imperfectly_nested_double_loop)
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
+
+
+def test_is_not_simple_loop(parser):
+    """
+    Test that :func:`is_simple_loop` correctly identifies a non-simple loop.
+    """
+    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    loops = schedule.walk(nodes.Loop)
+    assert not is_simple_loop(loops[0])
