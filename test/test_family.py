@@ -64,6 +64,21 @@ def test_get_relatives_loop(parser, nest_depth, inclusive, relative):
         assert num_relatives == expected
 
 
+def test_get_relatives_loop_depth(parser, nest_depth, inclusive, relative):
+    """
+    Test that :func:`get_children` and :func:`get_ancestors` correctly find
+    the right number of children/ancestors of a loop of a specified depth.
+    """
+    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    loop = schedule.walk(nodes.Loop)[0 if relative == "child" else nest_depth - 1]
+    depth = loop.depth
+    for i in range(nest_depth):
+        kwargs = dict(inclusive=inclusive, node_type=nodes.Loop, depth=depth)
+        num_relatives = len(get_relative[relative](loop, **kwargs))
+        assert num_relatives == (0 if not inclusive and i == 0 else 1)
+        depth += 2 if relative == "child" else -2
+
+
 def test_get_relatives_assignment(parser, nest_depth, inclusive, relative):
     """
     Test that :func:`get_children` and :func:`get_ancestors` correctly find
