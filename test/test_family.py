@@ -24,7 +24,7 @@ get_relative = {
 }
 
 
-def test_get_relatives_typeerror(parser, relative):
+def test_get_relatives_typeerror1(parser, relative):
     """
     Test that a :class:`TypeError` is raised when :func:`get_children`
     or :func:`get_ancestors` is called with a non-Boolean ``inclusive`` flag.
@@ -34,6 +34,19 @@ def test_get_relatives_typeerror(parser, relative):
     expected = "Expected a bool, not '<class 'int'>'."
     with pytest.raises(TypeError, match=expected):
         get_relative[relative](loops[0], inclusive=0)
+
+
+def test_get_relatives_typeerror2(parser, relative):
+    """
+    Test that a :class:`TypeError` is raised when :func:`get_children`
+    or :func:`get_ancestors` is called with a non-integer ``depth`` keyword
+    argument.
+    """
+    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    expected = "Expected an int, not '<class 'float'>'."
+    with pytest.raises(TypeError, match=expected):
+        get_relative[relative](loops[0], depth=2.0)
 
 
 def test_get_relatives_loop(parser, nest_depth, inclusive, relative):
