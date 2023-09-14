@@ -46,6 +46,18 @@ def test_has_no_kernels_directive(parser):
     assert not has_kernels_directive(loops[0])
 
 
+def test_apply_kernels_directive_typeerror(parser):
+    """
+    Test that a :class:`TypeError` is raised when :func:`apply_kernels_directive`
+    is called with options that aren't a :class:`dict`.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    expected = "Expected a dict, not '<class 'int'>'."
+    with pytest.raises(TypeError, match=expected):
+        apply_kernels_directive(loops[0], options=0)
+
+
 # TODO: Account for more generic blocks, too
 def test_apply_kernels_directive_loop(parser):
     """

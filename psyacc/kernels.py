@@ -21,10 +21,13 @@ def has_kernels_directive(node):
     return node.ancestor(ACCKernelsDirective)
 
 
-def apply_kernels_directive(block, **kwargs):
+def apply_kernels_directive(block, options={}):
     """
     Apply a ``kernels`` directive around a block of code.
 
-    Any keyword arguments are passed to :meth:`apply`.
+    :arg block: the block of code in consideration.
+    :kwarg options: a dictionary of clause options.
     """
-    ACCKernelsTrans().apply(block, **kwargs)
+    if not isinstance(options, dict):
+        raise TypeError(f"Expected a dict, not '{type(options)}'.")
+    ACCKernelsTrans().apply(block, options=options)
