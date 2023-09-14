@@ -1,6 +1,6 @@
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective
-from psyacc.loop_clauses import _prepare_loop_for_clause
+from psyacc.clauses import _prepare_loop_for_clause
 from utils import *
 import pytest
 
