@@ -1,5 +1,7 @@
 all: install
 
+.PHONY: test
+
 install:
 	@echo "Installing psyacc..."
 	@python3 -m pip install -r requirements.txt
