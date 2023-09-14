@@ -6,19 +6,25 @@ from psyacc.kernels import (
     apply_kernels_directive,
 )
 import code_snippets as cs
-from utils import get_schedule
+from utils import get_schedule, simple_loop_code
 import pytest
 
 
-def test_is_outer_loop(parser):
+@pytest.fixture(params=[1, 2, 3, 4])
+def nest_depth(request):
+    return request.param
+
+
+def test_is_outer_loop(parser, nest_depth):
     """
     Test that a :func:`is_outer_loop` correctly determines whether a loop is
     outer-most in its nest.
     """
-    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
+    schedule = get_schedule(parser, simple_loop_code(nest_depth))
     loops = schedule.walk(nodes.Loop)
     assert is_outer_loop(loops[0])
-    assert not is_outer_loop(loops[1])
+    for i in range(1, nest_depth):
+        assert not is_outer_loop(loops[i])
 
 
 def test_is_outer_loop_typeerror(parser):
