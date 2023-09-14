@@ -8,6 +8,7 @@ __all__ = [
     "apply_loop_directive",
     "is_perfectly_nested",
     "is_simple_loop",
+    "get_loop_variable_name",
 ]
 
 
@@ -76,3 +77,11 @@ def is_simple_loop(loop):
         return False
     nodes_next = [node for node in child_nodes if node.depth == depth + 4]
     return len(nodes_next) == 1 and isinstance(nodes_next[0], nodes.Assignment)
+
+
+def get_loop_variable_name(loop):
+    """
+    Given a :class:`Loop` node, return its variable name.
+    """
+    assert isinstance(loop, nodes.Loop)
+    return loop.variable.name

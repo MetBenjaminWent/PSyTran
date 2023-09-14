@@ -191,3 +191,14 @@ def test_is_not_simple_loop(parser):
     schedule = get_schedule(parser, cs.loop_with_3_assignments)
     loops = schedule.walk(nodes.Loop)
     assert not is_simple_loop(loops[0])
+
+
+def test_get_loop_variable_name(parser):
+    """
+    Test that :func:`get_loop_variable_name` correctly determines loop variable
+    names.
+    """
+    schedule = get_schedule(parser, cs.quadruple_loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    for i, expected in enumerate(["l", "k", "j", "i"]):
+        assert get_loop_variable_name(loops[i]) == expected
