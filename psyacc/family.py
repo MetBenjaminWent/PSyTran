@@ -32,8 +32,8 @@ def is_next_sibling(node1, node2):
     :arg node1: the first node.
     :arg node2: the second node.
     """
-    if node1 is None or node2 is None:
-        return False
+    assert isinstance(node1, nodes.Node)
+    assert isinstance(node2, nodes.Node)
     return (
         node2.sameParent(node1)
         and node2 in node1.following()
