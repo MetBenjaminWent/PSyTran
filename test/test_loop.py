@@ -61,6 +61,34 @@ def test_apply_loop_directive_typeerror(parser):
         apply_loop_directive(assignments[0])
 
 
+def test_is_perfectly_nested_typeerror(parser):
+    """
+    Test that a :class:`TypeError` is raised when :func:`is_perfectly_nested`
+    is called with something other than a :class:`Loop`.
+    """
+    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
+    assignments = schedule.walk(nodes.Assignment)
+    expected = (
+        "Expected a Loop, not"
+        " '<class 'psyclone.psyir.nodes.assignment.Assignment'>'."
+    )
+    with pytest.raises(TypeError, match=expected):
+        is_perfectly_nested(assignments[0])
+
+
+def test_is_perfectly_nested_valueerror(parser):
+    """
+    Test that a :class:`ValueError` is raised when :func:`is_perfectly_nested`
+    is called on a loop other than the outer-most.
+    """
+    schedule = get_schedule(parser, cs.quadruple_loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    expected = "is_perfectly_nested should be applied to outer-most loop."
+    for i in range(1, 4):
+        with pytest.raises(ValueError, match=expected):
+            is_perfectly_nested(loops[i])
+
+
 def test_is_perfectly_nested(parser):
     """
     Test that :func:`is_perfectly_nested` correctly identifies a perfectly
