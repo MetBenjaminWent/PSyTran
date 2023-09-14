@@ -3,18 +3,6 @@ from utils import *
 import pytest
 
 
-def test_follows(parser):
-    """
-    Test that :func:`follows` correctly determines whether one node follows
-    another.
-    """
-    schedule = get_schedule(parser, cs.loop_with_3_assignments)
-    assignments = schedule.walk(nodes.Assignment)
-    assert follows(*assignments[:2])
-    assert follows(*assignments[1:])
-    assert not follows(*assignments[::2])
-
-
 def test_split_consecutive(parser):
     """
     Test that :func:`split_consecutive` correctly determines consecutive nodes.

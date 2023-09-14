@@ -45,3 +45,15 @@ def test_get_ancestors_typeerror(parser):
     expected = "Expected a bool, not '<class 'int'>'."
     with pytest.raises(TypeError, match=expected):
         get_ancestors(loops[0], inclusive=0)
+
+
+def test_is_next_sibling(parser):
+    """
+    Test that :func:`is_next_sibling` correctly determines whether one node
+    follows another.
+    """
+    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    assignments = schedule.walk(nodes.Assignment)
+    assert is_next_sibling(*assignments[:2])
+    assert is_next_sibling(*assignments[1:])
+    assert not is_next_sibling(*assignments[::2])

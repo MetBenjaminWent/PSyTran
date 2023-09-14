@@ -1,6 +1,6 @@
 from psyclone.psyir import nodes
 
-__all__ = ["get_ancestors"]
+__all__ = ["get_ancestors", "is_next_sibling"]
 
 
 def get_ancestors(node, inclusive=False, node_type=nodes.Loop):
@@ -23,3 +23,19 @@ def get_ancestors(node, inclusive=False, node_type=nodes.Loop):
         current = current.ancestor(node_type)
         ancestors.append(current)
     return ancestors
+
+
+def is_next_sibling(node1, node2):
+    """
+    Determine whether one :class:`Node` immediately follows another.
+
+    :arg node1: the first node.
+    :arg node2: the second node.
+    """
+    if node1 is None or node2 is None:
+        return False
+    return (
+        node2.sameParent(node1)
+        and node2 in node1.following()
+        and node1.position + 1 == node2.position
+    )

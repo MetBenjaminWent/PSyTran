@@ -1,17 +1,6 @@
-__all__ = ["follows", "split_consecutive"]
+from psyacc.family import is_next_sibling
 
-
-def follows(node1, node2):
-    """
-    Determine whether two nodes immediately follow one another.
-    """
-    if node1 is None or node2 is None:
-        return False
-    return (
-        node2.sameParent(node1)
-        and node2 in node1.following()
-        and node1.position + 1 == node2.position
-    )
+__all__ = ["split_consecutive"]
 
 
 def split_consecutive(block):
@@ -25,7 +14,7 @@ def split_consecutive(block):
     for node in block:
         if node.depth != depth:
             raise ValueError("Block contains nodes with different depths.")
-        if len(current) == 0 or follows(current[-1], node):
+        if len(current) == 0 or is_next_sibling(current[-1], node):
             current.append(node)
         else:
             blocks.append(current)
