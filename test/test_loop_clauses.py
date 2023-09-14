@@ -24,6 +24,12 @@ has_clause = {
     "vector": has_vector_clause,
 }
 
+apply_clause = {
+    "sequential": apply_loop_seq,
+    "gang": apply_loop_gang,
+    "vector": apply_loop_vector,
+}
+
 
 def test_prepare_loop_for_clause_typeerror(parser):
     """
@@ -78,43 +84,17 @@ def test_no_loop_clause(parser, nest_depth, clause):
         assert not has_clause[clause](loops[i])
 
 
-def test_apply_loop_seq(parser, nest_depth):
+def test_apply_loop_clause(parser, nest_depth, clause):
     """
-    Test that :func:`apply_loop_seq` is correctly applied.
-    """
-    schedule = get_schedule(parser, simple_loop_code(nest_depth))
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    for i in range(nest_depth):
-        apply_loop_seq(loops[i])
-        assert loops[i].parent.parent.sequential
-        assert has_seq_clause(loops[i])
-
-
-def test_apply_loop_gang(parser, nest_depth):
-    """
-    Test that :func:`apply_loop_gang` is correctly applied.
+    Test that each clause is correctly applied.
     """
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
     loops = schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
     for i in range(nest_depth):
-        apply_loop_gang(loops[i])
-        assert loops[i].parent.parent.gang
-        assert has_gang_clause(loops[i])
-
-
-def test_apply_loop_vector(parser, nest_depth):
-    """
-    Test that :func:`apply_loop_vector` is correctly applied.
-    """
-    schedule = get_schedule(parser, simple_loop_code(nest_depth))
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    for i in range(nest_depth):
-        apply_loop_vector(loops[i])
-        assert loops[i].parent.parent.vector
-        assert has_vector_clause(loops[i])
+        apply_clause[clause](loops[i])
+        assert loops[i].parent.parent.__getattribute__(clause)
+        assert has_clause[clause](loops[i])
 
 
 def test_apply_loop_seq_gang_error(parser):
