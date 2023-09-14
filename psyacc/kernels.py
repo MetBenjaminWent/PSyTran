@@ -1,7 +1,6 @@
 from psyclone.psyir import nodes
-from psyclone.transformations import ACCKernelsDirective, ACCKernelsTrans
 
-__all__ = ["is_outer_loop", "has_kernels_directive", "apply_kernels_directive"]
+__all__ = ["is_outer_loop"]
 
 
 def is_outer_loop(loop):
@@ -11,23 +10,3 @@ def is_outer_loop(loop):
     if not isinstance(loop, nodes.Loop):
         raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
     return loop.ancestor(nodes.Loop) is None
-
-
-def has_kernels_directive(node):
-    """
-    Determine whether a node is inside a ``kernels`` directive.
-    """
-    assert isinstance(node, nodes.Node)
-    return node.ancestor(ACCKernelsDirective)
-
-
-def apply_kernels_directive(block, options={}):
-    """
-    Apply a ``kernels`` directive around a block of code.
-
-    :arg block: the block of code in consideration.
-    :kwarg options: a dictionary of clause options.
-    """
-    if not isinstance(options, dict):
-        raise TypeError(f"Expected a dict, not '{type(options)}'.")
-    ACCKernelsTrans().apply(block, options=options)

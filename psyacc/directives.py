@@ -1,8 +1,27 @@
 from psyclone.psyir import nodes
-from psyclone.transformations import ACCLoopDirective, ACCLoopTrans
-from psyacc.kernels import has_kernels_directive
+from psyclone.transformations import ACCKernelsDirective, ACCKernelsTrans, ACCLoopDirective, ACCLoopTrans
 
-__all__ = ["apply_loop_directive", "has_loop_directive"]
+__all__ = ["apply_kernels_directive", "has_kernels_directive", "apply_loop_directive", "has_loop_directive"]
+
+
+def apply_kernels_directive(block, options={}):
+    """
+    Apply a ``kernels`` directive around a block of code.
+
+    :arg block: the block of code in consideration.
+    :kwarg options: a dictionary of clause options.
+    """
+    if not isinstance(options, dict):
+        raise TypeError(f"Expected a dict, not '{type(options)}'.")
+    ACCKernelsTrans().apply(block, options=options)
+
+
+def has_kernels_directive(node):
+    """
+    Determine whether a node is inside a ``kernels`` directive.
+    """
+    assert isinstance(node, nodes.Node)
+    return node.ancestor(ACCKernelsDirective)
 
 
 def apply_loop_directive(loop, options={}):

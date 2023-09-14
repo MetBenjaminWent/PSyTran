@@ -1,6 +1,5 @@
 from psyclone.psyir import nodes
-from psyacc.kernels import has_kernels_directive
-from psyacc.directives import apply_loop_directive, has_loop_directive
+from psyacc.directives import has_kernels_directive, apply_loop_directive, has_loop_directive
 
 __all__ = [
     "has_seq_clause",

@@ -1,5 +1,4 @@
 from psyclone.psyir import nodes
-from psyclone.transformations import ACCKernelsDirective
 from utils import *
 import pytest
 
@@ -34,47 +33,3 @@ def test_is_outer_loop_typeerror(parser):
     )
     with pytest.raises(TypeError, match=expected):
         is_outer_loop(assignments[0])
-
-
-def test_has_no_kernels_directive(parser):
-    """
-    Test that :func:`has_kernels_directive` correctly identifies no OpenACC
-    kernels directives.
-    """
-    schedule = get_schedule(parser, cs.loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    assert not has_kernels_directive(loops[0])
-
-
-def test_apply_kernels_directive_typeerror(parser):
-    """
-    Test that a :class:`TypeError` is raised when :func:`apply_kernels_directive`
-    is called with options that aren't a :class:`dict`.
-    """
-    schedule = get_schedule(parser, cs.loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    expected = "Expected a dict, not '<class 'int'>'."
-    with pytest.raises(TypeError, match=expected):
-        apply_kernels_directive(loops[0], options=0)
-
-
-def test_apply_kernels_directive_schedule(parser):
-    """
-    Test that :func:`apply_kernels_directive` correctly applies a ``kernels``
-    directive to a schedule.
-    """
-    schedule = get_schedule(parser, cs.loop_with_1_assignment)
-    apply_kernels_directive(schedule)
-    assert isinstance(schedule[0], ACCKernelsDirective)
-
-
-def test_apply_kernels_directive_loop(parser):
-    """
-    Test that :func:`apply_kernels_directive` correctly applies a ``kernels``
-    directives to a loop.
-    """
-    schedule = get_schedule(parser, cs.loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    assert isinstance(loops[0].parent.parent, ACCKernelsDirective)
-    assert has_kernels_directive(loops[0])
