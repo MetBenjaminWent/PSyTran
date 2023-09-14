@@ -1,5 +1,6 @@
 from psyclone.psyir import nodes
 from psyacc.directives import has_kernels_directive, apply_loop_directive, has_loop_directive
+from psyacc.family import get_ancestors
 
 __all__ = [
     "has_seq_clause",
@@ -8,6 +9,7 @@ __all__ = [
     "apply_loop_gang",
     "has_vector_clause",
     "apply_loop_vector",
+    "has_collapse_clause",
     "apply_loop_collapse",
 ]
 
@@ -89,6 +91,28 @@ def apply_loop_vector(loop):
     if has_seq_clause(loop):
         raise ValueError("Cannot apply vector to a loop with a seq clause.")
     loop.parent.parent._vector = True
+
+
+def has_collapse_clause(loop):
+    """
+    Determine whether a loop lies within a collapsed loop nest.
+
+    :arg loop: the :class:`Loop` node.
+    """
+    if not isinstance(loop, nodes.Loop):
+        raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
+    if not has_kernels_directive(loop):
+        return False
+    ancestors = get_ancestors(loop, inclusive=True)
+    for i, current in enumerate(ancestors):
+        if has_loop_directive(current):
+            loop_dir = current.parent.parent
+            collapse = loop_dir.collapse
+            if collapse is None:
+                continue
+            else:
+                return collapse > i
+    return False
 
 
 def apply_loop_collapse(loop, collapse):

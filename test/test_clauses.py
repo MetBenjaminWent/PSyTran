@@ -142,9 +142,42 @@ def test_apply_loop_vector_seq_error(parser):
         apply_loop_vector(loops[0])
 
 
+def test_has_collapse_clause_no_kernels(parser):
+    """
+    Test that :func:`has_collapse_clause` returns ``False`` for a loop with no
+    ``kernels`` directive.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    assert not has_collapse_clause(loops[0])
+
+
+def test_has_collapse_clause_kernels_no_loop(parser):
+    """
+    Test that :func:`has_collapse_clause` returns ``False`` for a loop with a
+    ``kernels`` directive but no ``loop`` directives.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    assert not has_collapse_clause(loops[0])
+
+
+def test_has_collapse_clause_loop_no_collapse(parser):
+    """
+    Test that :func:`has_collapse_clause` returns ``False`` for a loop with a
+    ``loop`` directive but no ``collapse`` clause.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_directive(loops[0])
+    assert not has_collapse_clause(loops[0])
+
+
 def test_apply_loop_collapse_typeerror(parser):
     """
-    Test that a :class:`TypeError` is raised when :func:`apply_loop_directive`
+    Test that a :class:`TypeError` is raised when :func:`apply_loop_collapse`
     is called with a non-integer collapse.
     """
     schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
@@ -157,7 +190,7 @@ def test_apply_loop_collapse_typeerror(parser):
 
 def test_apply_loop_collapse_valueerror(parser):
     """
-    Test that a :class:`ValueError` is raised when :func:`apply_loop_directive`
+    Test that a :class:`ValueError` is raised when :func:`apply_loop_collapse`
     is called with an invalid collapse.
     """
     schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
@@ -170,7 +203,7 @@ def test_apply_loop_collapse_valueerror(parser):
 
 def test_apply_loop_collapse_too_large_error(parser):
     """
-    Test that a :class:`ValueError` is raised when :func:`apply_loop_directive`
+    Test that a :class:`ValueError` is raised when :func:`apply_loop_collapse`
     is called with too large a collapse.
     """
     schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
@@ -192,7 +225,7 @@ def test_apply_loop_collapse(parser, collapse):
     apply_loop_collapse(loops[0], collapse)
     assert loops[0].parent.parent.collapse == collapse
     for loop in loops:
-        assert is_collapsed(loop)
+        assert has_collapse_clause(loop)
 
 
 def test_apply_loop_collapse_subnest(parser, collapse):
@@ -207,6 +240,6 @@ def test_apply_loop_collapse_subnest(parser, collapse):
     apply_loop_collapse(loops[0], collapse)
     assert loops[0].parent.parent.collapse == collapse
     for i in range(collapse):
-        assert is_collapsed(loops[i])
+        assert has_collapse_clause(loops[i])
     assert loops[-1].parent.parent.collapse is None
-    assert not is_collapsed(loops[-1])
+    assert not has_collapse_clause(loops[-1])
