@@ -100,7 +100,7 @@ def test_apply_loop_directive_with_gang_vector(parser, clause):
     assert has_vector_clause(loops[0])
 
 
-def test_apply_loop_directive_typeerror(parser):
+def test_apply_loop_directive_typeerror1(parser):
     """
     Test that a :class:`TypeError` is raised when :func:`apply_loop_directive`
     is called with something other than a :class:`Loop`.
@@ -113,6 +113,18 @@ def test_apply_loop_directive_typeerror(parser):
     )
     with pytest.raises(TypeError, match=expected):
         apply_loop_directive(assignments[0])
+
+
+def test_apply_loop_directive_typeerror2(parser):
+    """
+    Test that a :class:`TypeError` is raised when :func:`apply_loop_directive`
+    is called with options that aren't a :class:`dict`.
+    """
+    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    expected = "Expected a dict, not '<class 'int'>'."
+    with pytest.raises(TypeError, match=expected):
+        apply_loop_directive(loops[0], options=0)
 
 
 def test_is_perfectly_nested_typeerror(parser):

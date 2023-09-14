@@ -19,17 +19,20 @@ def has_loop_directive(node):
     return isinstance(node.parent.parent, ACCLoopDirective)
 
 
-def apply_loop_directive(loop, **kwargs):
+def apply_loop_directive(loop, options={}):
     """
-    Apply ``loop`` directives around a block of code.
+    Apply a ``loop`` directive.
 
-    Any keyword arguments are passed to :meth:`apply`.
+    :arg loop: the :class:`Loop` node.
+    :kwarg options: a dictionary of clause options.
     """
     if not isinstance(loop, nodes.Loop):
         raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
+    if not isinstance(options, dict):
+        raise TypeError(f"Expected a dict, not '{type(options)}'.")
     if not has_kernels_directive(loop):
         raise ValueError("Cannot apply a loop directive without a kernels directive.")
-    ACCLoopTrans().apply(loop, **kwargs)
+    ACCLoopTrans().apply(loop, options=options)
 
 
 def is_perfectly_nested(loop):
