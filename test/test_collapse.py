@@ -4,7 +4,7 @@ from psyacc.kernels import apply_kernels_directive
 from psyacc.loop import apply_loop_directive
 from psyacc.collapse import get_ancestors, apply_loop_collapse, is_collapsed
 import code_snippets as cs
-from utils import get_schedule
+from utils import get_schedule, simple_loop_code
 from parameterized import parameterized
 import pytest
 
@@ -22,19 +22,6 @@ def nest_depth(request):
 @pytest.fixture(params=[2, 3])
 def collapse(request):
     return request.param
-
-
-def simple_loop_code(depth):
-    if depth == 1:
-        return cs.loop_with_1_assignment
-    elif depth == 2:
-        return cs.double_loop_with_1_assignment
-    elif depth == 3:
-        return cs.triple_loop_with_1_assignment
-    elif depth == 4:
-        return cs.quadruple_loop_with_1_assignment
-    else:
-        raise NotImplementedError
 
 
 def test_get_ancestors(parser, nest_depth, inclusive):

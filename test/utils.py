@@ -1,5 +1,6 @@
 from fparser.common.readfortran import FortranStringReader
 from psyclone.psyGen import PSyFactory
+import code_snippets as cs
 
 
 def get_schedule(parser, code_string):
@@ -13,3 +14,22 @@ def get_schedule(parser, code_string):
     code = parser(FortranStringReader(code_string))
     psy = PSyFactory("nemo", distributed_memory=False).create(code)
     return psy.invokes.invoke_list[0].schedule
+
+
+def simple_loop_code(depth):
+    """
+    Generate a code string containing a perfectly nested loop with a single
+    assignment at the deepest level.
+
+    :arg depth: number of loops in the nest
+    """
+    if depth == 1:
+        return cs.loop_with_1_assignment
+    elif depth == 2:
+        return cs.double_loop_with_1_assignment
+    elif depth == 3:
+        return cs.triple_loop_with_1_assignment
+    elif depth == 4:
+        return cs.quadruple_loop_with_1_assignment
+    else:
+        raise NotImplementedError
