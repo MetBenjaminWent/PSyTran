@@ -1,7 +1,6 @@
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective
 from psyacc.kernels import apply_kernels_directive
-from psyacc.loop import apply_loop_directive
 import code_snippets as cs
 from utils import get_schedule, simple_loop_code
 from psyacc.loop_clauses import *

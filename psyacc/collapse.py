@@ -1,6 +1,6 @@
 from psyclone.psyir import nodes
 from psyacc.kernels import has_kernels_directive
-from psyacc.loop import has_loop_directive, apply_loop_directive
+from psyacc.loop import has_loop_directive
 from psyacc.loop_clauses import _prepare_loop_for_clause
 
 __all__ = ["get_ancestors", "apply_loop_collapse", "is_collapsed"]
