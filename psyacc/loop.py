@@ -29,15 +29,12 @@ def is_perfectly_nested(loop):
     """
     if not isinstance(loop, nodes.Loop):
         raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
-    loops = loop.walk(nodes.Loop)
     depth = loop.depth
-    for i in range(1, len(loops)):
-        depth += 2
-        child_nodes = loops[i].walk(nodes.Node)
-        nodes_at_depth = [node for node in child_nodes if node.depth == depth]
-        if len(nodes_at_depth) != 1:
+    for i in range(len(loop.walk(nodes.Loop))):
+        nodes_at_depth = get_children(loop, inclusive=True, depth=depth)
+        if len(nodes_at_depth) != 1 or isinstance(nodes_at_depth[0], NemoKern):
             return False
-        assert isinstance(nodes_at_depth[0], nodes.Loop)
+        depth += 2
     else:
         return True
 
