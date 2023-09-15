@@ -36,6 +36,17 @@ def test_is_outer_loop(parser, nest_depth):
         assert not is_outer_loop(loops[i])
 
 
+def test_get_loop_nest_depth_simple(parser, nest_depth):
+    """
+    Test that :func:`get_loop_nest_depth` correctly determines the depth of a
+    simple loop.
+    """
+    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    loops = schedule.walk(nodes.Loop)
+    for i in range(nest_depth):
+        assert get_loop_nest_depth(loops[i]) == nest_depth - i
+
+
 def test_is_outer_loop_typeerror(parser):
     """
     Test that a :class:`TypeError` is raised when :func:`is_outer_loop` is
