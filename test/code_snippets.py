@@ -74,7 +74,22 @@ loop_with_3_assignments = """
     END PROGRAM test
     """
 
-imperfectly_nested_double_loop = """
+imperfectly_nested_double_loop_before = """
+    PROGRAM test
+      REAL :: a(10,10)
+      INTEGER :: i
+      INTEGER :: j
+
+      DO j = 1, 10
+        a(1,j) = 1.0
+        DO i = 1, 10
+          a(i,j) = 0.0
+        END DO
+      END DO
+    END PROGRAM test
+    """
+
+imperfectly_nested_double_loop_after = """
     PROGRAM test
       REAL :: a(10,10)
       INTEGER :: i

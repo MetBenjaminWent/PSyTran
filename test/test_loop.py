@@ -8,6 +8,17 @@ def nest_depth(request):
     return request.param
 
 
+@pytest.fixture(params=["before", "after"])
+def imperfection(request):
+    return request.param
+
+
+imperfectly_nested_double_loop = {
+    "before": cs.imperfectly_nested_double_loop_before,
+    "after": cs.imperfectly_nested_double_loop_after,
+}
+
+
 def test_is_outer_loop(parser, nest_depth):
     """
     Test that a :func:`is_outer_loop` correctly determines whether a loop is
@@ -60,12 +71,12 @@ def test_is_perfectly_nested(parser):
     assert is_perfectly_nested(loops[0])
 
 
-def test_is_not_perfectly_nested(parser):
+def test_is_not_perfectly_nested(parser, imperfection):
     """
     Test that :func:`is_perfectly_nested` correctly identifies an imperfectly
     nested loop.
     """
-    schedule = get_schedule(parser, cs.imperfectly_nested_double_loop)
+    schedule = get_schedule(parser, imperfectly_nested_loop[imperfection])
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
 
