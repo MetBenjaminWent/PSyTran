@@ -47,6 +47,36 @@ def test_get_loop_nest_depth_simple(parser, nest_depth):
         assert get_loop_nest_depth(loops[i]) == nest_depth - i
 
 
+def test_get_loop_nest_depth_multiple_assignments(parser):
+    """
+    Test that :func:`get_loop_nest_depth` correctly determines the depth of a
+    double loop with multiple assignments at the inner-most level.
+    """
+    schedule = get_schedule(parser, cs.double_loop_with_3_assignments)
+    loops = schedule.walk(nodes.Loop)
+    assert get_loop_nest_depth(loops[0]) == 2
+
+
+def test_get_loop_nest_depth_double_imperfection(parser, imperfection):
+    """
+    Test that :func:`get_loop_nest_depth` correctly determines the depth of an
+    imperfect double loop.
+    """
+    schedule = get_schedule(parser, imperfectly_nested_double_loop[imperfection])
+    loops = schedule.walk(nodes.Loop)
+    assert get_loop_nest_depth(loops[0]) == 2
+
+
+def test_get_loop_nest_depth_triple_imperfection(parser, imperfection):
+    """
+    Test that :func:`get_loop_nest_depth` correctly determines the depth of an
+    imperfect triple loop.
+    """
+    schedule = get_schedule(parser, imperfectly_nested_triple_loop[imperfection])
+    loops = schedule.walk(nodes.Loop)
+    assert get_loop_nest_depth(loops[0]) == 3
+
+
 def test_is_outer_loop_typeerror(parser):
     """
     Test that a :class:`TypeError` is raised when :func:`is_outer_loop` is
