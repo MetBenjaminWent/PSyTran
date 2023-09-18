@@ -42,7 +42,7 @@ def is_perfectly_nested(loop):
     nest_depth = get_loop_nest_depth(loop)
     for depth in range(loop.depth, loop.depth + 2 * nest_depth, 2):
         nodes_at_depth = get_children(loop, inclusive=True, depth=depth)
-        if len(nodes_at_depth) != 1 or isinstance(nodes_at_depth[0], NemoKern):
+        if len(nodes_at_depth) != 1 or not isinstance(nodes_at_depth[0], nodes.Loop):
             return False
     else:
         return True
