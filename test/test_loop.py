@@ -8,7 +8,7 @@ def nest_depth(request):
     return request.param
 
 
-@pytest.fixture(params=["before", "after"])
+@pytest.fixture(params=["before", "after", "if"])
 def imperfection(request):
     return request.param
 
@@ -16,11 +16,13 @@ def imperfection(request):
 imperfectly_nested_double_loop = {
     "before": cs.imperfectly_nested_double_loop_before,
     "after": cs.imperfectly_nested_double_loop_after,
+    "if": cs.imperfectly_nested_double_loop_with_if,
 }
 
 imperfectly_nested_triple_loop = {
     "before": cs.imperfectly_nested_triple_loop_before,
     "after": cs.imperfectly_nested_triple_loop_after,
+    "if": cs.imperfectly_nested_triple_loop_with_if,
 }
 
 
@@ -117,12 +119,22 @@ def test_is_perfectly_nested(parser):
     assert is_perfectly_nested(loops[0])
 
 
-def test_is_not_perfectly_nested(parser, imperfection):
+def test_is_not_perfectly_nested_double(parser, imperfection):
     """
     Test that :func:`is_perfectly_nested` correctly identifies an imperfectly
-    nested loop.
+    nested double loop.
     """
     schedule = get_schedule(parser, imperfectly_nested_double_loop[imperfection])
+    loops = schedule.walk(nodes.Loop)
+    assert not is_perfectly_nested(loops[0])
+
+
+def test_is_not_perfectly_nested_triple(parser, imperfection):
+    """
+    Test that :func:`is_perfectly_nested` correctly identifies an imperfectly
+    nested triple loop.
+    """
+    schedule = get_schedule(parser, imperfectly_nested_triple_loop[imperfection])
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
 

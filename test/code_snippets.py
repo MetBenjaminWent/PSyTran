@@ -91,6 +91,22 @@ double_loop_with_3_assignments = """
     END PROGRAM test
     """
 
+imperfectly_nested_double_loop_with_if = """
+    PROGRAM test
+      REAL :: a(10,10)
+      INTEGER :: i
+      INTEGER :: j
+
+      DO j = 1, 10
+        IF (j > 0) THEN
+          DO i = 1, 10
+            a(i,j) = 0.0
+          END DO
+        END IF
+      END DO
+    END PROGRAM test
+    """
+
 imperfectly_nested_double_loop_before = """
     PROGRAM test
       REAL :: a(10,10)
@@ -117,6 +133,25 @@ imperfectly_nested_double_loop_after = """
           a(i,j) = 0.0
         END DO
         a(1,j) = 1.0
+      END DO
+    END PROGRAM test
+    """
+
+imperfectly_nested_triple_loop_with_if = """
+    PROGRAM test
+      REAL :: a(10,10,10)
+      INTEGER :: i
+      INTEGER :: j
+      INTEGER :: k
+
+      DO k = 1, 10
+        IF (k > 0) THEN
+          DO j = 1, 10
+            DO i = 1, 10
+              a(i,j,k) = 0.0
+            END DO
+          END DO
+        END IF
       END DO
     END PROGRAM test
     """
