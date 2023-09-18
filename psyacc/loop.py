@@ -48,11 +48,13 @@ def is_perfectly_nested(loop):
     """
     if not isinstance(loop, nodes.Loop):
         raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
-    nest_depth = get_loop_nest_num_depths(loop)
-    for depth in range(loop.depth, loop.depth + 2 * nest_depth, 2):
-        nodes_at_depth = get_descendents(loop, inclusive=True, depth=depth)
-        if len(nodes_at_depth) != 1 or not isinstance(nodes_at_depth[0], nodes.Loop):
+    max_depth = get_loop_nest_max_depth(loop)
+    current = loop
+    while current.depth < max_depth:
+        children = get_children(current)
+        if len(children) != 1 or not isinstance(children[0], nodes.Loop):
             return False
+        current = children[0]
     else:
         return True
 
