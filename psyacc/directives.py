@@ -1,7 +1,17 @@
 from psyclone.psyir import nodes
-from psyclone.transformations import ACCKernelsDirective, ACCKernelsTrans, ACCLoopDirective, ACCLoopTrans
+from psyclone.transformations import (
+    ACCKernelsDirective,
+    ACCKernelsTrans,
+    ACCLoopDirective,
+    ACCLoopTrans,
+)
 
-__all__ = ["apply_kernels_directive", "has_kernels_directive", "apply_loop_directive", "has_loop_directive"]
+__all__ = [
+    "apply_kernels_directive",
+    "has_kernels_directive",
+    "apply_loop_directive",
+    "has_loop_directive",
+]
 
 
 def apply_kernels_directive(block, options={}):

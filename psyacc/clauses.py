@@ -1,5 +1,9 @@
 from psyclone.psyir import nodes
-from psyacc.directives import has_kernels_directive, apply_loop_directive, has_loop_directive
+from psyacc.directives import (
+    has_kernels_directive,
+    apply_loop_directive,
+    has_loop_directive,
+)
 from psyacc.family import get_ancestors
 
 __all__ = [

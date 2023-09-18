@@ -1,16 +1,16 @@
 from psyclone.psyir import nodes
 
-__all__ = ["get_children", "get_ancestors", "is_next_sibling"]
+__all__ = ["get_descendents", "get_ancestors", "is_next_sibling"]
 
 
-def get_children(node, inclusive=False, node_type=nodes.Node, depth=None):
+def get_descendents(node, inclusive=False, node_type=nodes.Node, depth=None):
     """
     Get all ancestors of a node with a given type.
 
-    :arg loop: the node to search for children of.
+    :arg loop: the node to search for descendents of.
     :arg inclusive: if ``True``, the current loop is included.
     :arg node_type: the type of node to search for.
-    :kwarg depth: specify a depth for the children to have.
+    :kwarg depth: specify a depth for the descendents to have.
     """
     assert isinstance(node, nodes.Node)
     if not isinstance(inclusive, bool):
@@ -18,12 +18,12 @@ def get_children(node, inclusive=False, node_type=nodes.Node, depth=None):
     assert issubclass(node_type, nodes.Node)
     if depth is not None and not isinstance(depth, int):
         raise TypeError(f"Expected an int, not '{type(depth)}'.")
-    children = list(node.walk(node_type))
+    descendents = list(node.walk(node_type))
     if not inclusive and isinstance(node, node_type):
-        children.pop(0)
+        descendents.pop(0)
     if depth is not None:
-        children = [child for child in children if child.depth == depth]
-    return children
+        descendents = [d for d in descendents if d.depth == depth]
+    return descendents
 
 
 def get_ancestors(node, inclusive=False, node_type=nodes.Loop, depth=None):

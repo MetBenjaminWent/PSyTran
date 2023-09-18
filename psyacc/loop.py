@@ -1,6 +1,6 @@
 from psyclone.psyir import nodes
 from psyclone.nemo import NemoKern
-from psyacc.family import get_children
+from psyacc.family import get_descendents
 
 __all__ = [
     "is_outer_loop",
@@ -41,7 +41,7 @@ def is_perfectly_nested(loop):
         raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
     nest_depth = get_loop_nest_depth(loop)
     for depth in range(loop.depth, loop.depth + 2 * nest_depth, 2):
-        nodes_at_depth = get_children(loop, inclusive=True, depth=depth)
+        nodes_at_depth = get_descendents(loop, inclusive=True, depth=depth)
         if len(nodes_at_depth) != 1 or not isinstance(nodes_at_depth[0], nodes.Loop):
             return False
     else:
@@ -58,11 +58,10 @@ def is_simple_loop(loop):
     if not is_perfectly_nested(loop):
         return False
     innermost_loop = loop.walk(nodes.Loop)[-1]
-    depth = innermost_loop.depth
-    nodes_next = get_children(innermost_loop, depth=depth + 2)
+    nodes_next = get_descendents(innermost_loop, depth=innermost_loop.depth + 2)
     if len(nodes_next) != 1 or not isinstance(nodes_next[0], NemoKern):
         return False
-    nodes_next = get_children(innermost_loop, depth=depth + 4)
+    nodes_next = get_descendents(innermost_loop, depth=innermost_loop.depth + 4)
     return len(nodes_next) == 1 and isinstance(nodes_next[0], nodes.Assignment)
 
 

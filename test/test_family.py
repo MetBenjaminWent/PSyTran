@@ -13,20 +13,20 @@ def nest_depth(request):
     return request.param
 
 
-@pytest.fixture(params=["child", "ancestor"])
+@pytest.fixture(params=["descendent", "ancestor"])
 def relative(request):
     return request.param
 
 
 get_relative = {
-    "child": get_children,
+    "descendent": get_descendents,
     "ancestor": get_ancestors,
 }
 
 
 def test_get_relatives_typeerror1(parser, relative):
     """
-    Test that a :class:`TypeError` is raised when :func:`get_children`
+    Test that a :class:`TypeError` is raised when :func:`get_descendents`
     or :func:`get_ancestors` is called with a non-Boolean ``inclusive`` flag.
     """
     schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
@@ -38,7 +38,7 @@ def test_get_relatives_typeerror1(parser, relative):
 
 def test_get_relatives_typeerror2(parser, relative):
     """
-    Test that a :class:`TypeError` is raised when :func:`get_children`
+    Test that a :class:`TypeError` is raised when :func:`get_descendents`
     or :func:`get_ancestors` is called with a non-integer ``depth`` keyword
     argument.
     """
@@ -51,13 +51,13 @@ def test_get_relatives_typeerror2(parser, relative):
 
 def test_get_relatives_loop(parser, nest_depth, inclusive, relative):
     """
-    Test that :func:`get_children` and :func:`get_ancestors` correctly find
-    the right number of children/ancestors of a loop.
+    Test that :func:`get_descendents` and :func:`get_ancestors` correctly find
+    the right number of descendents/ancestors of a loop.
     """
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
     loops = schedule.walk(nodes.Loop)
     for i in range(nest_depth):
-        loop = loops[i if relative == "child" else nest_depth - 1 - i]
+        loop = loops[i if relative == "descendent" else nest_depth - 1 - i]
         kwargs = dict(inclusive=inclusive, node_type=nodes.Loop)
         num_relatives = len(get_relative[relative](loop, **kwargs))
         expected = nest_depth - i if inclusive else nest_depth - 1 - i
@@ -66,29 +66,29 @@ def test_get_relatives_loop(parser, nest_depth, inclusive, relative):
 
 def test_get_relatives_loop_depth(parser, nest_depth, inclusive, relative):
     """
-    Test that :func:`get_children` and :func:`get_ancestors` correctly find
-    the right number of children/ancestors of a loop of a specified depth.
+    Test that :func:`get_descendents` and :func:`get_ancestors` correctly find
+    the right number of descendents/ancestors of a loop of a specified depth.
     """
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
-    loop = schedule.walk(nodes.Loop)[0 if relative == "child" else nest_depth - 1]
+    loop = schedule.walk(nodes.Loop)[0 if relative == "descendent" else nest_depth - 1]
     depth = loop.depth
     for i in range(nest_depth):
         kwargs = dict(inclusive=inclusive, node_type=nodes.Loop, depth=depth)
         num_relatives = len(get_relative[relative](loop, **kwargs))
         assert num_relatives == (0 if not inclusive and i == 0 else 1)
-        depth += 2 if relative == "child" else -2
+        depth += 2 if relative == "descendent" else -2
 
 
 def test_get_relatives_assignment(parser, nest_depth, inclusive, relative):
     """
-    Test that :func:`get_children` and :func:`get_ancestors` correctly find
-    the right number of children/ancestors of an assignment.
+    Test that :func:`get_descendents` and :func:`get_ancestors` correctly find
+    the right number of descendents/ancestors of an assignment.
     """
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
     assignment = schedule.walk(nodes.Assignment)[0]
     kwargs = dict(inclusive=inclusive, node_type=nodes.Loop)
     num_relatives = len(get_relative[relative](assignment, **kwargs))
-    assert num_relatives == 0 if relative == "child" else nest_depth
+    assert num_relatives == 0 if relative == "descendent" else nest_depth
 
 
 def test_is_next_sibling(parser):
