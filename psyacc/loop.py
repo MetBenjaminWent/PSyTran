@@ -30,6 +30,15 @@ def get_loop_nest_num_depths(loop):
     return len({l.depth for l in loop.walk(nodes.Loop)})
 
 
+def get_loop_nest_max_depth(loop):
+    """
+    Determine the maximum depth of a loop (sub-)nest.
+
+    :arg loop: the outer-most loop of the nest
+    """
+    return max({l.depth for l in loop.walk(nodes.Loop)})
+
+
 def is_perfectly_nested(loop):
     """
     Determine whether a loop nest is perfectly nested, i.e., each level except
