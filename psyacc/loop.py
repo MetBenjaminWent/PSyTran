@@ -4,7 +4,7 @@ from psyacc.family import get_descendents, get_children
 
 __all__ = [
     "is_outer_loop",
-    "get_loop_nest_depth",
+    "get_loop_nest_num_depths",
     "is_perfectly_nested",
     "is_simple_loop",
     "get_loop_variable_name",
@@ -21,9 +21,9 @@ def is_outer_loop(loop):
     return loop.ancestor(nodes.Loop) is None
 
 
-def get_loop_nest_depth(loop):
+def get_loop_nest_num_depths(loop):
     """
-    Determine the depth of a loop (sub-)nest.
+    Determine the number of depth levels in a loop (sub-)nest.
 
     :arg loop: the outer-most loop of the nest
     """
@@ -39,7 +39,7 @@ def is_perfectly_nested(loop):
     """
     if not isinstance(loop, nodes.Loop):
         raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
-    nest_depth = get_loop_nest_depth(loop)
+    nest_depth = get_loop_nest_num_depths(loop)
     for depth in range(loop.depth, loop.depth + 2 * nest_depth, 2):
         nodes_at_depth = get_descendents(loop, inclusive=True, depth=depth)
         if len(nodes_at_depth) != 1 or not isinstance(nodes_at_depth[0], nodes.Loop):
