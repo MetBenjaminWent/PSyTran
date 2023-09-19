@@ -21,6 +21,8 @@ def imperfection(request):
 perfectly_nested_loop = {
     "1_assignment": cs.loop_with_1_assignment,
     "3_assignments": cs.loop_with_3_assignments,
+    "double_3_assignments": cs.double_loop_with_3_assignments,
+    "double_conditional_3_assignments": cs.double_loop_with_conditional_3_assignments,
     "if": cs.triple_loop_with_conditional_1_assignment,
 }
 
