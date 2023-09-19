@@ -211,6 +211,65 @@ imperfectly_nested_triple_loop_after = """
     END PROGRAM test
     """
 
+imperfectly_nested_triple_loop_before_with_if = """
+    PROGRAM test
+      REAL :: a(10,10,10)
+      INTEGER :: i
+      INTEGER :: j
+      INTEGER :: k
+
+      DO k = 1, 10
+        a(1,1,k) = 1.0
+        DO j = 1, 10
+          DO i = 1, 10
+            IF (i > 0) THEN
+              a(i,j,k) = 0.0
+            END IF
+          END DO
+        END DO
+      END DO
+    END PROGRAM test
+    """
+
+imperfectly_nested_triple_loop_after_with_if = """
+    PROGRAM test
+      REAL :: a(10,10,10)
+      INTEGER :: i
+      INTEGER :: j
+      INTEGER :: k
+
+      DO k = 1, 10
+        DO j = 1, 10
+          DO i = 1, 10
+            IF (i > 0) THEN
+              a(i,j,k) = 0.0
+            END IF
+          END DO
+        END DO
+        a(1,1,k) = 1.0
+      END DO
+    END PROGRAM test
+    """
+
+conditional_imperfectly_nested_triple_loop = """
+    PROGRAM test
+      REAL :: a(10,10,10)
+      INTEGER :: i
+      INTEGER :: j
+      INTEGER :: k
+
+      DO k = 1, 10
+        IF (k > 0) THEN
+          DO j = 1, 10
+            DO i = 1, 10
+              a(i,j,k) = 0.0
+            END DO
+          END DO
+        END IF
+      END DO
+    END PROGRAM test
+    """
+
 serial_loop = """
     PROGRAM test
       REAL :: a(10)

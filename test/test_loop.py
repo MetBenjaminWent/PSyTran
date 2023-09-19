@@ -36,6 +36,12 @@ imperfectly_nested_triple_loop = {
     "if": cs.imperfectly_nested_triple_loop_with_if,
 }
 
+conditional_perfectly_nested_subloop = {
+    "before": cs.imperfectly_nested_triple_loop_before_with_if,
+    "after": cs.imperfectly_nested_triple_loop_after_with_if,
+    "if": cs.conditional_imperfectly_nested_triple_loop,
+}
+
 
 def test_is_outer_loop(parser, nest_depth):
     """
@@ -153,12 +159,24 @@ def test_is_not_perfectly_nested_triple(parser, imperfection):
 def test_is_perfectly_nested_subnest(parser, imperfection):
     """
     Test that :func:`is_perfectly_nested` correctly identifies a perfectly
-    sub-nest.
+    nested sub-nest.
     """
     schedule = get_schedule(parser, imperfectly_nested_triple_loop[imperfection])
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
     assert is_perfectly_nested(loops[1])
+
+
+def test_is_perfectly_nested_subnest_conditional(parser, imperfection):
+    """
+    Test that :func:`is_perfectly_nested` correctly identifies a perfectly
+    nested sub-nest with conditional.
+    """
+    schedule = get_schedule(parser, conditional_perfectly_nested_subloop[imperfection])
+    loops = schedule.walk(nodes.Loop)
+    assert not is_perfectly_nested(loops[0])
+    assert is_perfectly_nested(loops[1])
+    assert is_perfectly_nested(loops[2])
 
 
 def test_is_simple_loop(parser, nest_depth):
