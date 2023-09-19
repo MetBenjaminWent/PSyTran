@@ -2,6 +2,7 @@ from fparser.common.readfortran import FortranStringReader
 from psyclone.psyGen import PSyFactory
 from psyacc import *
 import code_snippets as cs
+import ukca_code as ukca
 
 has_clause = {
     "sequential": has_seq_clause,

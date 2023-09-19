@@ -181,6 +181,18 @@ def test_is_perfectly_nested_subnest_conditional(parser, imperfection):
     assert is_perfectly_nested(loops[2])
 
 
+def test_is_perfectly_nested_subnest_conditional_ukca(parser):
+    """
+    Test that :func:`is_perfectly_nested` correctly identifies a perfectly
+    nested sub-nest with conditional in real UKCA code.
+    """
+    schedule = get_schedule(parser, ukca.asad_prls_kernel6)
+    loops = schedule.walk(nodes.Loop)
+    assert not is_perfectly_nested(loops[0])
+    assert is_perfectly_nested(loops[1])
+    assert is_perfectly_nested(loops[2])
+
+
 def test_is_simple_loop(parser, nest_depth):
     """
     Test that :func:`is_simple_loop` correctly identifies a simple loop.
