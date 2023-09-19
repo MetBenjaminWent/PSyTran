@@ -8,10 +8,21 @@ def nest_depth(request):
     return request.param
 
 
+@pytest.fixture(params=["1_assignment", "3_assignments", "if"])
+def perfection(request):
+    return request.param
+
+
 @pytest.fixture(params=["before", "after", "if"])
 def imperfection(request):
     return request.param
 
+
+perfectly_nested_loop = {
+    "1_assignment": cs.loop_with_1_assignment,
+    "3_assignments": cs.loop_with_3_assignments,
+    "if": cs.triple_loop_with_conditional_1_assignment,
+}
 
 imperfectly_nested_double_loop = {
     "before": cs.imperfectly_nested_double_loop_before,
@@ -109,12 +120,12 @@ def test_is_perfectly_nested_typeerror(parser):
         is_perfectly_nested(assignments[0])
 
 
-def test_is_perfectly_nested(parser):
+def test_is_perfectly_nested(parser, perfection):
     """
     Test that :func:`is_perfectly_nested` correctly identifies a perfectly
     nested loop.
     """
-    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    schedule = get_schedule(parser, perfectly_nested_loop[perfection])
     loops = schedule.walk(nodes.Loop)
     assert is_perfectly_nested(loops[0])
 
