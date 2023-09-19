@@ -44,17 +44,25 @@ def is_perfectly_nested(loop):
     Determine whether a loop nest is perfectly nested, i.e., each level except
     the deepest contains only the next loop.
 
+    Note that we ignore nodes of type :class:`Literal` and :class:`Reference`.
+
     :arg loop: the outer-most loop of the nest
     """
     if not isinstance(loop, nodes.Loop):
         raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
+    node_types_to_ignore = (nodes.literal.Literal, nodes.reference.Reference)
     max_depth = get_loop_nest_max_depth(loop)
     current = loop
     while current.depth < max_depth:
-        children = get_children(current)
-        if len(children) != 1 or not isinstance(children[0], nodes.Loop):
+        loops = []
+        for child in get_children(current):
+            if isinstance(child, nodes.Loop):
+                loops.append(child)
+            elif not isinstance(child, node_types_to_ignore):
+                return False
+        if len(loops) != 1 or not isinstance(loops[0], nodes.Loop):
             return False
-        current = children[0]
+        current = loops[0]
     else:
         return True
 
