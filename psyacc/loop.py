@@ -1,6 +1,6 @@
 from psyclone.psyir import nodes
 from psyclone.nemo import NemoKern
-from psyacc.family import get_descendents, get_children
+from psyacc.family import get_children
 
 __all__ = [
     "is_outer_loop",
