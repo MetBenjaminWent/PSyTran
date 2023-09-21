@@ -1,5 +1,4 @@
 from psyclone.psyir import nodes
-from psyclone.nemo import NemoKern
 from psyacc.family import get_children
 
 __all__ = [
