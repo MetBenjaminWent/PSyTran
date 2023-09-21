@@ -1,11 +1,12 @@
 from psyclone.psyir import nodes
+from psyclone.nemo import NemoKern
 
 __all__ = [
     "get_descendents",
     "get_ancestors",
     "get_children",
     "get_siblings",
-    "get_parents",
+    "get_parent",
     "is_next_sibling",
 ]
 
@@ -62,24 +63,34 @@ def get_ancestors(node, inclusive=False, node_type=nodes.Loop, depth=None):
 
 def get_children(node, node_type=nodes.Node):
     """
-    Get all immediate descendents of a node with a given type, i.e., those at the
-    next depth level.
+    Get all immediate descendents of a node with a given type, i.e., those at
+    the next depth level.
 
     :arg node: the node to search for descendents of.
     :arg node_type: the type of node to search for.
     """
-    return get_descendents(node, node_type=node_type, depth=node.depth + 2)
+    children = get_descendents(node, node_type=node_type, depth=node.depth + 2)
+    if len(children) == 1 and isinstance(children[0], NemoKern):
+        assert not isinstance(node, NemoKern)  # Avoid infinite loop
+        return get_children(children[0], node_type=node_type)
+    return children
 
 
-def get_parents(node, node_type=nodes.Node):
+def get_parent(node, node_type=nodes.Node):
     """
-    Get all immediate ancestors of a node with a given type, i.e., those at the
-    previous depth level.
+    Get the immediate ancestors of a node with a given type, i.e., the one at
+    the previous depth level.
 
     :arg node: the node to search for ancestors of.
     :arg node_type: the type of node to search for.
     """
-    return get_ancestors(node, node_type=node_type, depth=node.depth - 2)
+    parents = get_ancestors(node, node_type=node_type, depth=node.depth - 2)
+    assert len(parents) == 1
+    parent = parents[0]
+    if isinstance(parent, NemoKern):
+        assert not isinstance(node, NemoKern)  # Avoid infinite loop
+        return get_parent(parent, node_type=node_type)
+    return parent
 
 
 def get_siblings(node, inclusive=False, node_type=nodes.Node):
@@ -90,9 +101,8 @@ def get_siblings(node, inclusive=False, node_type=nodes.Node):
     :arg inclusive: if ``True``, the current node is included.
     :arg node_type: the type of node to search for.
     """
-    parents = get_parents(node, node_type=node_type)
-    assert len(parents) == 1
-    siblings = get_children(parents[0], node_type=node_type)
+    parent = get_parent(node, node_type=node_type)
+    siblings = get_children(parent, node_type=node_type)
     for i, sibling in enumerate(siblings):
         assert sibling.depth == node.depth
         if not inclusive and sibling == node:

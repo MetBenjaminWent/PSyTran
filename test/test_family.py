@@ -91,6 +91,16 @@ def test_get_relatives_assignment(parser, nest_depth, inclusive, relative):
     assert num_relatives == 0 if relative == "descendent" else nest_depth
 
 
+def test_get_parent(parser):
+    """
+    Test that :func:`get_parent` correctly determines a node's parent.
+    """
+    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    loop = schedule.walk(nodes.Loop)[0]
+    for assignment in schedule.walk(nodes.Assignment):
+        assert get_parent(assignment) == loop
+
+
 def test_get_siblings(parser, inclusive):
     """
     Test that :func:`get_siblings` correctly determines a node's siblings.
