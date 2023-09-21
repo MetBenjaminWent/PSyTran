@@ -31,7 +31,7 @@ def has_kernels_directive(node):
     Determine whether a node is inside a ``kernels`` directive.
     """
     assert isinstance(node, nodes.Node)
-    return node.ancestor(ACCKernelsDirective)
+    return bool(node.ancestor(ACCKernelsDirective))
 
 
 def apply_loop_directive(loop, options={}):
@@ -50,9 +50,11 @@ def apply_loop_directive(loop, options={}):
     ACCLoopTrans().apply(loop, options=options)
 
 
-def has_loop_directive(node):
+def has_loop_directive(loop):
     """
     Determine whether a node has an OpenACC ``loop`` directive.
     """
-    assert isinstance(node, nodes.Node)
-    return isinstance(node.parent.parent, ACCLoopDirective)
+    assert isinstance(loop, nodes.Loop)
+    return has_kernels_directive(loop) and isinstance(
+        loop.parent.parent, ACCLoopDirective
+    )

@@ -18,14 +18,21 @@ __all__ = [
 ]
 
 
+def _check_loop(loop):
+    """
+    Check that we do indeed have a :class:`Loop` node.
+    """
+    if not isinstance(loop, nodes.Loop):
+        raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
+
+
 def _prepare_loop_for_clause(loop):
     """
     Prepare to apply a clause to a ``loop`` directive.
 
     :arg loop: the :class:`Loop` node.
     """
-    if not isinstance(loop, nodes.Loop):
-        raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
+    _check_loop(loop)
     if not has_kernels_directive(loop):
         raise ValueError("Cannot apply a loop clause without a kernels directive.")
     if not has_loop_directive(loop):
@@ -103,8 +110,7 @@ def has_collapse_clause(loop):
 
     :arg loop: the :class:`Loop` node.
     """
-    if not isinstance(loop, nodes.Loop):
-        raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
+    _check_loop(loop)
     if not has_kernels_directive(loop):
         return False
     ancestors = get_ancestors(loop, inclusive=True)

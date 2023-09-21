@@ -8,7 +8,7 @@ has_clause = {
     "sequential": has_seq_clause,
     "gang": has_gang_clause,
     "vector": has_vector_clause,
-    "collapse": has_collapse_clause
+    "collapse": has_collapse_clause,
 }
 
 apply_clause = {

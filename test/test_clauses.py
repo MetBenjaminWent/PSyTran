@@ -1,6 +1,6 @@
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective
-from psyacc.clauses import _prepare_loop_for_clause
+from psyacc.clauses import _check_loop, _prepare_loop_for_clause
 from utils import *
 import pytest
 
@@ -20,25 +20,22 @@ def collapse(request):
     return request.param
 
 
-def test_prepare_loop_for_clause_typeerror(parser):
+def test_check_loop_typeerror(parser):
     """
-    Test that a :class:`TypeError` is raised when
-    :func:`_prepare_loop_for_clause` is called with something other than a
-    :class:`Loop`.
+    Test that a :class:`TypeError` is raised when :func:`_check_loop` is called
+    with something other than a :class:`Loop`.
     """
     schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
     assignments = schedule.walk(nodes.Assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
     expected = (
         "Expected a Loop, not"
         " '<class 'psyclone.psyir.nodes.assignment.Assignment'>'."
     )
     with pytest.raises(TypeError, match=expected):
-        _prepare_loop_for_clause(assignments[0])
+        _check_loop(assignments[0])
 
 
-def test_prepare_loop_for_collapse_no_kernels_error(parser):
+def test_prepare_loop_for_clause_no_kernels_error(parser):
     """
     Test that a :class:`ValueError` is raised when
     :func:`_prepare_loop_for_clause` is called without a kernels directive.
