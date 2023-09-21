@@ -137,7 +137,7 @@ def has_ancestor(node, node_type, inclusive=False):
 
 
 def are_siblings(*nodes):
-    """
+    r"""
     Determine whether a collection of :class:`Node`\s have the same parent.
     """
     assert len(nodes) > 0
