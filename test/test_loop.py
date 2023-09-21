@@ -146,6 +146,7 @@ def test_is_not_perfectly_nested_double(parser, imperfection):
     schedule = get_schedule(parser, imperfectly_nested_double_loop[imperfection])
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
+    assert not is_simple_loop(loops[0])
 
 
 def test_is_not_perfectly_nested_triple(parser, imperfection):
@@ -156,6 +157,7 @@ def test_is_not_perfectly_nested_triple(parser, imperfection):
     schedule = get_schedule(parser, imperfectly_nested_triple_loop[imperfection])
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
+    assert not is_simple_loop(loops[0])
 
 
 def test_is_not_perfectly_nested_double_2_loop(parser, imperfection):
@@ -166,6 +168,7 @@ def test_is_not_perfectly_nested_double_2_loop(parser, imperfection):
     schedule = get_schedule(parser, cs.double_loop_with_2_loops)
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
+    assert not is_simple_loop(loops[0])
 
 
 def test_is_perfectly_nested_subnest(parser, imperfection):
