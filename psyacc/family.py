@@ -7,6 +7,7 @@ __all__ = [
     "get_children",
     "get_siblings",
     "get_parent",
+    "are_siblings",
     "is_next_sibling",
 ]
 
@@ -111,6 +112,20 @@ def get_siblings(node, inclusive=False, node_type=nodes.Node):
     return siblings
 
 
+def are_siblings(*nodes):
+    """
+    Determine whether a collection of :class:`Node`\s have the same parent.
+    """
+    assert len(nodes) > 0
+    if len(nodes) == 1:
+        return True
+    for node in nodes[1:]:
+        if not nodes[0].sameParent(node):
+            return False
+    else:
+        return True
+
+
 def is_next_sibling(node1, node2):
     """
     Determine whether one :class:`Node` immediately follows another.
@@ -118,10 +133,8 @@ def is_next_sibling(node1, node2):
     :arg node1: the first node.
     :arg node2: the second node.
     """
-    assert isinstance(node1, nodes.Node)
-    assert isinstance(node2, nodes.Node)
     return (
-        node2.sameParent(node1)
+        are_siblings(node1, node2)
         and node2 in node1.following()
         and node1.position + 1 == node2.position
     )

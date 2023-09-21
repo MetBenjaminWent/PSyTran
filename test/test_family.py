@@ -114,6 +114,20 @@ def test_get_siblings(parser, inclusive):
         assert get_siblings(assignments[i], inclusive=inclusive) == expected
 
 
+def test_are_siblings(parser):
+    """
+    Test that :func:`are_siblings` correctly determines whether nodes are
+    siblings.
+    """
+    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    loop = schedule.walk(nodes.Loop)[0]
+    assignments = schedule.walk(nodes.Assignment)
+    assert are_siblings(assignments[0])
+    assert are_siblings(*assignments[1:])
+    assert are_siblings(*assignments)
+    assert not are_siblings(assignments[0], loop)
+
+
 def test_is_next_sibling(parser):
     """
     Test that :func:`is_next_sibling` correctly determines whether one node
