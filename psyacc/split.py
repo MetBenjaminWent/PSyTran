@@ -12,9 +12,9 @@ def split_consecutive(block):
     current = {}
     for node in block:
         depth = node.depth
-        if node.depth not in blocks:
+        if depth not in blocks:
             blocks[depth] = []
-        if node.depth not in current:
+        if depth not in current:
             current[depth] = [node]
             continue
 
@@ -30,4 +30,5 @@ def split_consecutive(block):
         if len(values) > 0:
             blocks[depth].append(values)
         ret += blocks[depth]
+    assert isinstance(ret, list)
     return ret
