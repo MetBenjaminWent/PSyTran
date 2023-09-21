@@ -10,7 +10,7 @@ def nest_depth(request):
     return request.param
 
 
-@pytest.fixture(params=["sequential", "gang", "vector"])
+@pytest.fixture(params=["sequential", "gang", "vector", "collapse"])
 def clause(request):
     return request.param
 
@@ -77,12 +77,22 @@ def test_apply_loop_clause(parser, nest_depth, clause):
     """
     Test that each clause is correctly applied.
     """
-    schedule = get_schedule(parser, simple_loop_code(nest_depth))
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
     for i in range(nest_depth):
-        apply_clause[clause](loops[i])
-        assert loops[i].parent.parent.__getattribute__(clause)
+        schedule = get_schedule(parser, simple_loop_code(nest_depth))
+        loops = schedule.walk(nodes.Loop)
+        apply_kernels_directive(loops[0])
+        if clause == "collapse":
+            collapse = nest_depth - i
+            if collapse == 1:
+                expected = "Expected an integer greater than one, not 1."
+                with pytest.raises(ValueError, match=expected):
+                    apply_clause[clause](loops[i], collapse)
+                continue
+            apply_clause[clause](loops[i], collapse)
+            assert loops[i].parent.parent.__getattribute__(clause) == collapse
+        else:
+            apply_clause[clause](loops[i])
+            assert loops[i].parent.parent.__getattribute__(clause)
         assert has_clause[clause](loops[i])
 
 

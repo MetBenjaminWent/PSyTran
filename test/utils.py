@@ -8,12 +8,14 @@ has_clause = {
     "sequential": has_seq_clause,
     "gang": has_gang_clause,
     "vector": has_vector_clause,
+    "collapse": has_collapse_clause
 }
 
 apply_clause = {
     "sequential": apply_loop_seq,
     "gang": apply_loop_gang,
     "vector": apply_loop_vector,
+    "collapse": apply_loop_collapse,
 }
 
 
