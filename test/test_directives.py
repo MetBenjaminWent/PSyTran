@@ -132,6 +132,18 @@ def test_apply_loop_directive_typeerror2(parser):
         apply_loop_directive(loops[0], options=0)
 
 
+def test_apply_loop_directive_valueerror(parser):
+    """
+    Test that a :class:`ValueError` is raised when :func:`apply_loop_directive`
+    is called to a loop with no ``kernels`` directive.
+    """
+    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    expected = "Cannot apply a loop directive without a kernels directive."
+    with pytest.raises(ValueError, match=expected):
+        apply_loop_directive(loops[0])
+
+
 def test_has_no_loop_directive(parser):
     """
     Test that :func:`has_loop_directive` correctly identifies no ``loop``
