@@ -91,6 +91,19 @@ def test_get_relatives_assignment(parser, nest_depth, inclusive, relative):
     assert num_relatives == 0 if relative == "descendent" else nest_depth
 
 
+def test_get_siblings(parser, inclusive):
+    """
+    Test that :func:`get_siblings` correctly determines a node's siblings.
+    """
+    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    assignments = schedule.walk(nodes.Assignment)
+    for i in range(3):
+        expected = list(assignments)
+        if not inclusive:
+            expected.pop(i)
+        assert get_siblings(assignments[i], inclusive=inclusive) == expected
+
+
 def test_is_next_sibling(parser):
     """
     Test that :func:`is_next_sibling` correctly determines whether one node

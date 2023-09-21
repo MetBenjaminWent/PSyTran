@@ -14,7 +14,7 @@ def get_descendents(node, inclusive=False, node_type=nodes.Node, depth=None):
     """
     Get all ancestors of a node with a given type.
 
-    :arg loop: the node to search for descendents of.
+    :arg node: the node to search for descendents of.
     :arg inclusive: if ``True``, the current node is included.
     :arg node_type: the type of node to search for.
     :kwarg depth: specify a depth for the descendents to have.
@@ -37,7 +37,7 @@ def get_ancestors(node, inclusive=False, node_type=nodes.Loop, depth=None):
     """
     Get all ancestors of a node with a given type.
 
-    :arg loop: the node to search for ancestors of.
+    :arg node: the node to search for ancestors of.
     :arg inclusive: if ``True``, the current node is included.
     :arg node_type: the type of node to search for.
     :kwarg depth: specify a depth for the ancestors to have.
@@ -65,22 +65,10 @@ def get_children(node, node_type=nodes.Node):
     Get all immediate descendents of a node with a given type, i.e., those at the
     next depth level.
 
-    :arg loop: the node to search for descendents of.
+    :arg node: the node to search for descendents of.
     :arg node_type: the type of node to search for.
     """
     return get_descendents(node, node_type=node_type, depth=node.depth + 2)
-
-
-def get_siblings(node, **kwargs):
-    """
-    Get all nodes with a given type at the same depth level.
-
-    :arg loop: the node to search for siblings of.
-    :arg inclusive: if ``True``, the current node is included.
-    :arg node_type: the type of node to search for.
-    """
-    kwargs["depth"] = node.depth
-    return get_descendents(node, **kwargs)
 
 
 def get_parents(node, node_type=nodes.Node):
@@ -88,10 +76,29 @@ def get_parents(node, node_type=nodes.Node):
     Get all immediate ancestors of a node with a given type, i.e., those at the
     previous depth level.
 
-    :arg loop: the node to search for ancestors of.
+    :arg node: the node to search for ancestors of.
     :arg node_type: the type of node to search for.
     """
     return get_ancestors(node, node_type=node_type, depth=node.depth - 2)
+
+
+def get_siblings(node, inclusive=False, node_type=nodes.Node):
+    """
+    Get all nodes with a given type at the same depth level.
+
+    :arg node: the node to search for siblings of.
+    :arg inclusive: if ``True``, the current node is included.
+    :arg node_type: the type of node to search for.
+    """
+    parents = get_parents(node, node_type=node_type)
+    assert len(parents) == 1
+    siblings = get_children(parents[0], node_type=node_type)
+    for i, sibling in enumerate(siblings):
+        assert sibling.depth == node.depth
+        if not inclusive and sibling == node:
+            siblings.pop(i)
+            break
+    return siblings
 
 
 def is_next_sibling(node1, node2):
