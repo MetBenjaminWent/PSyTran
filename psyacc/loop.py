@@ -69,19 +69,23 @@ def is_perfectly_nested(loop):
 
 def is_simple_loop(loop):
     """
-    Determine whether a loop nest is simple, i.e., perfectly nested, with a
-    single assignment at the deepest level.
+    Determine whether a loop nest is simple, i.e., perfectly nested, with only
+    literal assignments at the deepest level.
 
     :arg loop: the outer-most loop of the nest
     """
     if not is_perfectly_nested(loop):
         return False
     innermost_loop = loop.walk(nodes.Loop)[-1]
-    children = get_children(innermost_loop)
-    if len(children) != 1 or not isinstance(children[0], NemoKern):
-        return False
-    grandchildren = get_children(children[0])
-    return len(grandchildren) == 1 and isinstance(grandchildren[0], nodes.Assignment)
+    for child in get_children(innermost_loop):
+        if not (
+            isinstance(child, nodes.Assignment)
+            and child.depth == innermost_loop.depth + 4
+            and child.walk(nodes.Literal)
+        ):
+            return False
+    else:
+        return True
 
 
 def get_loop_variable_name(loop):

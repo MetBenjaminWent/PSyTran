@@ -193,18 +193,30 @@ def test_is_perfectly_nested_subnest_conditional_ukca(parser):
     assert is_perfectly_nested(loops[2])
 
 
-def test_is_simple_loop(parser, nest_depth):
+def test_is_simple_loop_1_literal(parser, nest_depth):
     """
-    Test that :func:`is_simple_loop` correctly identifies a simple loop.
+    Test that :func:`is_simple_loop` correctly identifies a simple loop with
+    one literal assignment.
     """
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
     loops = schedule.walk(nodes.Loop)
     assert is_simple_loop(loops[0])
 
 
-def test_is_not_simple_loop(parser):
+def test_is_simple_loop_2_literals(parser, nest_depth):
     """
-    Test that :func:`is_simple_loop` correctly identifies a non-simple loop.
+    Test that :func:`is_simple_loop` correctly identifies a simple loop with
+    two literal assignments.
+    """
+    schedule = get_schedule(parser, cs.loop_with_2_literal_assignments)
+    loops = schedule.walk(nodes.Loop)
+    assert is_simple_loop(loops[0])
+
+
+def test_is_not_simple_loop_references(parser):
+    """
+    Test that :func:`is_simple_loop` correctly identifies a perfectly nested
+    loop with a reference assignment as non-simple.
     """
     schedule = get_schedule(parser, cs.loop_with_3_assignments)
     loops = schedule.walk(nodes.Loop)

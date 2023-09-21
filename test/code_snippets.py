@@ -93,6 +93,19 @@ loop_with_3_assignments = """
     END PROGRAM test
     """
 
+loop_with_2_literal_assignments = """
+    PROGRAM test
+      REAL :: a(10)
+      REAL :: b(10)
+      INTEGER :: i
+
+      DO i = 1, 10
+        a(i) = 0.0
+        b(i) = 1.0
+      END DO
+    END PROGRAM test
+    """
+
 double_loop_with_3_assignments = """
     PROGRAM test
       REAL :: a(10,10)
