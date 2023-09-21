@@ -22,7 +22,7 @@ def split_consecutive(block):
         if is_next_sibling(previous, node):
             current[depth].append(node)
         else:
-            blocks[depth].append(current)
+            blocks[depth].append(current[depth])
             current[depth] = [node]
 
     ret = []
