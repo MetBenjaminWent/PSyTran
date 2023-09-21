@@ -5,8 +5,10 @@ __all__ = [
     "get_descendents",
     "get_ancestors",
     "get_children",
-    "get_siblings",
     "get_parent",
+    "get_siblings",
+    "has_descendent",
+    "has_ancestor",
     "are_siblings",
     "is_next_sibling",
 ]
@@ -110,6 +112,28 @@ def get_siblings(node, inclusive=False, node_type=nodes.Node):
             siblings.pop(i)
             break
     return siblings
+
+
+def has_descendent(node, node_type, inclusive=False):
+    """
+    Check whether a node has a descendent node with a given type.
+
+    :arg node: the node to check for descendents of.
+    :arg node_type: the type of node to search for.
+    :arg inclusive: if ``True``, the current node is included.
+    """
+    return bool(get_descendents(node, inclusive=inclusive, node_type=node_type))
+
+
+def has_ancestor(node, node_type, inclusive=False):
+    """
+    Check whether a node has an ancestor node with a given type.
+
+    :arg node: the node to check for ancestors of.
+    :arg node_type: the type of node to search for.
+    :arg inclusive: if ``True``, the current node is included.
+    """
+    return bool(get_ancestors(node, inclusive=inclusive, node_type=node_type))
 
 
 def are_siblings(*nodes):

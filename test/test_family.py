@@ -114,6 +114,20 @@ def test_get_siblings(parser, inclusive):
         assert get_siblings(assignments[i], inclusive=inclusive) == expected
 
 
+def test_has_ancestor_descendent(parser):
+    """
+    Test that :func:`has_ancestor` and :func:`has_descendent` correctly
+    determine whether nodes have ancestors or descendents of specified types.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    loop = schedule.walk(nodes.Loop)[0]
+    assignment = schedule.walk(nodes.Assignment)[0]
+    assert has_descendent(loop, nodes.Assignment)
+    assert not has_descendent(loop, nodes.Loop)
+    assert has_ancestor(assignment, nodes.Loop)
+    assert not has_ancestor(assignment, nodes.Assignment)
+
+
 def test_are_siblings(parser):
     """
     Test that :func:`are_siblings` correctly determines whether nodes are
