@@ -158,6 +158,16 @@ def test_is_not_perfectly_nested_triple(parser, imperfection):
     assert not is_perfectly_nested(loops[0])
 
 
+def test_is_not_perfectly_nested_double_2_loop(parser, imperfection):
+    """
+    Test that :func:`is_perfectly_nested` correctly identifies an imperfectly
+    nested double loop containing two loops.
+    """
+    schedule = get_schedule(parser, cs.double_loop_with_2_loops)
+    loops = schedule.walk(nodes.Loop)
+    assert not is_perfectly_nested(loops[0])
+
+
 def test_is_perfectly_nested_subnest(parser, imperfection):
     """
     Test that :func:`is_perfectly_nested` correctly identifies a perfectly
