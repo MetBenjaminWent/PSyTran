@@ -1,4 +1,5 @@
 from psyclone.psyir import nodes
+from psyclone.psyir.tools import DependencyTools
 from psyacc.family import get_children
 
 __all__ = [
@@ -8,6 +9,7 @@ __all__ = [
     "is_simple_loop",
     "get_loop_variable_name",
     "get_loop_nest_variable_names",
+    "is_parallelisable",
 ]
 
 
@@ -102,3 +104,12 @@ def get_loop_nest_variable_names(loop):
     """
     assert isinstance(loop, nodes.Loop)
     return [get_loop_variable_name(loop) for loop in loop.walk(nodes.Loop)]
+
+
+def is_parallelisable(loop):
+    """
+    Determine whether a :class:`Loop` can be parallelised.
+
+    Note: wraps the :meth:`can_loop_be_parallelised` method of :class:`DependencyTools`.
+    """
+    return DependencyTools().can_loop_be_parallelised(loop)

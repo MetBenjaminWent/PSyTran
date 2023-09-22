@@ -122,6 +122,7 @@ def test_is_perfectly_nested(parser, perfection):
     schedule = get_schedule(parser, perfectly_nested_loop[perfection])
     loops = schedule.walk(nodes.Loop)
     assert is_perfectly_nested(loops[0])
+    assert is_parallelisable(loops[0])
 
 
 def test_is_not_perfectly_nested_double(parser, imperfection):
@@ -133,6 +134,7 @@ def test_is_not_perfectly_nested_double(parser, imperfection):
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
     assert not is_simple_loop(loops[0])
+    assert is_parallelisable(loops[0])
 
 
 def test_is_not_perfectly_nested_triple(parser, imperfection):
@@ -144,6 +146,7 @@ def test_is_not_perfectly_nested_triple(parser, imperfection):
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
     assert not is_simple_loop(loops[0])
+    assert is_parallelisable(loops[0])
 
 
 def test_is_not_perfectly_nested_double_2_loop(parser, imperfection):
@@ -155,6 +158,7 @@ def test_is_not_perfectly_nested_double_2_loop(parser, imperfection):
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
     assert not is_simple_loop(loops[0])
+    assert is_parallelisable(loops[0])
 
 
 def test_is_perfectly_nested_subnest(parser, imperfection):
@@ -166,6 +170,7 @@ def test_is_perfectly_nested_subnest(parser, imperfection):
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
     assert is_perfectly_nested(loops[1])
+    assert is_parallelisable(loops[0])
 
 
 def test_is_perfectly_nested_subnest_conditional(parser, imperfection):
@@ -178,6 +183,7 @@ def test_is_perfectly_nested_subnest_conditional(parser, imperfection):
     assert not is_perfectly_nested(loops[0])
     assert is_perfectly_nested(loops[1])
     assert is_perfectly_nested(loops[2])
+    assert is_parallelisable(loops[0])
 
 
 def test_is_perfectly_nested_subnest_conditional_ukca(parser):
@@ -190,6 +196,7 @@ def test_is_perfectly_nested_subnest_conditional_ukca(parser):
     assert not is_perfectly_nested(loops[0])
     assert is_perfectly_nested(loops[1])
     assert is_perfectly_nested(loops[2])
+    assert not is_parallelisable(loops[0])
 
 
 def test_is_simple_loop_1_literal(parser, nest_depth):
@@ -200,6 +207,7 @@ def test_is_simple_loop_1_literal(parser, nest_depth):
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
     loops = schedule.walk(nodes.Loop)
     assert is_simple_loop(loops[0])
+    assert is_parallelisable(loops[0])
 
 
 def test_is_simple_loop_2_literals(parser, nest_depth):
@@ -210,6 +218,7 @@ def test_is_simple_loop_2_literals(parser, nest_depth):
     schedule = get_schedule(parser, cs.loop_with_2_literal_assignments)
     loops = schedule.walk(nodes.Loop)
     assert is_simple_loop(loops[0])
+    assert is_parallelisable(loops[0])
 
 
 def test_is_not_simple_loop_references(parser):
@@ -220,6 +229,7 @@ def test_is_not_simple_loop_references(parser):
     schedule = get_schedule(parser, cs.loop_with_3_assignments)
     loops = schedule.walk(nodes.Loop)
     assert not is_simple_loop(loops[0])
+    assert is_parallelisable(loops[0])
 
 
 def test_get_loop_variable_name(parser):
