@@ -1,6 +1,5 @@
 from psyclone.psyir import nodes
 from utils import *
-import pytest
 
 
 def test_split_consecutive(parser):
