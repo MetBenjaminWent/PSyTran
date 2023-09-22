@@ -1,6 +1,6 @@
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective
-from psyacc.clauses import _check_loop, _prepare_loop_for_clause
+from psyacc.clauses import _prepare_loop_for_clause
 from utils import *
 import pytest
 
@@ -18,21 +18,6 @@ def clause(request):
 @pytest.fixture(params=[2, 3])
 def collapse(request):
     return request.param
-
-
-def test_check_loop_typeerror(parser):
-    """
-    Test that a :class:`TypeError` is raised when :func:`_check_loop` is called
-    with something other than a :class:`Loop`.
-    """
-    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
-    assignments = schedule.walk(nodes.Assignment)
-    expected = (
-        "Expected a Loop, not"
-        " '<class 'psyclone.psyir.nodes.assignment.Assignment'>'."
-    )
-    with pytest.raises(TypeError, match=expected):
-        _check_loop(assignments[0])
 
 
 def test_prepare_loop_for_clause_no_kernels_error(parser):

@@ -11,12 +11,19 @@ __all__ = [
 ]
 
 
+def _check_loop(loop):
+    """
+    Check that we do indeed have a :class:`Loop` node.
+    """
+    if not isinstance(loop, nodes.Loop):
+        raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
+
+
 def is_outer_loop(loop):
     """
     Determine whether a loop is outer-most in its nest.
     """
-    if not isinstance(loop, nodes.Loop):
-        raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
+    _check_loop(loop)
     return loop.ancestor(nodes.Loop) is None
 
 
@@ -47,19 +54,12 @@ def is_perfectly_nested(loop):
 
     :arg loop: the outer-most loop of the nest
     """
-    if not isinstance(loop, nodes.Loop):
-        raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
-    node_types_to_ignore = (nodes.literal.Literal, nodes.reference.Reference)
-    max_depth = get_loop_nest_max_depth(loop)
+    _check_loop(loop)
+    exclude = (nodes.literal.Literal, nodes.reference.Reference, nodes.Loop)
     current = loop
-    while current.depth < max_depth:
-        loops = []
-        for child in get_children(current):
-            if isinstance(child, nodes.Loop):
-                loops.append(child)
-            elif not isinstance(child, node_types_to_ignore):
-                return False
-        if len(loops) != 1 or not isinstance(loops[0], nodes.Loop):
+    while current.depth < get_loop_nest_max_depth(loop):
+        loops = get_children(current, node_type=nodes.Loop)
+        if len(loops) != 1 or len(get_children(current, exclude=exclude)) > 0:
             return False
         current = loops[0]
     else:

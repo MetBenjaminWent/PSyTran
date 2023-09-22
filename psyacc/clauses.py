@@ -5,6 +5,7 @@ from psyacc.directives import (
     has_loop_directive,
 )
 from psyacc.family import get_ancestors
+from psyacc.loop import _check_loop
 
 __all__ = [
     "has_seq_clause",
@@ -16,14 +17,6 @@ __all__ = [
     "has_collapse_clause",
     "apply_loop_collapse",
 ]
-
-
-def _check_loop(loop):
-    """
-    Check that we do indeed have a :class:`Loop` node.
-    """
-    if not isinstance(loop, nodes.Loop):
-        raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
 
 
 def _prepare_loop_for_clause(loop):

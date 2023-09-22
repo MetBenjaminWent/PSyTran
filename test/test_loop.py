@@ -1,4 +1,5 @@
 from psyclone.psyir import nodes
+from psyacc.loop import _check_loop
 from utils import *
 import pytest
 
@@ -43,6 +44,21 @@ conditional_perfectly_nested_subloop = {
     "after": cs.imperfectly_nested_triple_loop_after_with_if,
     "if": cs.conditional_imperfectly_nested_triple_loop,
 }
+
+
+def test_check_loop_typeerror(parser):
+    """
+    Test that a :class:`TypeError` is raised when :func:`_check_loop` is called
+    with something other than a :class:`Loop`.
+    """
+    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
+    assignments = schedule.walk(nodes.Assignment)
+    expected = (
+        "Expected a Loop, not"
+        " '<class 'psyclone.psyir.nodes.assignment.Assignment'>'."
+    )
+    with pytest.raises(TypeError, match=expected):
+        _check_loop(assignments[0])
 
 
 def test_is_outer_loop(parser, nest_depth):
@@ -96,36 +112,6 @@ def test_get_loop_nest_num_depths_triple_imperfection(parser, imperfection):
     schedule = get_schedule(parser, imperfectly_nested_triple_loop[imperfection])
     loops = schedule.walk(nodes.Loop)
     assert get_loop_nest_num_depths(loops[0]) == 3
-
-
-def test_is_outer_loop_typeerror(parser):
-    """
-    Test that a :class:`TypeError` is raised when :func:`is_outer_loop` is
-    called with something other than a :class:`Loop`.
-    """
-    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
-    assignments = schedule.walk(nodes.Assignment)
-    expected = (
-        "Expected a Loop, not"
-        " '<class 'psyclone.psyir.nodes.assignment.Assignment'>'."
-    )
-    with pytest.raises(TypeError, match=expected):
-        is_outer_loop(assignments[0])
-
-
-def test_is_perfectly_nested_typeerror(parser):
-    """
-    Test that a :class:`TypeError` is raised when :func:`is_perfectly_nested`
-    is called with something other than a :class:`Loop`.
-    """
-    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
-    assignments = schedule.walk(nodes.Assignment)
-    expected = (
-        "Expected a Loop, not"
-        " '<class 'psyclone.psyir.nodes.assignment.Assignment'>'."
-    )
-    with pytest.raises(TypeError, match=expected):
-        is_perfectly_nested(assignments[0])
 
 
 def test_is_perfectly_nested(parser, perfection):
