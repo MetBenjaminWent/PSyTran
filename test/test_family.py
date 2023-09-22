@@ -58,7 +58,7 @@ def test_get_relatives_loop(parser, nest_depth, inclusive, relative):
     loops = schedule.walk(nodes.Loop)
     for i in range(nest_depth):
         loop = loops[i if relative == "descendent" else nest_depth - 1 - i]
-        kwargs = dict(inclusive=inclusive, node_type=nodes.Loop)
+        kwargs = {"inclusive": inclusive, "node_type": nodes.Loop}
         num_relatives = len(get_relative[relative](loop, **kwargs))
         expected = nest_depth - i if inclusive else nest_depth - 1 - i
         assert num_relatives == expected
@@ -73,7 +73,7 @@ def test_get_relatives_loop_depth(parser, nest_depth, inclusive, relative):
     loop = schedule.walk(nodes.Loop)[0 if relative == "descendent" else nest_depth - 1]
     depth = loop.depth
     for i in range(nest_depth):
-        kwargs = dict(inclusive=inclusive, node_type=nodes.Loop, depth=depth)
+        kwargs = {"inclusive": inclusive, "node_type": nodes.Loop, "depth": depth}
         num_relatives = len(get_relative[relative](loop, **kwargs))
         assert num_relatives == (0 if not inclusive and i == 0 else 1)
         depth += 2 if relative == "descendent" else -2
@@ -86,9 +86,20 @@ def test_get_relatives_assignment(parser, nest_depth, inclusive, relative):
     """
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
     assignment = schedule.walk(nodes.Assignment)[0]
-    kwargs = dict(inclusive=inclusive, node_type=nodes.Loop)
+    kwargs = {"inclusive": inclusive, "node_type": nodes.Loop}
     num_relatives = len(get_relative[relative](assignment, **kwargs))
     assert num_relatives == 0 if relative == "descendent" else nest_depth
+
+
+def test_get_children(parser):
+    """
+    Test that :func:`get_children` correctly determines a node's children.
+    """
+    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    loop = schedule.walk(nodes.Loop)[0]
+    assignments = schedule.walk(nodes.Assignment)
+    assert get_children(loop) == assignments
+    assert get_children(loop, exclude=nodes.Assignment) == []
 
 
 def test_get_parent(parser):
@@ -99,6 +110,7 @@ def test_get_parent(parser):
     loop = schedule.walk(nodes.Loop)[0]
     for assignment in schedule.walk(nodes.Assignment):
         assert get_parent(assignment) == loop
+        assert get_parent(assignment, exclude=nodes.Loop) == None
 
 
 def test_get_siblings(parser, inclusive):
@@ -108,10 +120,13 @@ def test_get_siblings(parser, inclusive):
     schedule = get_schedule(parser, cs.loop_with_3_assignments)
     assignments = schedule.walk(nodes.Assignment)
     for i in range(3):
+        kwargs = {"inclusive": inclusive}
         expected = list(assignments)
         if not inclusive:
             expected.pop(i)
-        assert get_siblings(assignments[i], inclusive=inclusive) == expected
+        assert get_siblings(assignments[i], **kwargs) == expected
+        kwargs["exclude"] = nodes.Assignment
+        assert get_siblings(assignments[i], **kwargs) == []
 
 
 def test_has_ancestor_descendent(parser):
