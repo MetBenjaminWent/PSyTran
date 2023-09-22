@@ -26,6 +26,8 @@ def get_descendents(
     :kwarg exclude: type(s) of node to exclude.
     :kwarg depth: specify a depth for the descendents to have.
     """
+    if node_type == exclude:
+        return []
     assert isinstance(node, nodes.Node)
     if not isinstance(inclusive, bool):
         raise TypeError(f"Expected a bool, not '{type(inclusive)}'.")
@@ -35,7 +37,7 @@ def get_descendents(
     descendents = list(node.walk(node_type))
     if exclude is not None:
         descendents = [d for d in descendents if not isinstance(d, exclude)]
-    if not inclusive and isinstance(node, node_type):
+    if not inclusive and isinstance(node, node_type) and len(descendents) > 0:
         descendents.pop(0)
     if depth is not None:
         descendents = [d for d in descendents if d.depth == depth]
@@ -54,6 +56,8 @@ def get_ancestors(
     :kwarg exclude: type(s) of node to exclude.
     :kwarg depth: specify a depth for the ancestors to have.
     """
+    if node_type == exclude:
+        return []
     assert isinstance(node, nodes.Node)
     if not isinstance(inclusive, bool):
         raise TypeError(f"Expected a bool, not '{type(inclusive)}'.")
@@ -101,6 +105,8 @@ def get_parent(node, node_type=nodes.Node, exclude=None):
     :arg node_type: the type of node to search for.
     :kwarg exclude: type(s) of node to exclude.
     """
+    if node_type == exclude:
+        return None
     parents = get_ancestors(
         node, node_type=node_type, exclude=exclude, depth=node.depth - 2
     )
@@ -123,6 +129,8 @@ def get_siblings(node, inclusive=False, node_type=nodes.Node, exclude=None):
     :arg node_type: the type of node to search for.
     :kwarg exclude: type(s) of node to exclude.
     """
+    if node_type == exclude:
+        return []
     parent = get_parent(node, node_type=node_type, exclude=exclude)
     siblings = get_children(parent, node_type=node_type, exclude=exclude)
     for i, sibling in enumerate(siblings):
