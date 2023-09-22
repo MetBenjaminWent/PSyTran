@@ -14,13 +14,16 @@ __all__ = [
 ]
 
 
-def get_descendents(node, inclusive=False, node_type=nodes.Node, depth=None):
+def get_descendents(
+    node, inclusive=False, node_type=nodes.Node, exclude=None, depth=None
+):
     """
     Get all ancestors of a node with a given type.
 
     :arg node: the node to search for descendents of.
     :arg inclusive: if ``True``, the current node is included.
-    :arg node_type: the type of node to search for.
+    :kwarg node_type: the type of node to search for.
+    :kwarg exclude: type(s) of node to exclude.
     :kwarg depth: specify a depth for the descendents to have.
     """
     assert isinstance(node, nodes.Node)
@@ -30,6 +33,8 @@ def get_descendents(node, inclusive=False, node_type=nodes.Node, depth=None):
     if depth is not None and not isinstance(depth, int):
         raise TypeError(f"Expected an int, not '{type(depth)}'.")
     descendents = list(node.walk(node_type))
+    if exclude is not None:
+        descendents = [d for d in descendents if not isinstance(d, exclude)]
     if not inclusive and isinstance(node, node_type):
         descendents.pop(0)
     if depth is not None:
@@ -37,13 +42,16 @@ def get_descendents(node, inclusive=False, node_type=nodes.Node, depth=None):
     return descendents
 
 
-def get_ancestors(node, inclusive=False, node_type=nodes.Loop, depth=None):
+def get_ancestors(
+    node, inclusive=False, node_type=nodes.Loop, exclude=None, depth=None
+):
     """
     Get all ancestors of a node with a given type.
 
     :arg node: the node to search for ancestors of.
     :arg inclusive: if ``True``, the current node is included.
-    :arg node_type: the type of node to search for.
+    :kwarg node_type: the type of node to search for.
+    :kwarg exclude: type(s) of node to exclude.
     :kwarg depth: specify a depth for the ancestors to have.
     """
     assert isinstance(node, nodes.Node)
@@ -59,53 +67,64 @@ def get_ancestors(node, inclusive=False, node_type=nodes.Loop, depth=None):
     while current.ancestor(node_type) is not None:
         current = current.ancestor(node_type)
         ancestors.append(current)
+    if exclude is not None:
+        ancestors = [a for a in ancestors if not isinstance(a, exclude)]
     if depth is not None:
-        ancestors = [parent for parent in ancestors if parent.depth == depth]
+        ancestors = [a for a in ancestors if a.depth == depth]
     return ancestors
 
 
-def get_children(node, node_type=nodes.Node):
+def get_children(node, node_type=nodes.Node, exclude=None):
     """
     Get all immediate descendents of a node with a given type, i.e., those at
     the next depth level.
 
     :arg node: the node to search for descendents of.
-    :arg node_type: the type of node to search for.
+    :kwarg node_type: the type of node to search for.
+    :kwarg exclude: type(s) of node to exclude.
     """
-    children = get_descendents(node, node_type=node_type, depth=node.depth + 2)
+    children = get_descendents(
+        node, node_type=node_type, exclude=exclude, depth=node.depth + 2
+    )
     if len(children) == 1 and isinstance(children[0], NemoKern):
         assert not isinstance(node, NemoKern)  # Avoid infinite loop
-        return get_children(children[0], node_type=node_type)
+        return get_children(children[0], node_type=node_type, exclude=exclude)
     return children
 
 
-def get_parent(node, node_type=nodes.Node):
+def get_parent(node, node_type=nodes.Node, exclude=None):
     """
     Get the immediate ancestors of a node with a given type, i.e., the one at
     the previous depth level.
 
     :arg node: the node to search for ancestors of.
     :arg node_type: the type of node to search for.
+    :kwarg exclude: type(s) of node to exclude.
     """
-    parents = get_ancestors(node, node_type=node_type, depth=node.depth - 2)
+    parents = get_ancestors(
+        node, node_type=node_type, exclude=exclude, depth=node.depth - 2
+    )
+    if len(parents) == 0:
+        return None
     assert len(parents) == 1
     parent = parents[0]
     if isinstance(parent, NemoKern):
         assert not isinstance(node, NemoKern)  # Avoid infinite loop
-        return get_parent(parent, node_type=node_type)
+        return get_parent(parent, node_type=node_type, exclude=exclude)
     return parent
 
 
-def get_siblings(node, inclusive=False, node_type=nodes.Node):
+def get_siblings(node, inclusive=False, node_type=nodes.Node, exclude=None):
     """
     Get all nodes with a given type at the same depth level.
 
     :arg node: the node to search for siblings of.
     :arg inclusive: if ``True``, the current node is included.
     :arg node_type: the type of node to search for.
+    :kwarg exclude: type(s) of node to exclude.
     """
-    parent = get_parent(node, node_type=node_type)
-    siblings = get_children(parent, node_type=node_type)
+    parent = get_parent(node, node_type=node_type, exclude=exclude)
+    siblings = get_children(parent, node_type=node_type, exclude=exclude)
     for i, sibling in enumerate(siblings):
         assert sibling.depth == node.depth
         if not inclusive and sibling == node:
