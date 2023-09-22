@@ -49,46 +49,92 @@ def test_get_relatives_typeerror2(parser, relative):
         get_relative[relative](loops[0], depth=2.0)
 
 
-def test_get_relatives_loop(parser, nest_depth, inclusive, relative):
+def test_get_descendents_loop(parser, nest_depth, inclusive):
     """
-    Test that :func:`get_descendents` and :func:`get_ancestors` correctly find
-    the right number of descendents/ancestors of a loop.
+    Test that :func:`get_descendents` correctly finds the right number of descendents
+    of a loop.
     """
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
     loops = schedule.walk(nodes.Loop)
     for i in range(nest_depth):
-        loop = loops[i if relative == "descendent" else nest_depth - 1 - i]
+        loop = loops[i]
         kwargs = {"inclusive": inclusive, "node_type": nodes.Loop}
-        num_relatives = len(get_relative[relative](loop, **kwargs))
         expected = nest_depth - i if inclusive else nest_depth - 1 - i
-        assert num_relatives == expected
+        assert len(get_descendents(loop, **kwargs)) == expected
+        kwargs["exclude"] = nodes.Loop
+        assert len(get_descendents(loop, **kwargs)) == 0
 
 
-def test_get_relatives_loop_depth(parser, nest_depth, inclusive, relative):
+def test_get_ancestors_loop(parser, nest_depth, inclusive):
     """
-    Test that :func:`get_descendents` and :func:`get_ancestors` correctly find
-    the right number of descendents/ancestors of a loop of a specified depth.
+    Test that :func:`get_ancestors` correctly finds the right number of ancestors of a
+    loop.
     """
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
-    loop = schedule.walk(nodes.Loop)[0 if relative == "descendent" else nest_depth - 1]
+    loops = schedule.walk(nodes.Loop)
+    for i in range(nest_depth):
+        loop = loops[nest_depth - 1 - i]
+        kwargs = {"inclusive": inclusive, "node_type": nodes.Loop}
+        expected = nest_depth - i if inclusive else nest_depth - 1 - i
+        assert len(get_ancestors(loop, **kwargs)) == expected
+        kwargs["exclude"] = nodes.Loop
+        assert len(get_ancestors(loop, **kwargs)) == 0
+
+
+def test_get_descendents_loop_depth(parser, nest_depth, inclusive):
+    """
+    Test that :func:`get_descendents` correctly finds the right number of descendents
+    of a loop of a specified depth.
+    """
+    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    loop = schedule.walk(nodes.Loop)[0]
     depth = loop.depth
     for i in range(nest_depth):
         kwargs = {"inclusive": inclusive, "node_type": nodes.Loop, "depth": depth}
-        num_relatives = len(get_relative[relative](loop, **kwargs))
-        assert num_relatives == (0 if not inclusive and i == 0 else 1)
-        depth += 2 if relative == "descendent" else -2
+        num_descendents = len(get_descendents(loop, **kwargs))
+        assert num_descendents == (0 if not inclusive and i == 0 else 1)
+        depth += 2
 
 
-def test_get_relatives_assignment(parser, nest_depth, inclusive, relative):
+def test_get_ancestors_loop_depth(parser, nest_depth, inclusive):
     """
-    Test that :func:`get_descendents` and :func:`get_ancestors` correctly find
-    the right number of descendents/ancestors of an assignment.
+    Test that :func:`get_ancestors` correctly finds the right number of ancestors of
+    a loop of a specified depth.
+    """
+    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    loop = schedule.walk(nodes.Loop)[nest_depth - 1]
+    depth = loop.depth
+    for i in range(nest_depth):
+        kwargs = {"inclusive": inclusive, "node_type": nodes.Loop, "depth": depth}
+        num_ancestors = len(get_ancestors(loop, **kwargs))
+        assert num_ancestors == (0 if not inclusive and i == 0 else 1)
+        depth -= 2
+
+
+def test_get_descendents_assignment(parser, nest_depth, inclusive):
+    """
+    Test that :func:`get_descendents` correctly finds the right number of descendents
+    of an assignment.
     """
     schedule = get_schedule(parser, simple_loop_code(nest_depth))
     assignment = schedule.walk(nodes.Assignment)[0]
     kwargs = {"inclusive": inclusive, "node_type": nodes.Loop}
-    num_relatives = len(get_relative[relative](assignment, **kwargs))
-    assert num_relatives == 0 if relative == "descendent" else nest_depth
+    assert len(get_descendents(assignment, **kwargs)) == 0
+    kwargs["exclude"] = nodes.Node
+    assert len(get_descendents(assignment, **kwargs)) == 0
+
+
+def test_get_ancestors_assignment(parser, nest_depth, inclusive):
+    """
+    Test that :func:`get_ancestors` correctly finds the right number of ancestors of
+    an assignment.
+    """
+    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    assignment = schedule.walk(nodes.Assignment)[0]
+    kwargs = {"inclusive": inclusive, "node_type": nodes.Loop}
+    assert len(get_ancestors(assignment, **kwargs)) == nest_depth
+    kwargs["exclude"] = nodes.Loop
+    assert len(get_ancestors(assignment, **kwargs)) == 0
 
 
 def test_get_children(parser):
@@ -99,6 +145,7 @@ def test_get_children(parser):
     loop = schedule.walk(nodes.Loop)[0]
     assignments = schedule.walk(nodes.Assignment)
     assert get_children(loop) == assignments
+    assert get_children(loop, node_type=nodes.Loop) == []
     assert get_children(loop, exclude=nodes.Assignment) == []
 
 
@@ -111,6 +158,7 @@ def test_get_parent(parser):
     for assignment in schedule.walk(nodes.Assignment):
         assert get_parent(assignment) == loop
         assert get_parent(assignment, exclude=nodes.Loop) == None
+        assert get_parent(assignment, node_type=nodes.Loop, exclude=nodes.Loop) == None
 
 
 def test_get_siblings(parser, inclusive):
@@ -126,6 +174,8 @@ def test_get_siblings(parser, inclusive):
             expected.pop(i)
         assert get_siblings(assignments[i], **kwargs) == expected
         kwargs["exclude"] = nodes.Assignment
+        assert get_siblings(assignments[i], **kwargs) == []
+        kwargs["node_type"] = nodes.Assignment
         assert get_siblings(assignments[i], **kwargs) == []
 
 
