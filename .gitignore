@@ -1,3 +1,10 @@
+# Directories
 psyacc.egg-info/
 __pycache__/
 .psyclone/
+
+# Specific files
+.coverage
+
+# File extensions
+*.pyc
