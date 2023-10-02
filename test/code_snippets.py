@@ -338,3 +338,11 @@ array_assignment = """
       a(:) = 0.0
     END PROGRAM test
     """
+
+implied_array_assignment = """
+    PROGRAM test
+      REAL :: a(10)
+
+      a = 0.0
+    END PROGRAM test
+    """

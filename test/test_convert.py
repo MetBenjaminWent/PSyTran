@@ -3,6 +3,20 @@ from utils import *
 import pytest
 
 
+def test_convert_array_notation(parser):
+    """
+    Test that :func:`convert_array_notation` successfully converts an implied array
+    range assignment into an explicit one.
+    """
+    schedule = get_schedule(parser, cs.implied_array_assignment)
+    assert len(schedule.walk(nodes.Assignment)) == 1
+    assert len(schedule.walk(nodes.Range)) == 0
+    convert_array_notation(schedule)
+    assert len(schedule.walk(nodes.Assignment)) == 1
+    assert len(schedule.walk(nodes.Range)) == 1
+    assert str(schedule) == str(get_schedule(parser, cs.array_assignment))
+
+
 def test_convert_range_loops(parser):
     """
     Test that :func:`convert_range_loops` successfully converts an array range
