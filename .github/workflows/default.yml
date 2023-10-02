@@ -14,9 +14,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Setup virtual environment
+        run: |
+          cd /home/runner/work
+          python3 -m venv psyacc-ci
+
       - name: Install PSyclone
         run: |
-          cd
+          source /home/runner/work/psyacc-ci/bin/activate
+          cd /home/runner/work
           git clone https://github.com/stfc/PSyclone.git
           cd PSyclone
           python3 -m pip install -r requirements.txt
@@ -24,12 +30,15 @@ jobs:
 
       - name: Install PSyACC
         run: |
+          source /home/runner/work/psyacc-ci/bin/activate
           make install
 
       - name: Test linting
         run: |
+          source /home/runner/work/psyacc-ci/bin/activate
           make lint
 
       - name: Test PSyACC
         run: |
+          source /home/runner/work/psyacc-ci/bin/activate
           make coverage
