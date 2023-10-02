@@ -1,6 +1,6 @@
 from psyclone.psyir import nodes
 from psyclone.psyir import transformations as trans
-from psyclone.domain.nemo import transformations as nemo_trans
+from psyclone.domain.nemo.transformations import NemoArrayRange2LoopTrans
 from psyclone.psyir import symbols
 from psyclone.transformations import TransformationError
 
@@ -27,8 +27,8 @@ def convert_range_loops(schedule):
 
     Wrapper for the :meth:`apply` method of :class:`NemoAllArrayRange2LoopTrans`.
     """
-    for assign in schedule.walk(nodes.Assignment):
+    for r in schedule.walk(nodes.Range):
         try:
-            nemo_trans.NemoAllArrayTrans2LoopTrans().apply(assign)
+            NemoArrayRange2LoopTrans().apply(r)
         except TransformationError:
             pass
