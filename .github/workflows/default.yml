@@ -1,0 +1,28 @@
+name: default
+
+on:
+  # Trigger the workflow on events: pushes and PRs
+  push:
+  pull_request:
+
+  # Enable manual triggering from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install PSyACC
+        run: |
+          make install
+
+      - name: Test linting
+        run: |
+          make lint
+
+      - name: Test PSyACC
+        run: |
+          make coverage
