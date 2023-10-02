@@ -15,6 +15,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install PSyclone
+        run: |
+          cd
+          git clone https://github.com/stfc/PSyclone.git
+          cd PSyclone
+          python3 -m pip install -r requirements.txt
+          python3 -m pip install .
+
       - name: Install PSyACC
         run: |
           make install
