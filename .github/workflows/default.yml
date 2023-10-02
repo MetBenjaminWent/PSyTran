@@ -1,8 +1,7 @@
 name: default
 
 on:
-  # Trigger the workflow on events: pushes and PRs
-  push:
+  # Trigger the workflow on certain events
   pull_request:
 
   # Enable manual triggering from the Actions tab
