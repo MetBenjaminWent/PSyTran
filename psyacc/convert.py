@@ -25,7 +25,7 @@ def convert_range_loops(schedule):
     """
     Convert explicit array range assignments into loops.
 
-    Wrapper for the :meth:`apply` method of :class:`NemoAllArrayRange2LoopTrans`.
+    Wrapper for the :meth:`apply` method of :class:`NemoArrayRange2LoopTrans`.
     """
     for r in schedule.walk(nodes.Range):
         try:

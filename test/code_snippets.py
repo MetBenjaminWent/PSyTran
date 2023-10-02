@@ -330,3 +330,11 @@ serial_loop = """
       END DO
     END PROGRAM test
     """
+
+array_assignment = """
+    PROGRAM test
+      REAL :: a(10)
+
+      a(:) = 0.0
+    END PROGRAM test
+    """
