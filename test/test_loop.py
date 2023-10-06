@@ -1,3 +1,8 @@
+# (C) Crown Copyright, Met Office. All rights reserved.
+#
+# This file is part of PSyACC and is released under the BSD 3-Clause license.
+# See LICENSE in the root of the repository for full licensing details.
+
 from psyclone.psyir import nodes
 from psyacc.loop import _check_loop
 from utils import *
@@ -186,16 +191,15 @@ def test_is_perfectly_nested_subnest_conditional(parser, imperfection):
     assert is_parallelisable(loops[0])
 
 
-def test_is_perfectly_nested_subnest_conditional_ukca(parser):
+def test_is_perfectly_nested_subnest_index_array(parser):
     """
     Test that :func:`is_perfectly_nested` correctly identifies a perfectly
-    nested sub-nest with conditional in real UKCA code.
+    nested sub-nest where an index array is used.
     """
-    schedule = get_schedule(parser, ukca.asad_prls_kernel6)
+    schedule = get_schedule(parser, cs.double_loop_with_index_array)
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
     assert is_perfectly_nested(loops[1])
-    assert is_perfectly_nested(loops[2])
     assert not is_parallelisable(loops[0])
 
 

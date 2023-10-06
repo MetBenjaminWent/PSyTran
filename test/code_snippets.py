@@ -1,3 +1,8 @@
+# (C) Crown Copyright, Met Office. All rights reserved.
+#
+# This file is part of PSyACC and is released under the BSD 3-Clause license.
+# See LICENSE in the root of the repository for full licensing details.
+
 loop_with_1_assignment = """
     PROGRAM test
       REAL :: a(10)
@@ -346,3 +351,19 @@ implied_array_assignment = """
       a = 0.0
     END PROGRAM test
     """
+
+double_loop_with_index_array = """
+  PROGRAM test
+    INTEGER :: i, j, k
+    INTEGER :: indices(10)
+    REAL :: a(10,10)
+    REAL :: b(10,10)
+
+    DO j = 1, 10
+      k = indices(j)
+      DO i = 1, 10
+        a(i,k) = a(i,k) + b(i,j) + b(i,j)
+      END DO
+    END DO
+  END PROGRAM test
+  """

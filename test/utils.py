@@ -1,8 +1,12 @@
+# (C) Crown Copyright, Met Office. All rights reserved.
+#
+# This file is part of PSyACC and is released under the BSD 3-Clause license.
+# See LICENSE in the root of the repository for full licensing details.
+
 from fparser.common.readfortran import FortranStringReader
 from psyclone.psyGen import PSyFactory
 from psyacc import *
 import code_snippets as cs
-import ukca_code as ukca  # noqa
 
 has_clause = {
     "sequential": has_seq_clause,
