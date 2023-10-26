@@ -10,8 +10,10 @@ __all__ = ["split_consecutive"]
 
 def split_consecutive(block):
     """
-    Given a block of nodes at some depth, separate out those which follow one
+    Given a block of nodes, separate out those which directly follow one
     another.
+
+    The nodes may have different depths.
     """
     blocks = {}
     current = {}
@@ -22,9 +24,7 @@ def split_consecutive(block):
         if depth not in current:
             current[depth] = [node]
             continue
-
-        previous = current[depth][-1]
-        if is_next_sibling(previous, node):
+        if is_next_sibling(current[depth][-1], node):
             current[depth].append(node)
         else:
             blocks[depth].append(current[depth])
