@@ -165,14 +165,8 @@ def are_siblings(*nodes):
     r"""
     Determine whether a collection of :class:`Node`\s have the same parent.
     """
-    assert len(nodes) > 0
-    if len(nodes) == 1:
-        return True
-    for node in nodes[1:]:
-        if not nodes[0].sameParent(node):
-            return False
-    else:
-        return True
+    assert len(nodes) > 1
+    return all([node in nodes[0].siblings for node in nodes])
 
 
 def is_next_sibling(node1, node2):
