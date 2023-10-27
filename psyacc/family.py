@@ -46,9 +46,7 @@ def get_descendents(
     return descendents
 
 
-def get_ancestors(
-    node, inclusive=False, node_type=nodes.Loop, exclude=(), depth=None
-):
+def get_ancestors(node, inclusive=False, node_type=nodes.Loop, exclude=(), depth=None):
     """
     Get all ancestors of a node with a given type.
 
@@ -82,12 +80,17 @@ def get_children(node, node_type=nodes.Node, exclude=()):
     :kwarg node_type: the type of node to search for.
     :kwarg exclude: type(s) of node to exclude.
     """
-    children = get_descendents(
-        node, node_type=node_type, exclude=exclude, depth=node.depth + 2
-    )
+    assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
+    assert issubclass(node_type, nodes.Node)
+    children = [
+        grandchild
+        for child in node.children
+        for grandchild in child.children
+        if isinstance(grandchild, node_type) and not isinstance(grandchild, exclude)
+    ]
     if len(children) == 1 and isinstance(children[0], NemoKern):
         assert not isinstance(node, NemoKern)  # Avoid infinite loop
-        return get_children(children[0], node_type=node_type, exclude=exclude)
+        children = get_children(children[0], node_type=node_type, exclude=exclude)
     return children
 
 
