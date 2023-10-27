@@ -39,12 +39,11 @@ def get_descendents(
     :kwarg exclude: type(s) of node to exclude.
     :kwarg depth: specify a depth for the descendents to have.
     """
-    assert isinstance(node, nodes.Node)
-    if not isinstance(inclusive, bool):
-        raise TypeError(f"Expected a bool, not '{type(inclusive)}'.")
+    assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
+    assert isinstance(inclusive, bool), f"Expected a bool, not '{type(inclusive)}'."
     assert issubclass(node_type, nodes.Node)
-    if depth is not None and not isinstance(depth, int):
-        raise TypeError(f"Expected an int, not '{type(depth)}'.")
+    if depth is not None:
+        assert isinstance(depth, int), f"Expected an int, not '{type(depth)}'."
     descendents = [
         descendent
         for descendent in node.walk(node_type)
@@ -67,12 +66,11 @@ def get_ancestors(
     :kwarg exclude: type(s) of node to exclude.
     :kwarg depth: specify a depth for the ancestors to have.
     """
-    assert isinstance(node, nodes.Node)
-    if not isinstance(inclusive, bool):
-        raise TypeError(f"Expected a bool, not '{type(inclusive)}'.")
+    assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
+    assert isinstance(inclusive, bool), f"Expected a bool, not '{type(inclusive)}'."
     assert issubclass(node_type, nodes.Node)
-    if depth is not None and not isinstance(depth, int):
-        raise TypeError(f"Expected an int, not '{type(depth)}'.")
+    if depth is not None:
+        assert isinstance(depth, int), f"Expected an int, not '{type(depth)}'."
     ancestors = []
     node = node.ancestor(node_type, excluding=exclude, include_self=inclusive)
     while node is not None:

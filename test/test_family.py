@@ -37,7 +37,7 @@ def test_get_relatives_typeerror1(parser, relative):
     schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
     loops = schedule.walk(nodes.Loop)
     expected = "Expected a bool, not '<class 'int'>'."
-    with pytest.raises(TypeError, match=expected):
+    with pytest.raises(AssertionError, match=expected):
         get_relative[relative](loops[0], inclusive=0)
 
 
@@ -50,7 +50,7 @@ def test_get_relatives_typeerror2(parser, relative):
     schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
     loops = schedule.walk(nodes.Loop)
     expected = "Expected an int, not '<class 'float'>'."
-    with pytest.raises(TypeError, match=expected):
+    with pytest.raises(AssertionError, match=expected):
         get_relative[relative](loops[0], depth=2.0)
 
 
