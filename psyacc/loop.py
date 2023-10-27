@@ -70,18 +70,12 @@ def is_simple_loop(loop):
 
     :arg loop: the outer-most loop of the nest
     """
-    if not is_perfectly_nested(loop):
-        return False
-    innermost_loop = loop.walk(nodes.Loop)[-1]
-    for child in get_children(innermost_loop):
-        if not (
-            isinstance(child, nodes.Assignment)
-            and child.depth == innermost_loop.depth + 4
-            and child.walk(nodes.Literal)
-        ):
-            return False
-    else:
-        return True
+    return is_perfectly_nested(loop) and all(
+        [
+            isinstance(child, nodes.Assignment) and child.walk(nodes.Literal)
+            for child in get_children(loop.walk(nodes.Loop)[-1])
+        ]
+    )
 
 
 def get_loop_variable_name(loop):
