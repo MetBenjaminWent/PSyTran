@@ -56,7 +56,7 @@ def get_descendents(
 
 
 def get_ancestors(
-    node, inclusive=False, node_type=nodes.Loop, exclude=None, depth=None
+    node, inclusive=False, node_type=nodes.Loop, exclude=NoneType, depth=None
 ):
     """
     Get all ancestors of a node with a given type.
@@ -67,8 +67,6 @@ def get_ancestors(
     :kwarg exclude: type(s) of node to exclude.
     :kwarg depth: specify a depth for the ancestors to have.
     """
-    if node_type == exclude:
-        return []
     assert isinstance(node, nodes.Node)
     if not isinstance(inclusive, bool):
         raise TypeError(f"Expected a bool, not '{type(inclusive)}'.")
@@ -76,14 +74,10 @@ def get_ancestors(
     if depth is not None and not isinstance(depth, int):
         raise TypeError(f"Expected an int, not '{type(depth)}'.")
     ancestors = []
-    current = node
-    if inclusive and isinstance(node, node_type):
-        ancestors.append(current)
-    while current.ancestor(node_type) is not None:
-        current = current.ancestor(node_type)
-        ancestors.append(current)
-    if exclude is not None:
-        ancestors = [a for a in ancestors if not isinstance(a, exclude)]
+    node = node.ancestor(node_type, excluding=exclude, include_self=inclusive)
+    while node is not None:
+        ancestors.append(node)
+        node = node.ancestor(node_type, excluding=exclude)
     if depth is not None:
         ancestors = [a for a in ancestors if a.depth == depth]
     return ancestors
