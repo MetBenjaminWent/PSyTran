@@ -28,7 +28,7 @@ class NoneType:
 
 
 def get_descendents(
-    node, inclusive=False, node_type=nodes.Node, exclude=None, depth=None
+    node, inclusive=False, node_type=nodes.Node, exclude=NoneType, depth=None
 ):
     """
     Get all ancestors of a node with a given type.
@@ -39,19 +39,17 @@ def get_descendents(
     :kwarg exclude: type(s) of node to exclude.
     :kwarg depth: specify a depth for the descendents to have.
     """
-    if node_type == exclude:
-        return []
     assert isinstance(node, nodes.Node)
     if not isinstance(inclusive, bool):
         raise TypeError(f"Expected a bool, not '{type(inclusive)}'.")
     assert issubclass(node_type, nodes.Node)
     if depth is not None and not isinstance(depth, int):
         raise TypeError(f"Expected an int, not '{type(depth)}'.")
-    descendents = list(node.walk(node_type))
-    if exclude is not None:
-        descendents = [d for d in descendents if not isinstance(d, exclude)]
-    if not inclusive and isinstance(node, node_type) and len(descendents) > 0:
-        descendents.pop(0)
+    descendents = [
+        descendent
+        for descendent in node.walk(node_type)
+        if not isinstance(descendent, exclude) and (inclusive or descendent is not node)
+    ]
     if depth is not None:
         descendents = [d for d in descendents if d.depth == depth]
     return descendents
@@ -91,7 +89,7 @@ def get_ancestors(
     return ancestors
 
 
-def get_children(node, node_type=nodes.Node, exclude=None):
+def get_children(node, node_type=nodes.Node, exclude=NoneType):
     """
     Get all immediate descendents of a node with a given type, i.e., those at
     the next depth level.
