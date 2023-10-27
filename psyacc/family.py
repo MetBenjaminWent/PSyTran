@@ -19,16 +19,8 @@ __all__ = [
 ]
 
 
-class NoneType:
-    """
-    Dummy class for type checking.
-    """
-
-    pass
-
-
 def get_descendents(
-    node, inclusive=False, node_type=nodes.Node, exclude=NoneType, depth=None
+    node, inclusive=False, node_type=nodes.Node, exclude=(), depth=None
 ):
     """
     Get all ancestors of a node with a given type.
@@ -55,7 +47,7 @@ def get_descendents(
 
 
 def get_ancestors(
-    node, inclusive=False, node_type=nodes.Loop, exclude=NoneType, depth=None
+    node, inclusive=False, node_type=nodes.Loop, exclude=(), depth=None
 ):
     """
     Get all ancestors of a node with a given type.
@@ -81,7 +73,7 @@ def get_ancestors(
     return ancestors
 
 
-def get_children(node, node_type=nodes.Node, exclude=NoneType):
+def get_children(node, node_type=nodes.Node, exclude=()):
     """
     Get all immediate descendents of a node with a given type, i.e., those at
     the next depth level.
@@ -123,7 +115,7 @@ def get_parent(node, node_type=nodes.Node, exclude=None):
     return parent
 
 
-def get_siblings(node, inclusive=False, node_type=nodes.Node, exclude=NoneType):
+def get_siblings(node, inclusive=False, node_type=nodes.Node, exclude=()):
     """
     Get all nodes with a given type at the same depth level.
 
