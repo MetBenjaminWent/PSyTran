@@ -43,13 +43,13 @@ def get_loop_nest_num_depths(loop):
     return len({l.depth for l in loop.walk(nodes.Loop)})
 
 
-def get_loop_nest_max_depth(loop):
+def _perfect_nest_iter(loops, non_loops):
     """
-    Determine the maximum depth of a loop (sub-)nest.
-
-    :arg loop: the outer-most loop of the nest
+    Determine whether a nest iteration is perfect.
     """
-    return max({l.depth for l in loop.walk(nodes.Loop)})
+    return (len(loops) == 1 and len(non_loops) == 0) or (
+        len(loops) == 0 and not (len(non_loops) == 1 and non_loops[0].walk(nodes.Loop))
+    )
 
 
 def is_perfectly_nested(loop):
@@ -63,12 +63,12 @@ def is_perfectly_nested(loop):
     """
     _check_loop(loop)
     exclude = (nodes.literal.Literal, nodes.reference.Reference, nodes.Loop)
-    current = loop
-    while current.depth < get_loop_nest_max_depth(loop):
-        loops = get_children(current, node_type=nodes.Loop)
-        if len(loops) != 1 or len(get_children(current, exclude=exclude)) > 0:
+    loops, non_loops = [loop], []
+    while len(loops) > 0:
+        non_loops = get_children(loops[0], exclude=exclude)
+        loops = get_children(loops[0], node_type=nodes.Loop)
+        if not _perfect_nest_iter(loops, non_loops):
             return False
-        current = loops[0]
     else:
         return True
 
