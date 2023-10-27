@@ -10,6 +10,7 @@ from psyclone.transformations import (
     ACCLoopDirective,
     ACCLoopTrans,
 )
+from psyacc.family import get_parent
 
 __all__ = [
     "apply_kernels_directive",
@@ -60,6 +61,5 @@ def has_loop_directive(loop):
     Determine whether a node has an OpenACC ``loop`` directive.
     """
     assert isinstance(loop, nodes.Loop)
-    return has_kernels_directive(loop) and isinstance(
-        loop.parent.parent, ACCLoopDirective
-    )
+    parent = get_parent(loop)
+    return isinstance(parent, ACCLoopDirective) and has_kernels_directive(loop)
