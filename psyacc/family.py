@@ -36,14 +36,13 @@ def get_descendents(
     assert issubclass(node_type, nodes.Node)
     if depth is not None:
         assert isinstance(depth, int), f"Expected an int, not '{type(depth)}'."
-    descendents = [
+    return [
         descendent
         for descendent in node.walk(node_type)
-        if not isinstance(descendent, exclude) and (inclusive or descendent is not node)
+        if not isinstance(descendent, exclude)
+        and (inclusive or descendent is not node)
+        and (depth is None or descendent.depth == depth)
     ]
-    if depth is not None:
-        descendents = [d for d in descendents if d.depth == depth]
-    return descendents
 
 
 def get_ancestors(node, inclusive=False, node_type=nodes.Loop, exclude=(), depth=None):
