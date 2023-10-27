@@ -19,6 +19,14 @@ __all__ = [
 ]
 
 
+class NoneType:
+    """
+    Dummy class for type checking.
+    """
+
+    pass
+
+
 def get_descendents(
     node, inclusive=False, node_type=nodes.Node, exclude=None, depth=None
 ):
@@ -125,7 +133,7 @@ def get_parent(node, node_type=nodes.Node, exclude=None):
     return parent
 
 
-def get_siblings(node, inclusive=False, node_type=nodes.Node, exclude=None):
+def get_siblings(node, inclusive=False, node_type=nodes.Node, exclude=NoneType):
     """
     Get all nodes with a given type at the same depth level.
 
@@ -134,16 +142,13 @@ def get_siblings(node, inclusive=False, node_type=nodes.Node, exclude=None):
     :arg node_type: the type of node to search for.
     :kwarg exclude: type(s) of node to exclude.
     """
-    if node_type == exclude:
-        return []
-    parent = get_parent(node, node_type=node_type, exclude=exclude)
-    siblings = get_children(parent, node_type=node_type, exclude=exclude)
-    for i, sibling in enumerate(siblings):
-        assert sibling.depth == node.depth
-        if not inclusive and sibling == node:
-            siblings.pop(i)
-            break
-    return siblings
+    return [
+        sibling
+        for sibling in node.siblings
+        if isinstance(sibling, node_type)
+        and not isinstance(sibling, exclude)
+        and (inclusive or sibling is not node)
+    ]
 
 
 def has_descendent(node, node_type, inclusive=False):
