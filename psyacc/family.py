@@ -33,7 +33,7 @@ def get_descendents(
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
     assert isinstance(inclusive, bool), f"Expected a bool, not '{type(inclusive)}'."
-    assert issubclass(node_type, nodes.Node)
+    assert isinstance(node_type, tuple) or issubclass(node_type, nodes.Node)
     if depth is not None:
         assert isinstance(depth, int), f"Expected an int, not '{type(depth)}'."
     return [
@@ -57,7 +57,7 @@ def get_ancestors(node, inclusive=False, node_type=nodes.Loop, exclude=(), depth
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
     assert isinstance(inclusive, bool), f"Expected a bool, not '{type(inclusive)}'."
-    assert issubclass(node_type, nodes.Node)
+    assert isinstance(node_type, tuple) or issubclass(node_type, nodes.Node)
     if depth is not None:
         assert isinstance(depth, int), f"Expected an int, not '{type(depth)}'."
     ancestors = []
@@ -80,7 +80,7 @@ def get_children(node, node_type=nodes.Node, exclude=()):
     :kwarg exclude: type(s) of node to exclude.
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
-    assert issubclass(node_type, nodes.Node)
+    assert isinstance(node_type, tuple) or issubclass(node_type, nodes.Node)
     children = [
         grandchild
         for child in node.children
