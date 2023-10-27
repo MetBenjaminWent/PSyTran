@@ -9,7 +9,6 @@ from psyacc.family import get_children
 
 __all__ = [
     "is_outer_loop",
-    "get_loop_nest_num_depths",
     "is_perfectly_nested",
     "is_simple_loop",
     "get_loop_variable_name",
@@ -32,15 +31,6 @@ def is_outer_loop(loop):
     """
     _check_loop(loop)
     return loop.ancestor(nodes.Loop) is None
-
-
-def get_loop_nest_num_depths(loop):
-    """
-    Determine the number of depth levels in a loop (sub-)nest.
-
-    :arg loop: the outer-most loop of the nest
-    """
-    return len({l.depth for l in loop.walk(nodes.Loop)})
 
 
 def _perfect_nest_iter(loops, non_loops):

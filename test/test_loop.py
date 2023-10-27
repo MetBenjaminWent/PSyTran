@@ -78,47 +78,6 @@ def test_is_outer_loop(parser, nest_depth):
         assert not is_outer_loop(loops[i])
 
 
-def test_get_loop_nest_num_depths_simple(parser, nest_depth):
-    """
-    Test that :func:`get_loop_nest_num_depths` correctly determines the depth of a
-    simple loop.
-    """
-    schedule = get_schedule(parser, simple_loop_code(nest_depth))
-    loops = schedule.walk(nodes.Loop)
-    for i in range(nest_depth):
-        assert get_loop_nest_num_depths(loops[i]) == nest_depth - i
-
-
-def test_get_loop_nest_num_depths_multiple_assignments(parser):
-    """
-    Test that :func:`get_loop_nest_num_depths` correctly determines the depth of a
-    double loop with multiple assignments at the inner-most level.
-    """
-    schedule = get_schedule(parser, cs.double_loop_with_3_assignments)
-    loops = schedule.walk(nodes.Loop)
-    assert get_loop_nest_num_depths(loops[0]) == 2
-
-
-def test_get_loop_nest_num_depths_double_imperfection(parser, imperfection):
-    """
-    Test that :func:`get_loop_nest_num_depths` correctly determines the depth of an
-    imperfect double loop.
-    """
-    schedule = get_schedule(parser, imperfectly_nested_double_loop[imperfection])
-    loops = schedule.walk(nodes.Loop)
-    assert get_loop_nest_num_depths(loops[0]) == 2
-
-
-def test_get_loop_nest_num_depths_triple_imperfection(parser, imperfection):
-    """
-    Test that :func:`get_loop_nest_num_depths` correctly determines the depth of an
-    imperfect triple loop.
-    """
-    schedule = get_schedule(parser, imperfectly_nested_triple_loop[imperfection])
-    loops = schedule.walk(nodes.Loop)
-    assert get_loop_nest_num_depths(loops[0]) == 3
-
-
 def test_is_perfectly_nested(parser, perfection):
     """
     Test that :func:`is_perfectly_nested` correctly identifies a perfectly
