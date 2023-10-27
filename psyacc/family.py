@@ -80,7 +80,10 @@ def get_children(node, node_type=nodes.Node, exclude=()):
     :kwarg exclude: type(s) of node to exclude.
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
-    assert isinstance(node_type, tuple) or issubclass(node_type, nodes.Node)
+    if not isinstance(node_type, tuple):
+        issubclass(node_type, nodes.Node)
+        node_type = (node_type,)
+    node_type += (NemoKern,)
     children = [
         grandchild
         for child in node.children
