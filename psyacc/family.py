@@ -94,30 +94,16 @@ def get_children(node, node_type=nodes.Node, exclude=()):
     return children
 
 
-def get_parent(node, node_type=nodes.Node, exclude=()):
+def get_parent(node):
     """
-    Get the immediate ancestors of a node with a given type, i.e., the one at
-    the previous depth level.
+    Get the immediate ancestor of a node.
 
     :arg node: the node to search for ancestors of.
-    :arg node_type: the type of node to search for.
-    :kwarg exclude: type(s) of node to exclude.
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
-    assert issubclass(node_type, nodes.Node)
-    parents = [
-        grandparent
-        for parent in [node.parent]
-        for grandparent in [parent.parent]
-        if isinstance(grandparent, node_type) and not isinstance(grandparent, exclude)
-    ]
-    if len(parents) == 0:
-        return None
-    assert len(parents) == 1
-    parent = parents[0]
+    parent = node.parent.parent
     if isinstance(parent, NemoKern):
-        assert not isinstance(node, NemoKern)  # Avoid infinite loop
-        return get_parent(parent, node_type=node_type, exclude=exclude)
+        parent = parent.parent.parent
     return parent
 
 

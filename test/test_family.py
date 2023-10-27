@@ -162,8 +162,6 @@ def test_get_parent(parser):
     loop = schedule.walk(nodes.Loop)[0]
     for assignment in schedule.walk(nodes.Assignment):
         assert get_parent(assignment) == loop
-        assert get_parent(assignment, exclude=nodes.Loop) is None
-        assert get_parent(assignment, node_type=nodes.Loop, exclude=nodes.Loop) is None
 
 
 def test_get_siblings(parser, inclusive):
