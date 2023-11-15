@@ -38,10 +38,8 @@ def get_descendents(
         assert isinstance(depth, int), f"Expected an int, not '{type(depth)}'."
     return [
         descendent
-        for descendent in node.walk(node_type)
-        if not isinstance(descendent, exclude)
-        and (inclusive or descendent is not node)
-        and (depth is None or descendent.depth == depth)
+        for descendent in node.walk(node_type, depth=depth)
+        if not isinstance(descendent, exclude) and (inclusive or descendent is not node)
     ]
 
 
