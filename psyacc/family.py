@@ -162,8 +162,4 @@ def is_next_sibling(node1, node2):
     :arg node1: the first node.
     :arg node2: the second node.
     """
-    return (
-        are_siblings(node1, node2)
-        and node2 in node1.following()
-        and node1.position + 1 == node2.position
-    )
+    return node2.immediately_follows(node1)
