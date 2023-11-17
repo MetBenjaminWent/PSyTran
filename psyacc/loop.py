@@ -52,7 +52,12 @@ def is_perfectly_nested(loop):
     :arg loop: the outer-most loop of the nest
     """
     _check_loop(loop)
-    exclude = (nodes.literal.Literal, nodes.reference.Reference, nodes.Loop)
+    exclude = (
+        nodes.literal.Literal,
+        nodes.reference.Reference,
+        nodes.Loop,
+        nodes.IntrinsicCall,
+    )
     loops, non_loops = [loop], []
     while len(loops) > 0:
         non_loops = get_children(loops[0], exclude=exclude)
