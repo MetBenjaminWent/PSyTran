@@ -10,6 +10,7 @@ from psyclone.transformations import (
     ACCLoopDirective,
     ACCLoopTrans,
 )
+from collections.abc import Iterable
 from psyacc.family import get_parent
 
 __all__ = [
@@ -36,6 +37,8 @@ def has_kernels_directive(node):
     """
     Determine whether a node is inside a ``kernels`` directive.
     """
+    if isinstance(node, Iterable):
+        return has_kernels_directive(node[0])
     assert isinstance(node, nodes.Node)
     return bool(node.ancestor(ACCKernelsDirective))
 
