@@ -37,8 +37,8 @@ def _perfect_nest_iter(loops, non_loops):
     """
     Determine whether a nest iteration is perfect.
     """
-    return (len(loops) == 1 and len(non_loops) == 0) or (
-        len(loops) == 0 and not (len(non_loops) == 1 and non_loops[0].walk(nodes.Loop))
+    return (len(loops) == 1 and not non_loops) or (
+        not loops and not (any([node.walk(nodes.Loop) for node in non_loops]))
     )
 
 
