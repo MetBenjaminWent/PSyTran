@@ -347,7 +347,7 @@ serial_loop = """
     END PROGRAM test
     """
 
-array_assignment = """
+array_assignment_1d = """
     PROGRAM test
       REAL :: a(10)
 
@@ -355,9 +355,25 @@ array_assignment = """
     END PROGRAM test
     """
 
-implied_array_assignment = """
+array_assignment_2d = """
+    PROGRAM test
+      REAL :: a(10,10)
+
+      a(:,:) = 0.0
+    END PROGRAM test
+    """
+
+implied_array_assignment_1d = """
     PROGRAM test
       REAL :: a(10)
+
+      a = 0.0
+    END PROGRAM test
+    """
+
+implied_array_assignment_2d = """
+    PROGRAM test
+      REAL :: a(10,10)
 
       a = 0.0
     END PROGRAM test
