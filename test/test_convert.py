@@ -8,7 +8,7 @@ from utils import *
 import pytest
 
 
-@pytest.fixture(params=[1, 2])
+@pytest.fixture(params=[1, 2, 3])
 def dim(request):
     return request.param
 
@@ -16,11 +16,13 @@ def dim(request):
 array_assignment = {
     1: cs.array_assignment_1d,
     2: cs.array_assignment_2d,
+    3: cs.array_assignment_3d,
 }
 
 implied_array_assignment = {
     1: cs.implied_array_assignment_1d,
     2: cs.implied_array_assignment_2d,
+    3: cs.implied_array_assignment_3d,
 }
 
 def test_convert_array_notation(parser, dim):

@@ -363,6 +363,14 @@ array_assignment_2d = """
     END PROGRAM test
     """
 
+array_assignment_3d = """
+    PROGRAM test
+      REAL :: a(10,10,10)
+
+      a(:,:,:) = 0.0
+    END PROGRAM test
+    """
+
 implied_array_assignment_1d = """
     PROGRAM test
       REAL :: a(10)
@@ -374,6 +382,14 @@ implied_array_assignment_1d = """
 implied_array_assignment_2d = """
     PROGRAM test
       REAL :: a(10,10)
+
+      a = 0.0
+    END PROGRAM test
+    """
+
+implied_array_assignment_3d = """
+    PROGRAM test
+      REAL :: a(10,10,10)
 
       a = 0.0
     END PROGRAM test
