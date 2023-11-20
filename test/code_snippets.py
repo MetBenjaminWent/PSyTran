@@ -65,6 +65,17 @@ quadruple_loop_with_1_assignment = """
     END PROGRAM test
     """
 
+loop_with_1_assignment_and_intrinsic_call = """
+    PROGRAM test
+      REAL :: a(10)
+      INTEGER :: i
+
+      DO i = 1, 10
+        a(i) = ABS(-i)
+      END DO
+    END PROGRAM test
+    """
+
 triple_loop_with_conditional_1_assignment = """
     PROGRAM test
       REAL :: a(10,10)
