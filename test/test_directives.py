@@ -36,6 +36,16 @@ def test_apply_kernels_directive_schedule(parser):
     assert isinstance(schedule[0], ACCKernelsDirective)
 
 
+def test_apply_kernels_directive_schedule_with_intrinsic_call(parser):
+    """
+    Test that :func:`apply_kernels_directive` correctly applies a ``kernels``
+    directive to a schedule containing a loop with an intrinsic call.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment_and_intrinsic_call)
+    apply_kernels_directive(schedule)
+    assert isinstance(schedule[0], ACCKernelsDirective)
+
+
 def test_apply_kernels_directive_loop(parser):
     """
     Test that :func:`apply_kernels_directive` correctly applies a ``kernels``
