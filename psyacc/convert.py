@@ -22,7 +22,7 @@ def convert_array_notation(schedule):
         if isinstance(reference.symbol, symbols.DataSymbol):
             try:
                 trans.Reference2ArrayRangeTrans().apply(reference)
-            except TransformationError:
+            except TransformationError:  # pragma: no cover
                 pass
 
 
@@ -35,5 +35,5 @@ def convert_range_loops(schedule):
     for r in schedule.walk(nodes.Range):
         try:
             NemoArrayRange2LoopTrans().apply(r)
-        except TransformationError:
+        except TransformationError:  # pragma: no cover
             pass
