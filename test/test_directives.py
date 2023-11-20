@@ -46,6 +46,7 @@ def test_apply_kernels_directive_loop(parser):
     apply_kernels_directive(loops[0])
     assert isinstance(loops[0].parent.parent, ACCKernelsDirective)
     assert has_kernels_directive(loops[0])
+    assert has_kernels_directive(loops)
 
 
 def test_has_no_kernels_directive(parser):
@@ -56,6 +57,16 @@ def test_has_no_kernels_directive(parser):
     schedule = get_schedule(parser, cs.loop_with_1_assignment)
     loops = schedule.walk(nodes.Loop)
     assert not has_kernels_directive(loops[0])
+
+
+def test_has_no_kernels_directive_block(parser):
+    """
+    Test that :func:`has_kernels_directive` correctly identifies no OpenACC
+    kernels directives when applied to a block of code.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    loops = schedule.walk(nodes.Loop)
+    assert not has_kernels_directive(loops)
 
 
 def test_force_apply_loop_directive(parser):
