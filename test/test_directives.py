@@ -107,7 +107,7 @@ def test_apply_loop_directive_with_clause(parser, clause):
     assert has_clause[clause](loops[0])
 
 
-def test_apply_loop_directive_with_gang_vector(parser, clause):
+def test_apply_loop_directive_with_gang_vector(parser):
     """
     Test that :func:`apply_loop_directive` correctly applies a ``loop``
     directive with ``gang`` and ``vector`` clauses.
