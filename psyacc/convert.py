@@ -37,3 +37,9 @@ def convert_range_loops(schedule):
             NemoArrayRange2LoopTrans().apply(r)
         except TransformationError:  # pragma: no cover
             pass
+
+    # The above will convert a multi-dimensional array range assignment into a
+    # loop containing an array range assignment with one fewer dimension. As
+    # such, we need to recurse to get rid of all array range assignments.
+    if schedule.walk(nodes.Range):
+        convert_range_loops(schedule)

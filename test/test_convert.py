@@ -50,5 +50,4 @@ def test_convert_range_loops(parser, dim):
     assert len(schedule.walk(nodes.Loop)) == 0
     convert_range_loops(schedule)
     assert len(schedule.walk(nodes.Assignment)) == 1
-    assert len(schedule.walk(nodes.Range)) == dim - 1
-    assert len(schedule.walk(nodes.Loop)) == 1
+    assert len(schedule.walk(nodes.Loop)) == dim
