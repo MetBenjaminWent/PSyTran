@@ -20,14 +20,14 @@ __all__ = [
 
 
 def get_descendents(
-    node, inclusive=False, node_type=nodes.Node, exclude=(), depth=None
+    node, node_type=nodes.Node, inclusive=False, exclude=(), depth=None
 ):
     """
     Get all ancestors of a node with a given type.
 
     :arg node: the node to search for descendents of.
-    :arg inclusive: if ``True``, the current node is included.
     :kwarg node_type: the type of node to search for.
+    :kwarg inclusive: if ``True``, the current node is included.
     :kwarg exclude: type(s) of node to exclude.
     :kwarg depth: specify a depth for the descendents to have.
     """
@@ -43,13 +43,13 @@ def get_descendents(
     ]
 
 
-def get_ancestors(node, inclusive=False, node_type=nodes.Loop, exclude=(), depth=None):
+def get_ancestors(node, node_type=nodes.Loop, inclusive=False, exclude=(), depth=None):
     """
     Get all ancestors of a node with a given type.
 
     :arg node: the node to search for ancestors of.
-    :arg inclusive: if ``True``, the current node is included.
     :kwarg node_type: the type of node to search for.
+    :kwarg inclusive: if ``True``, the current node is included.
     :kwarg exclude: type(s) of node to exclude.
     :kwarg depth: specify a depth for the ancestors to have.
     """
@@ -111,13 +111,13 @@ def get_parent(node):
     return parent
 
 
-def get_siblings(node, inclusive=False, node_type=nodes.Node, exclude=()):
+def get_siblings(node, node_type=nodes.Node, inclusive=False, exclude=()):
     """
     Get all nodes with a given type at the same depth level.
 
     :arg node: the node to search for siblings of.
-    :arg inclusive: if ``True``, the current node is included.
-    :arg node_type: the type of node to search for.
+    :kwarg node_type: the type of node to search for.
+    :kwarg inclusive: if ``True``, the current node is included.
     :kwarg exclude: type(s) of node to exclude.
     """
     return [
@@ -135,18 +135,18 @@ def has_descendent(node, node_type, inclusive=False):
 
     :arg node: the node to check for descendents of.
     :arg node_type: the type of node to search for.
-    :arg inclusive: if ``True``, the current node is included.
+    :kwarg inclusive: if ``True``, the current node is included.
     """
     return bool(get_descendents(node, inclusive=inclusive, node_type=node_type))
 
 
-def has_ancestor(node, node_type, name=None, inclusive=False):
+def has_ancestor(node, node_type=nodes.Loop, name=None, inclusive=False):
     """
     Check whether a node has an ancestor node with a given type.
 
     :arg node: the node to check for ancestors of.
-    :arg node_type: the type of node to search for.
-    :arg inclusive: if ``True``, the current node is included.
+    :kwarg inclusive: if ``True``, the current node is included.
+    :kwarg node_type: the type of node to search for.
     :kwarg name: check whether the node has an ancestor with a particular name.
     """
     ancestors = get_ancestors(node, inclusive=inclusive, node_type=node_type)
