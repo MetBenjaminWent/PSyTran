@@ -106,7 +106,9 @@ def is_independent(loop):
     Determine whether a perfectly nested :class:`Loop` is independent.
     """
     if not is_perfectly_nested(loop):
-        raise ValueError("is_independent can only be applied to perfectly nested loops")
+        raise ValueError(
+            "is_independent can only be applied to perfectly nested loops."
+        )
     previous_variables = []
     while isinstance(loop, nodes.Loop):
         previous_variables.append(loop.variable)

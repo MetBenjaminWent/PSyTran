@@ -220,6 +220,17 @@ def test_get_loop_nest_variable_names(parser):
         assert get_loop_nest_variable_names(loop) == indices[i:]
 
 
+def test_is_independent_valueerror(parser):
+    """
+    Test that a :class:`ValueError` is raised when :func:`is_independent` is called
+    with an imperfectly nested :class:`Loop`.
+    """
+    schedule = get_schedule(parser, cs.imperfectly_nested_double_loop_before)
+    expected = "is_independent can only be applied to perfectly nested loops."
+    with pytest.raises(ValueError, match=expected):
+        is_independent(schedule.walk(nodes.Loop)[0])
+
+
 def test_is_not_independent_double_loop(parser):
     """
     Test that :func:`is_independent` correctly identifies a dependent double loop.
