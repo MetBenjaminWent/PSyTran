@@ -13,6 +13,7 @@ __all__ = [
     "is_simple_loop",
     "get_loop_variable_name",
     "get_loop_nest_variable_names",
+    "is_independent",
     "is_parallelisable",
 ]
 
@@ -98,6 +99,27 @@ def get_loop_nest_variable_names(loop):
     """
     assert isinstance(loop, nodes.Loop)
     return [get_loop_variable_name(loop) for loop in loop.walk(nodes.Loop)]
+
+
+def is_independent(loop):
+    """
+    Determine whether a perfectly nested :class:`Loop` is independent.
+    """
+    if not is_perfectly_nested(loop):
+        raise ValueError("is_independent can only be applied to perfectly nested loops")
+    previous_variables = []
+    while isinstance(loop, nodes.Loop):
+        previous_variables.append(loop.variable)
+        loop = loop.loop_body.children[0]
+        if not isinstance(loop, nodes.Loop):
+            return True
+        for bound in (loop.start_expr, loop.stop_expr, loop.step_expr):
+            for ref in bound.walk(nodes.Reference):
+                if ref.symbol in previous_variables:
+                    return False
+                    break
+    else:
+        return True
 
 
 def is_parallelisable(loop):
