@@ -140,15 +140,19 @@ def has_descendent(node, node_type, inclusive=False):
     return bool(get_descendents(node, inclusive=inclusive, node_type=node_type))
 
 
-def has_ancestor(node, node_type, inclusive=False):
+def has_ancestor(node, node_type, name=None, inclusive=False):
     """
     Check whether a node has an ancestor node with a given type.
 
     :arg node: the node to check for ancestors of.
     :arg node_type: the type of node to search for.
     :arg inclusive: if ``True``, the current node is included.
+    :kwarg name: check whether the node has an ancestor with a particular name.
     """
-    return bool(get_ancestors(node, inclusive=inclusive, node_type=node_type))
+    ancestors = get_ancestors(node, inclusive=inclusive, node_type=node_type)
+    if name:
+        return any([ancestor.variable.name == name for ancestor in ancestors])
+    return bool(ancestors)
 
 
 def are_siblings(*nodes):

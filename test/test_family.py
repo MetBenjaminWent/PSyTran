@@ -196,6 +196,18 @@ def test_has_ancestor_descendent(parser):
     assert not has_ancestor(assignment, nodes.Assignment)
 
 
+def test_has_ancestor_name(parser):
+    """
+    Test that :func:`has_ancestor` correctly determine whether nodes have ancestors
+    whose variables have particular names.
+    """
+    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    loop = schedule.walk(nodes.Loop)[0]
+    assignment = schedule.walk(nodes.Assignment)[0]
+    assert has_ancestor(assignment, nodes.Loop, name="i")
+    assert not has_ancestor(assignment, nodes.Loop, name="j")
+
+
 def test_are_siblings(parser):
     """
     Test that :func:`are_siblings` correctly determines whether nodes are
