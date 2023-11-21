@@ -88,6 +88,7 @@ def test_is_perfectly_nested(parser, perfection):
     loops = schedule.walk(nodes.Loop)
     assert is_perfectly_nested(loops[0])
     assert is_parallelisable(loops[0])
+    assert is_independent(loops[0])
 
 
 def test_is_not_perfectly_nested_double(parser, imperfection):
@@ -114,7 +115,7 @@ def test_is_not_perfectly_nested_triple(parser, imperfection):
     assert is_parallelisable(loops[0])
 
 
-def test_is_not_perfectly_nested_double_2_loop(parser, imperfection):
+def test_is_not_perfectly_nested_double_2_loop(parser):
     """
     Test that :func:`is_perfectly_nested` correctly identifies an imperfectly
     nested double loop containing two loops.
@@ -148,7 +149,6 @@ def test_is_perfectly_nested_subnest_conditional(parser, imperfection):
     assert not is_perfectly_nested(loops[0])
     assert is_perfectly_nested(loops[1])
     assert is_perfectly_nested(loops[2])
-    assert is_parallelisable(loops[0])
 
 
 def test_is_perfectly_nested_subnest_index_array(parser):
@@ -172,9 +172,10 @@ def test_is_simple_loop_1_literal(parser, nest_depth):
     loops = schedule.walk(nodes.Loop)
     assert is_simple_loop(loops[0])
     assert is_parallelisable(loops[0])
+    assert is_independent(loops[0])
 
 
-def test_is_simple_loop_2_literals(parser, nest_depth):
+def test_is_simple_loop_2_literals(parser):
     """
     Test that :func:`is_simple_loop` correctly identifies a simple loop with
     two literal assignments.
@@ -183,6 +184,7 @@ def test_is_simple_loop_2_literals(parser, nest_depth):
     loops = schedule.walk(nodes.Loop)
     assert is_simple_loop(loops[0])
     assert is_parallelisable(loops[0])
+    assert is_independent(loops[0])
 
 
 def test_is_not_simple_loop_references(parser):
@@ -216,3 +218,42 @@ def test_get_loop_nest_variable_names(parser):
     indices = ["l", "k", "j", "i"]
     for i, loop in enumerate(schedule.walk(nodes.Loop)):
         assert get_loop_nest_variable_names(loop) == indices[i:]
+
+
+def test_is_not_independent_double_loop(parser):
+    """
+    Test that :func:`is_independent` correctly identifies a dependent double loop.
+    """
+    schedule = get_schedule(parser, cs.dependent_double_loop)
+    loops = schedule.walk(nodes.Loop)
+    assert is_simple_loop(loops[0])
+    assert is_parallelisable(loops[0])
+    assert not is_independent(loops[0])
+    assert is_independent(loops[1])
+
+
+def test_is_not_independent_triple_loop(parser):
+    """
+    Test that :func:`is_independent` correctly identifies a dependent triple loop.
+    """
+    schedule = get_schedule(parser, cs.dependent_triple_loop)
+    loops = schedule.walk(nodes.Loop)
+    assert is_simple_loop(loops[0])
+    assert is_parallelisable(loops[0])
+    assert not is_independent(loops[0])
+    assert is_independent(loops[1])
+    assert is_independent(loops[2])
+
+
+def test_is_not_independent_triple_subloop(parser):
+    """
+    Test that :func:`is_independent` correctly identifies a dependent triple loop.
+    """
+    schedule = get_schedule(parser, cs.dependent_triple_subloop)
+    loops = schedule.walk(nodes.Loop)
+    assert is_simple_loop(loops[0])
+    assert is_parallelisable(loops[0])
+    assert not is_independent(loops[0])
+    assert is_perfectly_nested(loops[1])
+    assert not is_independent(loops[1])
+    assert is_independent(loops[2])

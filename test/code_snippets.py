@@ -347,6 +347,54 @@ serial_loop = """
     END PROGRAM test
     """
 
+dependent_double_loop = """
+    PROGRAM test
+      REAL :: a(10,10)
+      INTEGER :: i
+      INTEGER :: j
+
+      DO i = 1, 10
+        DO j = i, 10
+          a(i,j) = 0
+        END DO
+      END DO
+    END PROGRAM test
+    """
+
+dependent_triple_loop = """
+    PROGRAM test
+      REAL :: a(10,10)
+      INTEGER :: i
+      INTEGER :: j
+      INTEGER :: k
+
+      DO i = 1, 10
+        DO j = i, 10
+          DO k = 1, 10
+            a(i,j,k) = 0
+          END DO
+        END DO
+      END DO
+    END PROGRAM test
+    """
+
+dependent_triple_subloop = """
+    PROGRAM test
+      REAL :: a(10,10)
+      INTEGER :: i
+      INTEGER :: j
+      INTEGER :: k
+
+      DO i = 1, 10
+        DO j = 1, 10
+          DO k = j, 10
+            a(i,j,k) = 0
+          END DO
+        END DO
+      END DO
+    END PROGRAM test
+    """
+
 array_assignment_1d = """
     PROGRAM test
       REAL :: a(10)
