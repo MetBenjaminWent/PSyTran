@@ -32,6 +32,7 @@ def convert_range_loops(schedule):
 
     Wrapper for the :meth:`apply` method of :class:`NemoArrayRange2LoopTrans`.
     """
+    before = str(schedule)
     for r in schedule.walk(nodes.Range):
         try:
             NemoArrayRange2LoopTrans().apply(r)
@@ -41,5 +42,5 @@ def convert_range_loops(schedule):
     # The above will convert a multi-dimensional array range assignment into a
     # loop containing an array range assignment with one fewer dimension. As
     # such, we need to recurse to get rid of all array range assignments.
-    if schedule.walk(nodes.Range):
+    if str(schedule) != before and schedule.walk(nodes.Range):
         convert_range_loops(schedule)
