@@ -25,6 +25,7 @@ implied_array_assignment = {
     3: cs.implied_array_assignment_3d,
 }
 
+
 def test_convert_array_notation(parser, dim):
     """
     Test that :func:`convert_array_notation` successfully converts an implied array
