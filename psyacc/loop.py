@@ -112,12 +112,11 @@ def is_independent(loop):
         previous_variables.append(loop.variable)
         loop = loop.loop_body.children[0]
         if not isinstance(loop, nodes.Loop):
-            return True
+            continue
         for bound in (loop.start_expr, loop.stop_expr, loop.step_expr):
             for ref in bound.walk(nodes.Reference):
                 if ref.symbol in previous_variables:
                     return False
-                    break
     else:
         return True
 
