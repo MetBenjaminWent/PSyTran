@@ -14,7 +14,4 @@ def is_literal_assignment(node):
 
     :arg node: the :class:`Node` in question
     """
-    return (
-        isinstance(node, nodes.Assignment)
-        and isinstance(node.rhs, nodes.Literal)
-    )
+    return isinstance(node, nodes.Assignment) and isinstance(node.rhs, nodes.Literal)
