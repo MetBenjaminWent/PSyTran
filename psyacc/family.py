@@ -4,7 +4,6 @@
 # See LICENSE in the root of the repository for full licensing details.
 
 from psyclone.psyir import nodes
-from psyclone.nemo import NemoKern
 
 __all__ = [
     "get_descendents",
@@ -81,20 +80,12 @@ def get_children(node, node_type=nodes.Node, exclude=()):
     if not isinstance(node_type, tuple):
         issubclass(node_type, nodes.Node)
         node_type = (node_type,)
-    node_type += (NemoKern,)
     children = [
         grandchild
         for child in node.children
         for grandchild in child.children
         if isinstance(grandchild, node_type) and not isinstance(grandchild, exclude)
     ]
-    nemo_kerns = [child for child in children if isinstance(child, NemoKern)]
-    if nemo_kerns:
-        assert len(nemo_kerns) == 1
-        children = nemo_kerns
-    if len(children) == 1 and isinstance(children[0], NemoKern):
-        assert not isinstance(node, NemoKern)  # Avoid infinite loop
-        children = get_children(children[0], node_type=node_type, exclude=exclude)
     return children
 
 
@@ -106,8 +97,6 @@ def get_parent(node):
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
     parent = node.parent.parent
-    if isinstance(parent, NemoKern):
-        parent = parent.parent.parent
     return parent
 
 
