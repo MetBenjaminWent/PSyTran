@@ -8,6 +8,7 @@ from psyclone.psyir import transformations as trans
 from psyclone.domain.nemo.transformations import NemoArrayRange2LoopTrans
 from psyclone.psyir import symbols
 from psyclone.transformations import TransformationError
+from psyacc.family import has_ancestor
 
 __all__ = ["convert_array_notation", "convert_range_loops"]
 
@@ -19,6 +20,8 @@ def convert_array_notation(schedule):
     Wrapper for the :meth:`apply` method of :class:`Reference2ArrayRangeTrans`.
     """
     for reference in schedule.walk(nodes.Reference, stop_type=nodes.Reference):
+        if has_ancestor(reference, nodes.Call):
+            continue
         if isinstance(reference.symbol, symbols.DataSymbol):
             try:
                 trans.Reference2ArrayRangeTrans().apply(reference)

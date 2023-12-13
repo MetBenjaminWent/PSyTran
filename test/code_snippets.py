@@ -458,3 +458,12 @@ double_loop_with_index_array = """
     END DO
   END PROGRAM test
   """
+
+subroutine_call = """
+    PROGRAM test
+      USE my_mod, ONLY: my_subroutine
+      REAL :: a(10)
+
+      CALL my_subroutine(a)
+    END PROGRAM test
+    """

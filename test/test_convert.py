@@ -40,6 +40,19 @@ def test_convert_array_notation(parser, dim):
     assert str(schedule) == str(get_schedule(parser, array_assignment[dim]))
 
 
+def test_avoid_array_notation_subroutine(parser):
+    """
+    Test that :func:`convert_array_notation` does not use array notation in subroutine
+    calls.
+    """
+    schedule = get_schedule(parser, cs.subroutine_call)
+    assert len(schedule.walk(nodes.Call)) == 1
+    assert len(schedule.walk(nodes.Range)) == 0
+    convert_array_notation(schedule)
+    assert len(schedule.walk(nodes.Call)) == 1
+    assert len(schedule.walk(nodes.Range)) == 0
+
+
 def test_convert_range_loops(parser, dim):
     """
     Test that :func:`convert_range_loops` successfully converts an array range
