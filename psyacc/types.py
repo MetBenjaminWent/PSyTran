@@ -4,6 +4,7 @@
 # See LICENSE in the root of the repository for full licensing details.
 
 from psyclone.psyir import nodes
+from psyacc.family import get_descendents
 
 __all__ = ["is_character", "refers_to_character"]
 
@@ -20,4 +21,4 @@ def refers_to_character(node):
     """
     Determine whether a Node contains references to `CHARACTER`s.
     """
-    return any([is_character(ref) for ref in node.walk(nodes.Reference)])
+    return any([is_character(ref) for ref in get_descendents(node, nodes.Reference)])
