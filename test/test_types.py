@@ -15,3 +15,4 @@ def test_is_character(parser):
     schedule = get_schedule(parser, cs.string_assignment)
     references = schedule.walk(nodes.Reference)
     assert is_character(references[0])
+    assert refers_to_character(schedule)
