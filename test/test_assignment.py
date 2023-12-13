@@ -6,7 +6,6 @@
 from psyclone.psyir import nodes
 from psyacc.assignment import is_literal_assignment
 from utils import *
-import pytest
 
 
 def test_is_literal_assignment(parser):
