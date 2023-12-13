@@ -9,3 +9,4 @@ from psyacc.convert import *  # noqa
 from psyacc.directives import *  # noqa
 from psyacc.family import *  # noqa
 from psyacc.loop import *  # noqa
+from psyacc.types import *  # noqa

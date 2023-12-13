@@ -467,3 +467,11 @@ subroutine_call = """
       CALL my_subroutine(a)
     END PROGRAM test
     """
+
+string_assignment = """
+    PROGRAM test
+      CHARACTER(LEN=11) :: c
+
+      c = "hello world"
+    END PROGRAM test
+    """
