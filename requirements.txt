@@ -1,5 +1,5 @@
-collections
 coverage
+dataclasses
 flake8
 parameterized
 pytest
