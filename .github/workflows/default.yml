@@ -7,6 +7,10 @@ on:
   # Enable manual triggering from the Actions tab
   workflow_dispatch:
 
+  # Trigger the workflow every Thursday at 17:00 UTC
+  schedule:
+    - cron: "0 17 * * 4"
+
 jobs:
   build:
     runs-on: ubuntu-latest
