@@ -4,11 +4,20 @@
 # See LICENSE in the root of the repository for full licensing details.
 
 from setuptools import setup
+import sys
+
+if sys.version_info[0] != 3:
+    raise Exception("Requires Python 3.")
+if sys.version_info[1] < 10:
+    raise Exception(
+        "Requires Python 3.10 or newer. "
+        "On VDI you first need to do `module load scitools`."
+    )
 
 setup(
     name="psyacc",
     version="0.1",
-    description="PSy-ACC: tools for automating OpenACC GPU porting efforts using PSyclone",
+    description="PSyACC: Tools for automating OpenACC GPU porting efforts using PSyclone",
     author="Joe Wallwork",
     author_email="joseph.wallwork@metoffice.gov.uk",
     packages=["psyacc"],
