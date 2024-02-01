@@ -12,6 +12,9 @@ install:
 	@python3 -m pip install -r requirements.txt
 	@python3 -m pip install -e .
 	@echo "Done."
+	@echo "Setting up pre-commit..."
+	@pre-commit install
+	@echo "Done."
 
 lint:
 	@echo "Checking lint..."
