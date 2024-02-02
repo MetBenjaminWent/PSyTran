@@ -70,8 +70,7 @@ This will install PSyACC's other requirements, the package itself, and set up
 ## Developer notes
 
 Contributions are very welcome! However, please read PSyACC's
-[Coding Practices](https://github.com/MetOffice/psyacc/wiki/Coding-practices) before
-commencing development work.
+[Coding Practices](./wiki/Coding-practices) before commencing development work.
 
 When you make your first contribution, make sure to add yourself to the
 [contributors list](./CONTRIBUTORS.md).
