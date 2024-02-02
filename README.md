@@ -25,3 +25,9 @@ Amongst other things, PSyACC provides functionality for:
  * applying OpenACC `kernels` and `loop` directives,
  * applying OpenACC clauses to `loop` directives,
  * querying `Node` types.
+
+## Developer notes
+
+Contributions are very welcome! However, please read PSyACC's
+[Coding Practices](https://github.com/MetOffice/psyacc/wiki/Coding-practices) before
+commencing development work.
