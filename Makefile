@@ -7,6 +7,11 @@ all: install
 
 .PHONY: test
 
+setup:
+	@echo "Setting up directory structure..."
+	@mkdir -p demos/outputs
+	@echo "Done."
+
 install:
 	@echo "Installing psyacc..."
 	@python3 -m pip install -r requirements.txt
