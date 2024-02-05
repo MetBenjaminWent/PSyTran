@@ -5,7 +5,7 @@
 
 all: install
 
-.PHONY: test
+.PHONY: demos test
 
 setup:
 	@echo "Setting up directory structure..."
@@ -36,4 +36,9 @@ coverage:
 	@python3 -m coverage erase
 	@python3 -m coverage run --source=psyacc -m pytest -v test
 	@python3 -m coverage html
+	@echo "Done."
+
+demos: setup
+	@echo "Running demos..."
+	@cd demos && make run
 	@echo "Done."
