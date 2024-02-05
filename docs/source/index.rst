@@ -6,8 +6,15 @@
 Welcome to PSyACC's documentation!
 ==================================
 
-For documentation on PSyclone, we refer to its
-`ReadTheDocs documentation <https://psyclone.readthedocs.io/en/stable/>`__.
+PSyACC is a Python package for streamlining OpenACC GPU porting efforts using the
+`PSyclone <https://github.com/stfc/PSyclone>`__ domain-specific compiler and code
+transformation tool.
+
+Before getting started with PSyACC, it is recommended that you familiarise yourself
+with the following background material:
+
+* `OpenACC website <https://www.openacc.org>`__.
+* `PSyclone documentation <https://psyclone.readthedocs.io/en/stable>`__.
 
 .. toctree::
    :maxdepth: 2
