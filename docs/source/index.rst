@@ -16,6 +16,19 @@ with the following background material:
 * `OpenACC website <https://www.openacc.org>`__.
 * `PSyclone documentation <https://psyclone.readthedocs.io/en/stable>`__.
 
+API documentation
+-----------------
+
+The API documentation page shows the objects comprising PSyACC.
+
+.. toctree::
+    :maxdepth: 1
+
+    API documentation <psyacc>
+
+Alternatively, an alphabetical list can be found on the :ref:`index <genindex>` page.
+A :ref:`search engine <search>` is also provided.
+
 Demos
 -----
 
