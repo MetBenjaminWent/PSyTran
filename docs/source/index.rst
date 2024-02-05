@@ -16,6 +16,7 @@ with the following background material:
 * `OpenACC website <https://www.openacc.org>`__.
 * `PSyclone documentation <https://psyclone.readthedocs.io/en/stable>`__.
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+Demos
+-----
+
+[This is where the PSyACC demos will live.]
