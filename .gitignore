@@ -6,6 +6,8 @@ __pycache__/
 
 # Specific files
 .coverage
+docs/source/modules.rst
+docs/source/psyacc.rst
 
 # File extensions
 *.pyc
