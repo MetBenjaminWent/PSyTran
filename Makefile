@@ -5,7 +5,7 @@
 
 all: install
 
-.PHONY: test
+.PHONY: docs test
 
 install:
 	@echo "Updating pip..."
@@ -17,6 +17,11 @@ install:
 	@echo "Done."
 	@echo "Setting up pre-commit..."
 	@pre-commit install
+	@echo "Done."
+
+docs:
+	@echo "Building PSyACC docs..."
+	@cd docs && make html
 	@echo "Done."
 
 lint:
