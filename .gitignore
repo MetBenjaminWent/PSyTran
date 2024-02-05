@@ -1,4 +1,5 @@
 # Directories
+build/
 psyacc.egg-info/
 __pycache__/
 .psyclone/
