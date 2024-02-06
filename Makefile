@@ -5,7 +5,12 @@
 
 all: install
 
-.PHONY: docs test
+.PHONY: demos docs test
+
+setup:
+	@echo "Setting up directory structure..."
+	@mkdir -p demos/outputs
+	@echo "Done."
 
 install:
 	@echo "Updating pip..."
@@ -39,4 +44,9 @@ coverage:
 	@python3 -m coverage erase
 	@python3 -m coverage run --source=psyacc -m pytest -v test
 	@python3 -m coverage html
+	@echo "Done."
+
+demos: setup
+	@echo "Running demos..."
+	@cd demos && make run
 	@echo "Done."

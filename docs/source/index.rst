@@ -32,4 +32,7 @@ A :ref:`search engine <search>` is also provided.
 Demos
 -----
 
-[This is where the PSyACC demos will live.]
+.. toctree::
+    :maxdepth: 1
+
+    PSyclone transformations from the command line <demos/01_psyclone.py>
