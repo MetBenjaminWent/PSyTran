@@ -5,15 +5,23 @@
 
 all: install
 
-.PHONY: test
+.PHONY: docs test
 
 install:
+	@echo "Updating pip..."
+	@python3 -m pip install --upgrade pip
+	@echo "Done."
 	@echo "Installing psyacc..."
 	@python3 -m pip install -r requirements.txt
 	@python3 -m pip install -e .
 	@echo "Done."
 	@echo "Setting up pre-commit..."
 	@pre-commit install
+	@echo "Done."
+
+docs:
+	@echo "Building PSyACC docs..."
+	@cd docs && make html
 	@echo "Done."
 
 lint:

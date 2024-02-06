@@ -1,10 +1,13 @@
 # Directories
+build/
 psyacc.egg-info/
 __pycache__/
 .psyclone/
 
 # Specific files
 .coverage
+docs/source/modules.rst
+docs/source/psyacc.rst
 
 # File extensions
 *.pyc

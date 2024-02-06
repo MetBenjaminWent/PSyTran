@@ -18,7 +18,7 @@ def is_character(node):
 
 
 def refers_to_character(node):
-    """
-    Determine whether a Node contains references to `CHARACTER`s.
+    r"""
+    Determine whether a Node contains references to `CHARACTER`\s.
     """
     return any([is_character(ref) for ref in get_descendents(node, nodes.Reference)])

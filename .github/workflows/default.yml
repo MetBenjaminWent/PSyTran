@@ -48,3 +48,8 @@ jobs:
           python3 -m coverage erase
           python3 -m coverage run --source=psyacc -m pytest -v test
           python3 -m coverage report
+
+      - name: Build docs
+        run: |
+          source /home/runner/work/psyacc-ci/bin/activate
+          make docs
