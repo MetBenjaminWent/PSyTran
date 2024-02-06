@@ -53,3 +53,8 @@ jobs:
         run: |
           source /home/runner/work/psyacc-ci/bin/activate
           make demos
+
+      - name: Build docs
+        run: |
+          source /home/runner/work/psyacc-ci/bin/activate
+          make docs

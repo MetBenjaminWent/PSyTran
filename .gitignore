@@ -1,4 +1,5 @@
 # Directories
+build/
 outputs/
 psyacc.egg-info/
 __pycache__/
@@ -6,6 +7,8 @@ __pycache__/
 
 # Specific files
 .coverage
+docs/source/modules.rst
+docs/source/psyacc.rst
 
 # File extensions
 *.pyc
