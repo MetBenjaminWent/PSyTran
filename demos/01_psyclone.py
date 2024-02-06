@@ -17,7 +17,8 @@
 #
 # The recommended command for this demo is as follows.
 #
-# .. code-block::
+# .. code-block:: bash
+#
 #    psyclone -api nemo --config ../.psyclone/psyclone.cfg \
 #        fortran/empty.F90 --script ./01_psyclone.py -opsy outputs/01_psyclone.F90
 #
@@ -46,6 +47,7 @@
 # the `empty.F90` file, which contains a 'Hello, World!' Fortran program:
 #
 # .. code-block:: fortran
+#
 #    PROGRAM intro
 #      IMPLICIT NONE
 #      PRINT *, "Hello, Fortran World!"
@@ -81,6 +83,7 @@ def trans(psy):
 # Inspecting the output file, it should look something like.
 #
 # .. code-block:: fortran
+#
 #    program intro
 #
 #      PRINT *, "Hello, Fortran World!"
