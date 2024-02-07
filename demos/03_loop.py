@@ -75,17 +75,82 @@ def apply_openacc_loops(psy):
     return psy
 
 
-# *TODO*
+# Now that each loop has a directive, we may iterate over each loop and modify the
+# attributes of the corresponding
+# :py:class:`psyclone.psyir.nodes.acc_directives.ACCLoopDirective` instance. These
+# attributes correspond to whether various clauses are to be used, e.g., ``seq``,
+# ``gang``, ``vector``. Here ``seq`` tells the compiler *not* to parallelise the loop,
+# i.e., run it in serial. The ``gang`` and ``vector`` clauses refer to different ways to
+# parallelise the loop.
 #
+# A good general approach is to apply both ``gang`` and ``vector`` parallelism to outer
+# loops and ``seq`` to all other loops in the nest. We can again use
+# :py:func:`psyacc.loop.is_outer_loop` to query whether a loop is outer-most or not. If
+# so, we can apply both :py:func:`psyacc.loop.apply_loop_gang` and
+# :py:func:`psyacc.loop.apply_loop_vector`. If not, we can apply
+# :py:func:`psyacc.loop.apply_loop_seq`.
+#
+# .. note::
+#
+#    Whilst the OpenACC syntax is to use ``seq`` to denote a serial clause, PSyclone
+#    uses the notation ``sequential`` internally. We don't need to worry about this
+#    when using PSyACC, though, as PSyACC follows the OpenACC standard in this case.
+#
+# ::
 
 
-def trans(psy):
-    psy = apply_openacc_loops(apply_openacc_kernels(psy))
+def insert_clauses(psy):
+    schedule = psy.invokes.invoke_list[0].schedule
+    for loop in schedule.walk(nodes.Loop):
+        if is_outer_loop(loop):
+            apply_loop_gang(loop)
+            apply_loop_vector(loop)
+        else:
+            apply_loop_seq(loop)
     return psy
 
 
+# Finally, we tie everything together by calling the composition of the above functions
+# within the ``trans`` function. ::
+
+
+def trans(psy):
+    return insert_clauses(apply_openacc_loops(apply_openacc_kernels(psy)))
+
+
+# The output in ``output/03_loop-double_loop.F90`` should be as follows.
 #
-# *TODO*
+# .. code-block:: fortran
 #
+#    program double_loop
+#      integer, parameter :: m = 10
+#      integer, parameter :: n = 1000
+#      integer :: i
+#      integer :: j
+#      real, dimension(m,n) :: arr
+#
+#      !$acc kernels
+#      !$acc loop gang vector independent
+#      do j = 1, n, 1
+#        !$acc loop seq
+#        do i = 1, m, 1
+#          arr(i,j) = 0.0
+#        enddo
+#      enddo
+#      !$acc end kernels
+#
+#    end program double_loop
+#
+# Hopefully that is as expected.
+#
+# Exercises
+# ---------
+#
+# 1. Check that we get the same result if we drop the ``apply_openacc_loops`` step.
+#    Convince yourself why this happens by reading the API documentation links
+#    referenced above.
+#
+# 2. Try applying this transformation script to the Fortran source code from the
+#    `previous demo <02_kernels.py.html>`__, i.e., ``fortran/single_loop.py``.
 #
 # This demo can also be viewed as a `Python script <03_loop.py>`__.
