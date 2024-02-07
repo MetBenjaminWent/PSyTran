@@ -36,3 +36,4 @@ Demos
     :maxdepth: 1
 
     PSyclone transformations from the command line <demos/01_psyclone.py>
+    Inserting OpenACC `kernels` directives using PSyACC <demos/02_kernels.py>

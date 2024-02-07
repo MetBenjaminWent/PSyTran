@@ -1,5 +1,5 @@
-# Demo 2: Introduction to PSyACC
-# ==============================
+# Demo 2: Inserting OpenACC `kernels` directives using PSyACC
+# ===========================================================
 #
 # The `previous demo <01_psyclone.html>` showed how to run PSyclone in code
 # transformation mode from the command line, albeit with a trivial transformation
