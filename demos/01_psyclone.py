@@ -67,9 +67,9 @@ def trans(psy):
 
 
 # The transformation function *must* have the name `trans`, *must* have a single
-# argument (the :class:`~.PSy` instance), and *must* return the same :class:`~.PSy`
-# instance, usually modified in some way. In this demo, we don't actually make any
-# modifications and instead just say hello to the user.
+# argument (the :py:class:`psyclone.psyGen.PSy` instance), and *must* return the same
+# :py:class:`psyclone.psyGen.PSy` instance, usually modified in some way. In this demo,
+# we don't actually make any modifications and instead just say hello to the user.
 #
 # Output file
 # -----------

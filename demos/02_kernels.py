@@ -41,8 +41,8 @@ from psyclone.psyir import nodes
 # Recall that the main thing that PSyclone will take from this file is the `trans`
 # function. For demonstration purposes, we decompose it into subfunctions rather than
 # writing out the final result all at once. In each case, follow the signature of
-# `trans` so that the subfunction takes the :class:`~.PSy` instance `psy` as an argument
-# and returns it, with or without modification.
+# `trans` so that the subfunction takes the :py:class:`psyclone.psyGen.PSy` instance
+# `psy` as an argument and returns it, with or without modification.
 #
 # First, let's count how many invokes are associated with `psy`. ::
 
@@ -97,14 +97,14 @@ Schedule
 #
 # Now for the more interesting bit: let's use PSyACC to add some OpenACC syntax. To do
 # this, we need to find the loop within the schedule. This can be achieved using the
-# :meth:`~.Node.walk` method of PSyclone's :class:`~.Node` class. Before taking the
-# first loop found, we check that it was the only one.
+# `walk` method of PSyclone's :py:class:`psyclone.psyir.nodes.node.Node`
+# class. Before taking the first loop found, we check that it was the only one.
 #
 # Having found the loop, we can apply an OpenACC `kernels` directive to it using
-# PSyACC's :func:`apply_kernels_directive`. The effect of this will be to instruct the
-# NVHPC Fortran compiler to run the loop on the GPU. Since we do not provide any other
-# instructions, the compiler is free to optimise the GPU configuration for the GPU
-# device however it sees fit.
+# PSyACC's :py:func:`psyacc.directives.apply_kernels_directive`. The effect of this will
+# be to instruct the NVHPC Fortran compiler to run the loop on the GPU. Since we do not
+# provide any other instructions, the compiler is free to optimise the GPU configuration
+# for the GPU device however it sees fit.
 #
 # .. note::
 #
@@ -140,8 +140,9 @@ Modified schedule
 
 
 # As shown below, the schedule for the main program has now been modified to use OpenACC
-# syntax: there is a :class:`~.ACCKernelsDirective`, which hides the original schedule
-# within it.
+# syntax: there is a
+# :py:class:`psyclone.psyir.nodes.acc_directives.ACCKernelsDirective`, which hides the
+# original schedule within it.
 #
 # .. code-block:: bash
 #
