@@ -32,6 +32,10 @@ A :ref:`search engine <search>` is also provided.
 Demos
 -----
 
+The best way to learn about PSyACC is by doing! The following examples demonstrate how
+to use PSyACC to complete standard OpenACC GPU porting tasks, such as inserting
+directives and clauses.
+
 .. toctree::
     :maxdepth: 1
 
