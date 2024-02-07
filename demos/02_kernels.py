@@ -184,4 +184,7 @@ def trans(psy):
 # main thing to note, though, is that an OpenACC `kernels` directive has indeed been
 # applied to the loop.
 #
+# In the `next demo <03_loop.py.html>`__ we'll build on this and additionally apply
+# an OpenACC `loop` directive, with appropriate clauses.
+#
 # This demo can also be viewed as a `Python script <02_kernels.py>`__.
