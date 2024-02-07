@@ -26,6 +26,13 @@
 #      END DO
 #    END PROGRAM double_loop
 #
+# Use the following command for this demo:
+#
+# .. code-block:: bash
+#
+#    psyclone -api nemo --config ../.psyclone/psyclone.cfg fortran/double_loop.F90 \
+#       --script 03_loop.py -opsy outputs/03_loop-double_loop.F90
+#
 # *TODO*
 #
 # This demo can also be viewed as a `Python script <03_loop.py>`__.
