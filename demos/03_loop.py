@@ -63,13 +63,24 @@ def apply_openacc_kernels(psy):
     return psy
 
 
-#
+# Next, we apply ``loop`` directives to every loop using
+# :py:class:`psyacc.directives.apply_loop_directive`. All this does is mark them out; we
+# will add clauses subsequently. ::
+
+
+def apply_openacc_loops(psy):
+    schedule = psy.invokes.invoke_list[0].schedule
+    for loop in schedule.walk(nodes.Loop):
+        apply_loop_directive(loop)
+    return psy
+
+
 # *TODO*
 #
 
 
 def trans(psy):
-    psy = apply_openacc_kernels(psy)
+    psy = apply_openacc_loops(apply_openacc_kernels(psy))
     return psy
 
 
