@@ -86,9 +86,9 @@ def apply_openacc_loops(psy):
 # A good general approach is to apply both ``gang`` and ``vector`` parallelism to outer
 # loops and ``seq`` to all other loops in the nest. We can again use
 # :py:func:`psyacc.loop.is_outer_loop` to query whether a loop is outer-most or not. If
-# so, we can apply both :py:func:`psyacc.loop.apply_loop_gang` and
-# :py:func:`psyacc.loop.apply_loop_vector`. If not, we can apply
-# :py:func:`psyacc.loop.apply_loop_seq`.
+# so, we can apply both :py:func:`psyacc.clauses.apply_loop_gang` and
+# :py:func:`psyacc.clauses.apply_loop_vector`. If not, we can apply
+# :py:func:`psyacc.clauses.apply_loop_seq`.
 #
 # .. note::
 #
