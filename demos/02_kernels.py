@@ -33,7 +33,7 @@
 #       --script 02_kernels.py -opsy outputs/02_kernels-single_loop.F90
 #
 # We begin by importing from the namespace PSyACC, as well as the ``nodes`` module of
-# PSyclone::
+# PSyclone. ::
 
 from psyacc import *
 from psyclone.psyir import nodes
