@@ -1,7 +1,7 @@
 # Demo 2: Inserting OpenACC `kernels` directives using PSyACC
 # ===========================================================
 #
-# The `previous demo <01_psyclone.html>` showed how to run PSyclone in code
+# The `previous demo <01_psyclone.py.html>`__ showed how to run PSyclone in code
 # transformation mode from the command line, albeit with a trivial transformation
 # function. Here, we use a more interesting transformation function, which makes use of
 # PSyACC.
@@ -183,4 +183,4 @@ def trans(psy):
 # main thing to note, though, is that an OpenACC `kernels` directive has indeed been
 # applied to the loop.
 #
-# This demo can also be viewed as a `Python script <02_kernels.html.py>`.
+# This demo can also be viewed as a `Python script <02_kernels.py>`__.
