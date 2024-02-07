@@ -35,5 +35,6 @@ Demos
 .. toctree::
     :maxdepth: 1
 
-    PSyclone transformations from the command line <demos/01_psyclone.py>
-    Inserting OpenACC `kernels` directives using PSyACC <demos/02_kernels.py>
+    1. Basic usage <demos/01_psyclone.py>
+    2. Inserting kernels directives <demos/02_kernels.py>
+    3. Inserting loop directives <demos/03_loop.py>

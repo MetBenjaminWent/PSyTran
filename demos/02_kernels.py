@@ -1,5 +1,5 @@
-# Demo 2: Inserting OpenACC `kernels` directives using PSyACC
-# ===========================================================
+# Demo 2: Inserting OpenACC ``kernels`` directives using PSyACC
+# =============================================================
 #
 # The `previous demo <01_psyclone.py.html>`__ showed how to run PSyclone in code
 # transformation mode from the command line, albeit with a trivial transformation
@@ -7,7 +7,7 @@
 # PSyACC.
 #
 # We also consider a slightly more interesting snippet of Fortran source, as given in
-# `fortran/single_loop.py`:
+# ``fortran/single_loop.py``:
 #
 # .. code-block:: fortran
 #
@@ -32,19 +32,19 @@
 #    psyclone -api nemo --config ../.psyclone/psyclone.cfg fortran/single_loop.F90 \
 #       --script 02_kernels.py -opsy outputs/02_kernels-single_loop.F90
 #
-# We begin by importing from the namespace PSyACC, as well as the `nodes` module of
+# We begin by importing from the namespace PSyACC, as well as the ``nodes`` module of
 # PSyclone::
 
 from psyacc import *
 from psyclone.psyir import nodes
 
-# Recall that the main thing that PSyclone will take from this file is the `trans`
+# Recall that the main thing that PSyclone will take from this file is the ``trans``
 # function. For demonstration purposes, we decompose it into subfunctions rather than
 # writing out the final result all at once. In each case, follow the signature of
-# `trans` so that the subfunction takes the :py:class:`psyclone.psyGen.PSy` instance
-# `psy` as an argument and returns it, with or without modification.
+# ``trans`` so that the subfunction takes the :py:class:`psyclone.psyGen.PSy` instance
+# ``psy`` as an argument and returns it, with or without modification.
 #
-# First, let's count how many invokes are associated with `psy`. ::
+# First, let's count how many invokes are associated with ``psy``. ::
 
 
 def count_invokes(psy):
@@ -97,10 +97,10 @@ Schedule
 #
 # Now for the more interesting bit: let's use PSyACC to add some OpenACC syntax. To do
 # this, we need to find the loop within the schedule. This can be achieved using the
-# `walk` method of PSyclone's :py:class:`psyclone.psyir.nodes.node.Node`
+# ``walk`` method of PSyclone's :py:class:`psyclone.psyir.nodes.node.Node`
 # class. Before taking the first loop found, we check that it was the only one.
 #
-# Having found the loop, we can apply an OpenACC `kernels` directive to it using
+# Having found the loop, we can apply an OpenACC ``kernels`` directive to it using
 # PSyACC's :py:func:`psyacc.directives.apply_kernels_directive`. The effect of this will
 # be to instruct the NVHPC Fortran compiler to run the loop on the GPU. Since we do not
 # provide any other instructions, the compiler is free to optimise the GPU configuration
@@ -108,11 +108,11 @@ Schedule
 #
 # .. note::
 #
-#    The key difference between the `kernels` and `parallel` directives is that with the
-#    former the compiler will apply all clauses explicitly mentioned in the code, plus
-#    any others it sees fit, whereas with the latter it will only use the clauses
-#    provided. That is, `parallel` gives more control to the user whereas `kernels`
-#    gives more freedom to the compiler.
+#    The key difference between the ``kernels`` and ``parallel`` directives is that
+#    with the former the compiler will apply all clauses explicitly mentioned in the
+#    code, plus any others it sees fit, whereas with the latter it will only use the
+#    clauses provided. That is, ``parallel`` gives more control to the user whereas
+#    ``kernels`` gives more freedom to the compiler.
 #
 # ::
 
@@ -153,8 +153,8 @@ Modified schedule
 #    ACCKernelsDirective[]
 #    End NemoInvokeSchedule
 #
-# Finally, we bring all of the above together by combining them in the `trans` function
-# which will be picked up by PSyclone. ::
+# Finally, we bring all of the above together by combining them in the ``trans``
+# function which will be picked up by PSyclone. ::
 
 
 def trans(psy):
@@ -162,7 +162,7 @@ def trans(psy):
 
 
 # Running the PSyclone command given at the beginning of this demo should generate the
-# output `02_kernels-single_loop.F90` with contents as follows:
+# output ``02_kernels-single_loop.F90`` with contents as follows:
 #
 # .. code-block:: fortran
 #
@@ -181,10 +181,10 @@ def trans(psy):
 #
 # Again, the source code has clearly been reformatted to use lower case and increased
 # spacing. (A few other reformattings are left as a spot-the-difference exercise!) The
-# main thing to note, though, is that an OpenACC `kernels` directive has indeed been
+# main thing to note, though, is that an OpenACC ``kernels`` directive has indeed been
 # applied to the loop.
 #
 # In the `next demo <03_loop.py.html>`__ we'll build on this and additionally apply
-# an OpenACC `loop` directive, with appropriate clauses.
+# an OpenACC ``loop`` directive, with appropriate clauses.
 #
 # This demo can also be viewed as a `Python script <02_kernels.py>`__.

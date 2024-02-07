@@ -1,14 +1,14 @@
-# Demo 3: Applying OpenACC `loop` directives using PSyACC
-# ===========================================================
+# Demo 3: Applying OpenACC ``loop`` directives using PSyACC
+# =========================================================
 #
-# The `previous demo <02_kernels.py.html>`__ showed how to insert OpenACC `kernels`
+# The `previous demo <02_kernels.py.html>`__ showed how to insert OpenACC ``kernels``
 # directives into Fortran code using PSyACC. Such directives mark out sections of code
 # to be run on the GPU. In this demo, we additionally apply OpenACC `loop` directives to
 # loops within such regions and configure them with different clauses.
 #
 # We have already considered a single loop for zeroing every entry of an array. Now
 # consider the extension of this to the case of a 2D array, of dimension
-# :math:`10\times1000`, as given in `fortran/double_loop.py`:
+# :math:`10\times1000`, as given in ``fortran/double_loop.py``:
 #
 # .. code-block:: fortran
 #
