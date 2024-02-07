@@ -30,3 +30,7 @@ copy_demos:
 %: Makefile copy_demos
 	@$(SPHINXAPIDOC) -o "$(SOURCEDIR)" "$(PSYACC)"
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+clean:
+	rm -rf $(BUILDDIR)
+	rm -rf $(SOURCEDIR)/demos
