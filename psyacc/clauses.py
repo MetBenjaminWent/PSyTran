@@ -3,14 +3,13 @@
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
-from psyclone.psyir import nodes
 from psyacc.directives import (
     has_kernels_directive,
     apply_loop_directive,
     has_loop_directive,
 )
 from psyacc.family import get_ancestors
-from psyacc.loop import _check_loop, is_perfectly_nested
+from psyacc.loop import _check_loop, loop2nest, is_perfectly_nested
 
 __all__ = [
     "has_seq_clause",
@@ -139,8 +138,8 @@ def apply_loop_collapse(loop, collapse=None):
     :kwarg collapse: the number of loops to collapse
     """
     _prepare_loop_for_clause(loop)
+    loops = loop2nest(loop)
     if collapse is None:
-        loops = loop.walk(nodes.Loop)
         while len(loops) > 0:
             if is_perfectly_nested(loops):
                 return apply_loop_collapse(loop, len(loops))
@@ -149,9 +148,8 @@ def apply_loop_collapse(loop, collapse=None):
         raise TypeError(f"Expected an integer, not '{type(collapse)}'.")
     if collapse <= 1:
         raise ValueError(f"Expected an integer greater than one, not {collapse}.")
-    if len(loop.walk(nodes.Loop)) < collapse:
+    if len(loops) < collapse:
         raise ValueError(
-            f"Cannot apply collapse to {collapse} loops in a sub-nest of"
-            f" {len(loop.walk(nodes.Loop))}."
+            f"Cannot apply collapse to {collapse} loops in a sub-nest of {len(loops)}."
         )
     loop.parent.parent._collapse = collapse

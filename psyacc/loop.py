@@ -129,7 +129,7 @@ def is_simple_loop(loop):
     return is_perfectly_nested(loop) and all(
         [
             isinstance(child, nodes.Assignment) and child.walk(nodes.Literal)
-            for child in get_children(loop.walk(nodes.Loop)[-1])
+            for child in get_children(loop2nest(loop)[-1])
         ]
     )
 
@@ -148,7 +148,7 @@ def get_loop_nest_variable_names(loop):
     contains.
     """
     assert isinstance(loop, nodes.Loop)
-    return [get_loop_variable_name(loop) for loop in loop.walk(nodes.Loop)]
+    return [get_loop_variable_name(loop) for loop in loop2nest(loop)]
 
 
 def is_independent(loop):
