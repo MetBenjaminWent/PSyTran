@@ -96,3 +96,9 @@ def trans(psy):
 # reason for this is that PSyclone always reformats code according to its in-built
 # preferences. In particular, it will use lower case (for the most part) and will
 # put a single blank line at the start and end of any program.
+#
+# In the `next demo <02_kernels.py.html>`__, we'll develop a more interesting
+# transformation script, which uses PSyACC to apply an OpenACC `kernels` directive to a
+# simple loop.
+#
+# This demo can also be viewed as a `Python script <02_psyclone.py>`__.
