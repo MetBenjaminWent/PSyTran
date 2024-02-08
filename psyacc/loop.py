@@ -59,17 +59,18 @@ def nest2loop(loops):
     return outer_loop
 
 
-def is_perfectly_nested(outer_loop):
-    """
-    Determine whether a loop (sub)nest is perfectly nested, i.e., each level except
-    the deepest contains only the next loop.
+def is_perfectly_nested(outer_loop_or_subnest):
+    r"""
+    Determine whether a loop (sub)nest is perfect, i.e., each level except the deepest
+    contains only the next loop.
 
     Note that we ignore nodes of type :class:`Literal` and :class:`Reference`.
 
-    Note also that `outer_loop` is not necessarily the outer-most loop in the schedule,
-    just the outer-most loop in the sub-nest.
+    Note also that the 'outer loop' here is not necessarily the outer-most loop in the
+    schedule, just the outer-most loop in the sub-nest.
 
-    :arg outer_loop: the outer loop of the sub-nest
+    :arg outer_loop_or_subnest: either the outer loop of the subnest, or the subnest as
+        a list of :class:`Loop`\s
     """
     exclude = (
         nodes.literal.Literal,
@@ -79,10 +80,11 @@ def is_perfectly_nested(outer_loop):
     )
 
     # Switch for input type
-    if isinstance(outer_loop, Iterable):
-        subnest = outer_loop
+    if isinstance(outer_loop_or_subnest, Iterable):
+        subnest = outer_loop_or_subnest
         outer_loop = nest2loop(subnest)
     else:
+        outer_loop = outer_loop_or_subnest
         subnest = loop2nest(outer_loop)
 
     def intersect(list1, list2):
@@ -92,7 +94,7 @@ def is_perfectly_nested(outer_loop):
         """
         return [item for item in list1 if item in list2]
 
-    # Check whether the subnest is perfect
+    # Check whether the subnest is perfect by checking each level in turn
     loops, non_loops = [outer_loop], []
     while len(loops) > 0:
         non_loops = get_children(loops[0], exclude=exclude)
