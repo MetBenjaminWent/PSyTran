@@ -47,31 +47,37 @@ def is_perfectly_nested(outer_loop):
 
     :arg outer_loop: the outer loop of the sub-nest
     """
-    if isinstance(outer_loop, Iterable):
-        match_loops = outer_loop
-        outer_loop = match_loops[0]
-        for loop in match_loops:
-            _check_loop(loop)
-            assert loop in outer_loop.walk(nodes.Loop)
-    else:
-        _check_loop(outer_loop)
-        match_loops = outer_loop.walk(nodes.Loop)
     exclude = (
         nodes.literal.Literal,
         nodes.reference.Reference,
         nodes.Loop,
         nodes.IntrinsicCall,
     )
+
+    # Validate input
+    if isinstance(outer_loop, Iterable):
+        # If the input is a list, extract the outer_loop and subnest
+        subnest = outer_loop
+        outer_loop = subnest[0]
+        for loop in subnest:
+            _check_loop(loop)
+            assert loop in outer_loop.walk(nodes.Loop)
+    else:
+        # Otherwise, set the subnest to all descendents of the input
+        _check_loop(outer_loop)
+        subnest = outer_loop.walk(nodes.Loop)
+
+    # Check whether the subnest is perfect
     loops, non_loops = [outer_loop], []
     while len(loops) > 0:
         non_loops = get_children(loops[0], exclude=exclude)
         loops = get_children(loops[0], node_type=nodes.Loop)
-        loops = [node for node in loops if node in match_loops]
+        loops = [node for node in loops if node in subnest]
         if len(loops) == 1 and not non_loops:
             continue
         if not loops:
             for node in non_loops:
-                if [loop for loop in node.walk(nodes.Loop) if loop in match_loops]:
+                if [loop for loop in node.walk(nodes.Loop) if loop in subnest]:
                     break
             else:
                 continue
