@@ -5,11 +5,13 @@
 
 from psyclone.psyir import nodes
 from psyclone.psyir.tools import DependencyTools
-from psyacc.family import get_children
+from psyacc.family import get_children, get_descendents
 from collections.abc import Iterable
 
 __all__ = [
     "is_outer_loop",
+    "loop2nest",
+    "nest2loop",
     "is_perfectly_nested",
     "is_simple_loop",
     "get_loop_variable_name",
@@ -35,6 +37,28 @@ def is_outer_loop(loop):
     return loop.ancestor(nodes.Loop) is None
 
 
+def loop2nest(loop):
+    """
+    Given a loop, obtain all of its descendent loops (inclusive).
+
+    :arg loop: the :class:`Loop`
+    """
+    _check_loop(loop)
+    return get_descendents(loop, node_type=nodes.Loop, inclusive=True)
+
+
+def nest2loop(loops):
+    """
+    Given a loop nest, validate it and return its outer-most loop.
+    """
+    outer_loop = loops[0]
+    descendents = loop2nest(outer_loop)
+    for loop in loops:
+        _check_loop(loop)
+        assert loop in descendents
+    return outer_loop
+
+
 def is_perfectly_nested(outer_loop):
     """
     Determine whether a loop (sub)nest is perfectly nested, i.e., each level except
@@ -54,25 +78,19 @@ def is_perfectly_nested(outer_loop):
         nodes.IntrinsicCall,
     )
 
+    # Switch for input type
+    if isinstance(outer_loop, Iterable):
+        subnest = outer_loop
+        outer_loop = nest2loop(subnest)
+    else:
+        subnest = loop2nest(outer_loop)
+
     def intersect(list1, list2):
         r"""
         Return the intersection of two lists. Note that we cannot use the in-built set
         intersection functionality because PSyclone :class:`Node`\s are not hashable.
         """
         return [item for item in list1 if item in list2]
-
-    # Validate input
-    if isinstance(outer_loop, Iterable):
-        # If the input is a list, extract the outer_loop and subnest
-        subnest = outer_loop
-        outer_loop = subnest[0]
-        for loop in subnest:
-            _check_loop(loop)
-            assert loop in outer_loop.walk(nodes.Loop)
-    else:
-        # Otherwise, set the subnest to all descendents of the input
-        _check_loop(outer_loop)
-        subnest = outer_loop.walk(nodes.Loop)
 
     # Check whether the subnest is perfect
     loops, non_loops = [outer_loop], []
