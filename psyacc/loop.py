@@ -54,11 +54,11 @@ def is_perfectly_nested(loop):
     while len(loops) > 0:
         non_loops = get_children(loops[0], exclude=exclude)
         loops = get_children(loops[0], node_type=nodes.Loop)
-        if not (
-            (len(loops) == 1 and not non_loops)
-            or (not loops and not (any([node.walk(nodes.Loop) for node in non_loops])))
-        ):
-            return False
+        if len(loops) == 1 and not non_loops:
+            continue
+        if not loops and not (any([node.walk(nodes.Loop) for node in non_loops])):
+            continue
+        return False
     else:
         return True
 
