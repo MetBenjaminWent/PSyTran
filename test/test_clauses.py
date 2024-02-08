@@ -30,6 +30,11 @@ def imperfection(request):
     return request.param
 
 
+imperfectly_nested_triple_loop1 = {
+    "before": cs.imperfectly_nested_triple_loop1_before,
+    "after": cs.imperfectly_nested_triple_loop1_after,
+}
+
 imperfectly_nested_triple_loop2 = {
     "before": cs.imperfectly_nested_triple_loop2_before,
     "after": cs.imperfectly_nested_triple_loop2_after,
@@ -282,3 +287,18 @@ def test_apply_loop_collapse_imperfect_default(parser, imperfection):
     assert has_collapse_clause(loops[0])
     assert has_collapse_clause(loops[1])
     assert not has_collapse_clause(loops[2])
+
+
+def test_apply_loop_collapse_imperfect_default_error(parser, imperfection):
+    """
+    Test calling that :func:`apply_loop_collapse` without a `collapse` keyword argument
+    raises an error when applied to an imperfect nest for which the outer loop is not
+    itself in a perfect nest.
+    """
+    schedule = get_schedule(parser, imperfectly_nested_triple_loop1[imperfection])
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_directive(loops[0])
+    expected = "Expected an integer greater than one, not 1."
+    with pytest.raises(ValueError, match=expected):
+        apply_loop_collapse(loops[0])
