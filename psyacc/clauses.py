@@ -10,7 +10,7 @@ from psyacc.directives import (
     has_loop_directive,
 )
 from psyacc.family import get_ancestors
-from psyacc.loop import _check_loop
+from psyacc.loop import _check_loop, is_perfectly_nested
 
 __all__ = [
     "has_seq_clause",
@@ -129,16 +129,22 @@ def has_collapse_clause(loop):
     return False
 
 
-def apply_loop_collapse(loop, collapse):
+def apply_loop_collapse(loop, collapse=None):
     """
     Apply a ``collapse`` clause to a loop.
 
     A ``loop`` directive is also applied, if it does not already exist.
 
     :arg loop: the :class:`Loop` node.
-    :arg collapse: the number of loops to collapse
+    :kwarg collapse: the number of loops to collapse
     """
     _prepare_loop_for_clause(loop)
+    if collapse is None:
+        loops = loop.walk(nodes.Loop)
+        while len(loops) > 0:
+            if is_perfectly_nested(loops):
+                return apply_loop_collapse(loop, len(loops))
+            loops.pop(-1)
     if not isinstance(collapse, int):
         raise TypeError(f"Expected an integer, not '{type(collapse)}'.")
     if collapse <= 1:
