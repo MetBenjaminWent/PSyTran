@@ -6,6 +6,7 @@
 from psyclone.psyir import nodes
 from psyclone.psyir.tools import DependencyTools
 from psyacc.family import get_children
+from collections.abc import Iterable
 
 __all__ = [
     "is_outer_loop",
@@ -34,31 +35,43 @@ def is_outer_loop(loop):
     return loop.ancestor(nodes.Loop) is None
 
 
-def is_perfectly_nested(loop):
+def is_perfectly_nested(outer_loop):
     """
-    Determine whether a loop nest is perfectly nested, i.e., each level except
+    Determine whether a loop (sub)nest is perfectly nested, i.e., each level except
     the deepest contains only the next loop.
 
     Note that we ignore nodes of type :class:`Literal` and :class:`Reference`.
 
-    :arg loop: the outer-most loop of the nest
+    Note also that `outer_loop` is not necessarily the outer-most loop in the schedule,
+    just the outer-most loop in the sub-nest.
+
+    :arg outer_loop: the outer loop of the sub-nest
     """
-    _check_loop(loop)
+    if isinstance(outer_loop, Iterable):
+        match_loops = outer_loop
+        outer_loop = match_loops[0]
+        for loop in match_loops:
+            _check_loop(loop)
+            assert loop in outer_loop.walk(nodes.Loop)
+    else:
+        _check_loop(outer_loop)
+        match_loops = outer_loop.walk(nodes.Loop)
     exclude = (
         nodes.literal.Literal,
         nodes.reference.Reference,
         nodes.Loop,
         nodes.IntrinsicCall,
     )
-    loops, non_loops = [loop], []
+    loops, non_loops = [outer_loop], []
     while len(loops) > 0:
         non_loops = get_children(loops[0], exclude=exclude)
         loops = get_children(loops[0], node_type=nodes.Loop)
+        loops = [node for node in loops if node in match_loops]
         if len(loops) == 1 and not non_loops:
             continue
         if not loops:
             for node in non_loops:
-                if node.walk(nodes.Loop):
+                if [loop for loop in node.walk(nodes.Loop) if loop in match_loops]:
                     break
             else:
                 continue
