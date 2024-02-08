@@ -79,14 +79,21 @@ def is_perfectly_nested(outer_loop):
     while len(loops) > 0:
         non_loops = get_children(loops[0], exclude=exclude)
         loops = intersect(get_children(loops[0], node_type=nodes.Loop), subnest)
+
+        # Case of one loop and no non-loops: this nest level is okay
         if len(loops) == 1 and not non_loops:
             continue
+
+        # Case of no loops and no non-loops with descendents outside of the subnest:
+        # this nest level is also okay
         if not loops:
             for node in non_loops:
                 if intersect(node.walk(nodes.Loop), subnest):
                     break
             else:
                 continue
+
+        # Otherwise, the nest level is not okay
         return False
     else:
         return True
