@@ -22,5 +22,6 @@ html_static_path = ["_static"]
 
 # Configure Intersphinx
 intersphinx_mapping = {
-    "psyclone": ("https://psyclone.readthedocs.io/en/stable/", None),
+    "psyclone": ("https://psyclone.readthedocs.io/en/stable", None),
+    "python": ("https://docs.python.org/3", None),
 }

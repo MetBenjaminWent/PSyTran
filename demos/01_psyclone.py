@@ -11,9 +11,9 @@
 #    directly.
 #
 # Instead of running the demos as Python scripts, they should be passed as
-# transformation scripts for the `psyclone` command. This command will only be available
-# if you have activated the virtual environment you used to install PSyclone (and
-# PSyACC).
+# transformation scripts for the ``psyclone`` command. This command will only be
+# available if you have activated the virtual environment you used to install PSyclone
+# (and PSyACC).
 #
 # The recommended command for this demo is as follows.
 #
@@ -27,24 +27,24 @@
 # API
 # ---
 #
-# PSyclone requires an API to be chosen, i.e., the argument following `-api`. Since
+# PSyclone requires an API to be chosen, i.e., the argument following ``-api``. Since
 # PSyACC is designed to use the NEMO API, we should always choose this.
 #
 # Configuration
 # -------------
 #
-# PSyclone also requires a configuration file, i.e., the argument following `--config`.
-# For simplicity, we provide the path to a copy of the default one used by PSyclone.
-# However, feel free to change this or modify it, as desired. Editing the PSyclone
-# configuration is considered advanced, so don't worry about this if you are only just
-# getting started.
+# PSyclone also requires a configuration file, i.e., the argument following
+# ``--config``. For simplicity, we provide the path to a copy of the default one used
+# by PSyclone. However, feel free to change this or modify it, as desired. Editing the
+# PSyclone configuration is considered advanced, so don't worry about this if you are
+# only just getting started.
 #
 # Source code
 # -----------
 #
 # Perhaps the most important argument is the source code to be transformed. We provide
 # a subdirectory of Fortran source to be used for this purpose. In this demo, we parse
-# the `empty.F90` file, which contains a 'Hello, World!' Fortran program:
+# the ``empty.F90`` file, which contains a 'Hello, World!' Fortran program:
 #
 # .. code-block:: fortran
 #
@@ -56,7 +56,7 @@
 # Transformation script
 # ---------------------
 #
-# The `--script` option is used to provide a transformation script to PSyclone. In this
+# The ``--script`` option is used to provide a transformation script to PSyclone. In this
 # case, we pass this file. Given that almost all of it is comprised of comments, the
 # only Python syntax that will be picked up is the following. ::
 
@@ -66,7 +66,7 @@ def trans(psy):
     return psy
 
 
-# The transformation function *must* have the name `trans`, *must* have a single
+# The transformation function *must* have the name ``trans``, *must* have a single
 # argument (the :py:class:`psyclone.psyGen.PSy` instance), and *must* return the same
 # :py:class:`psyclone.psyGen.PSy` instance, usually modified in some way. In this demo,
 # we don't actually make any modifications and instead just say hello to the user.
@@ -76,8 +76,8 @@ def trans(psy):
 #
 # Finally, we need to tell PSyclone where to write the transformed code to. If this
 # argument is dropped then the transformed code will be printed to screen. We pass the
-# location `outputs/01_psyclone-empty.F90` as a combination of the names of the source
-# file and transformation script. The `output` subdirectory should have been created
+# location ``outputs/01_psyclone-empty.F90`` as a combination of the names of the source
+# file and transformation script. The ``output`` subdirectory should have been created
 # when you installed PSyACC.
 #
 # Inspecting the output file, it should look something like.
@@ -98,7 +98,7 @@ def trans(psy):
 # put a single blank line at the start and end of any program.
 #
 # In the `next demo <02_kernels.py.html>`__, we'll develop a more interesting
-# transformation script, which uses PSyACC to apply an OpenACC `kernels` directive to a
-# simple loop.
+# transformation script, which uses PSyACC to apply an OpenACC ``kernels`` directive to
+# a simple loop.
 #
 # This demo can also be viewed as a `Python script <02_psyclone.py>`__.

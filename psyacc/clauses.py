@@ -50,6 +50,8 @@ def apply_loop_seq(loop):
     """
     Apply a ``seq`` clause to a loop.
 
+    A ``loop`` directive is also applied, if it does not already exist.
+
     :arg loop: the :class:`Loop` node.
     """
     _prepare_loop_for_clause(loop)
@@ -73,6 +75,8 @@ def apply_loop_gang(loop):
     """
     Apply a ``gang`` clause to a loop.
 
+    A ``loop`` directive is also applied, if it does not already exist.
+
     :arg loop: the :class:`Loop` node.
     """
     _prepare_loop_for_clause(loop)
@@ -93,6 +97,8 @@ def has_vector_clause(loop):
 def apply_loop_vector(loop):
     """
     Apply a ``vector`` clause to a loop.
+
+    A ``loop`` directive is also applied, if it does not already exist.
 
     :arg loop: the :class:`Loop` node.
     """
@@ -126,6 +132,8 @@ def has_collapse_clause(loop):
 def apply_loop_collapse(loop, collapse):
     """
     Apply a ``collapse`` clause to a loop.
+
+    A ``loop`` directive is also applied, if it does not already exist.
 
     :arg loop: the :class:`Loop` node.
     :arg collapse: the number of loops to collapse
