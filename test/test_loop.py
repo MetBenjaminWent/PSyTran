@@ -40,15 +40,15 @@ imperfectly_nested_double_loop = {
 }
 
 imperfectly_nested_triple_loop = {
-    "before": cs.imperfectly_nested_triple_loop_before,
-    "after": cs.imperfectly_nested_triple_loop_after,
-    "if": cs.imperfectly_nested_triple_loop_with_if,
+    "before": cs.imperfectly_nested_triple_loop1_before,
+    "after": cs.imperfectly_nested_triple_loop1_after,
+    "if": cs.imperfectly_nested_triple_loop1_with_if,
 }
 
 conditional_perfectly_nested_subloop = {
-    "before": cs.imperfectly_nested_triple_loop_before_with_if,
-    "after": cs.imperfectly_nested_triple_loop_after_with_if,
-    "if": cs.conditional_imperfectly_nested_triple_loop,
+    "before": cs.imperfectly_nested_triple_loop1_before_with_if,
+    "after": cs.imperfectly_nested_triple_loop1_after_with_if,
+    "if": cs.conditional_imperfectly_nested_triple_loop1,
 }
 
 

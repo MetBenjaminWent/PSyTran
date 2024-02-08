@@ -221,7 +221,7 @@ imperfectly_nested_double_loop_after = """
     END PROGRAM test
     """
 
-imperfectly_nested_triple_loop_with_if = """
+imperfectly_nested_triple_loop1_with_if = """
     PROGRAM test
       REAL :: a(10,10,10)
       INTEGER :: i
@@ -240,7 +240,7 @@ imperfectly_nested_triple_loop_with_if = """
     END PROGRAM test
     """
 
-imperfectly_nested_triple_loop_before = """
+imperfectly_nested_triple_loop1_before = """
     PROGRAM test
       REAL :: a(10,10,10)
       INTEGER :: i
@@ -258,7 +258,7 @@ imperfectly_nested_triple_loop_before = """
     END PROGRAM test
     """
 
-imperfectly_nested_triple_loop_after = """
+imperfectly_nested_triple_loop1_after = """
     PROGRAM test
       REAL :: a(10,10,10)
       INTEGER :: i
@@ -276,7 +276,7 @@ imperfectly_nested_triple_loop_after = """
     END PROGRAM test
     """
 
-imperfectly_nested_triple_loop_before_with_if = """
+imperfectly_nested_triple_loop1_before_with_if = """
     PROGRAM test
       REAL :: a(10,10,10)
       INTEGER :: i
@@ -296,7 +296,7 @@ imperfectly_nested_triple_loop_before_with_if = """
     END PROGRAM test
     """
 
-imperfectly_nested_triple_loop_after_with_if = """
+imperfectly_nested_triple_loop1_after_with_if = """
     PROGRAM test
       REAL :: a(10,10,10)
       INTEGER :: i
@@ -316,7 +316,7 @@ imperfectly_nested_triple_loop_after_with_if = """
     END PROGRAM test
     """
 
-conditional_imperfectly_nested_triple_loop = """
+conditional_imperfectly_nested_triple_loop1 = """
     PROGRAM test
       REAL :: a(10,10,10)
       INTEGER :: i
@@ -331,6 +331,42 @@ conditional_imperfectly_nested_triple_loop = """
             END DO
           END DO
         END IF
+      END DO
+    END PROGRAM test
+    """
+
+imperfectly_nested_triple_loop2_before = """
+    PROGRAM test
+      REAL :: a(10,10,10)
+      INTEGER :: i
+      INTEGER :: j
+      INTEGER :: k
+
+      DO k = 1, 10
+        DO j = 1, 10
+          a(1,j,k) = 1.0
+          DO i = 1, 10
+            a(i,j,k) = 0.0
+          END DO
+        END DO
+      END DO
+    END PROGRAM test
+    """
+
+imperfectly_nested_triple_loop2_after = """
+    PROGRAM test
+      REAL :: a(10,10,10)
+      INTEGER :: i
+      INTEGER :: j
+      INTEGER :: k
+
+      DO k = 1, 10
+        DO j = 1, 10
+          DO i = 1, 10
+            a(i,j,k) = 0.0
+          END DO
+          a(1,j,k) = 1.0
+        END DO
       END DO
     END PROGRAM test
     """
