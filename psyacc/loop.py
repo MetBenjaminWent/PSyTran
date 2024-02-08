@@ -54,6 +54,13 @@ def is_perfectly_nested(outer_loop):
         nodes.IntrinsicCall,
     )
 
+    def intersect(list1, list2):
+        r"""
+        Return the intersection of two lists. Note that we cannot use the in-built set
+        intersection functionality because PSyclone :class:`Node`\s are not hashable.
+        """
+        return [item for item in list1 if item in list2]
+
     # Validate input
     if isinstance(outer_loop, Iterable):
         # If the input is a list, extract the outer_loop and subnest
@@ -71,13 +78,12 @@ def is_perfectly_nested(outer_loop):
     loops, non_loops = [outer_loop], []
     while len(loops) > 0:
         non_loops = get_children(loops[0], exclude=exclude)
-        loops = get_children(loops[0], node_type=nodes.Loop)
-        loops = [node for node in loops if node in subnest]
+        loops = intersect(get_children(loops[0], node_type=nodes.Loop), subnest)
         if len(loops) == 1 and not non_loops:
             continue
         if not loops:
             for node in non_loops:
-                if [loop for loop in node.walk(nodes.Loop) if loop in subnest]:
+                if intersect(node.walk(nodes.Loop), subnest):
                     break
             else:
                 continue
