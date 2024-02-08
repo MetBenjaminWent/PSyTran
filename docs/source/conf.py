@@ -9,10 +9,18 @@ copyright = "Crown Copyright, Met Office"
 author = "Joseph Wallwork"
 
 # General configuration
-extensions = ["sphinx.ext.autodoc"]
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
+]
 templates_path = ["_templates"]
 exclude_patterns = []
 
 # Options for HTML output
 html_theme = "alabaster"
 html_static_path = ["_static"]
+
+# Configure Intersphinx
+intersphinx_mapping = {
+    "psyclone": ("https://psyclone.readthedocs.io/en/stable/", None),
+}
