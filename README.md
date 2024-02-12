@@ -26,46 +26,9 @@ Amongst other things, PSyACC provides functionality for:
  * applying OpenACC clauses to `loop` directives,
  * querying `Node` types.
 
-## Installation
+## General user instructions
 
-To install PSyACC, you will first need a Python virtual environment, with Python version
-at least 3.10. (On the Met Office VDI system, you can load an up-to-date Python version
-with `module load scitools`.) Check your Python version with `python3 --version`.
-
-Starting from the location where you want to install PSyACC and PSyclone (such as
-`${HOME}/software`), first create your virtual environment:
-```
-python3 -m venv psyclone-venv
-```
-and activate it
-```
-source psyclone-venv/bin/activate
-```
-You can check the Python version again as a sanity check (and `module unload scitools`
-if you wish).
-
-Next, clone both of the repositories:
-```
-git clone git@github.com:stfc/PSyclone.git
-git clone git@github.com:MetOffice/psyacc.git
-```
-Note that you will need to use the SSH protocol because PSyACC is not publicly visible.
-
-Install PSyclone either by following the instructions in that repository or simply with
-```
-cd PSyclone
-python3 -m pip install -r requirements.txt
-python3 -m pip install -e .
-cd ..
-```
-
-To install PSyACC, navigate to the repository and use the `make install` recipe:
-```
-cd psyacc
-make install
-```
-This will install PSyACC's other requirements, the package itself, and set up
-[`pre-commit`](https://pre-commit.com) hooks for consistent formatting.
+Instructions for installing PSyACC and building and viewing its documentation may be found on the [Wiki page](https://github.com/MetOffice/psyacc/wiki#general-users).
 
 ## Developer notes
 
