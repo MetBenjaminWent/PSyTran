@@ -8,11 +8,6 @@ import sys
 
 if sys.version_info[0] != 3:
     raise Exception("Requires Python 3.")
-if sys.version_info[1] < 10:
-    raise Exception(
-        "Requires Python 3.10 or newer. "
-        "On VDI you first need to do `module load scitools`."
-    )
 
 setup(
     name="psyacc",

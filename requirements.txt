@@ -1,5 +1,6 @@
 black
 coverage
+dataclasses
 flake8
 parameterized
 pre-commit
