@@ -34,3 +34,7 @@ copy_demos:
 clean:
 	rm -rf $(BUILDDIR)
 	rm -rf $(SOURCEDIR)/demos
+	rm -rf $(SOURCEDIR)/_static
+	rm -rf $(SOURCEDIR)/_templates
+	rm -f $(SOURCEDIR)/modules.rst
+	rm -f $(SOURCEDIR)/psyacc.rst
