@@ -79,7 +79,7 @@ def trans(psy):
 # Running this example using the PSyclone command above, you should find that the output
 # in ``outputs/04_collapse-double_loop.F90`` reads as follows.
 #
-# .. code-block::
+# .. code-block:: fortran
 #
 #    program double_loop
 #      integer, parameter :: m = 10
