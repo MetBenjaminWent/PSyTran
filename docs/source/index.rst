@@ -42,3 +42,4 @@ directives and clauses.
     1. Basic usage <demos/01_psyclone.py>
     2. Inserting kernels directives <demos/02_kernels.py>
     3. Inserting loop directives <demos/03_loop.py>
+    4. Adding collapse clauses <demos/04_collapse.py>

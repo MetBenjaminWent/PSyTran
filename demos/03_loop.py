@@ -153,4 +153,7 @@ def trans(psy):
 # 2. Try applying this transformation script to the Fortran source code from the
 #    `previous demo <02_kernels.py.html>`__, i.e., ``fortran/single_loop.py``.
 #
+# In the `next demo <04_collapse.py.html>`__, we'll revisit the double loop example and
+# apply a different clause type: the ``collapse`` clause.
+#
 # This demo can also be viewed as a `Python script <03_loop.py>`__.
