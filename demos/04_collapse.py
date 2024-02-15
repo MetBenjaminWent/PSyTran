@@ -106,4 +106,16 @@ def trans(psy):
 #
 #    end program double_loop
 #
+# Exercises
+# ---------
+#
+# 1. Recall the exercise in the `previous demo <03_loop.py.html>`__ where we applied
+#    the transformation script to ``single_loop.F90``, as opposed to
+#    ``double_loop.F90``. What happens when we do that in this case?
+#
+# 2. What happens when the ``collapse`` argument is removed from the call to
+#    :func:`psyacc.clauses.apply_loop_collapse` in the transformation script? Is the
+#    output the same? Convince yourself that everything is working as expected by
+#    reading the `API documentation <../psyacc.html>`__.
+#
 # This demo can also be viewed as a `Python script <04_collapse.py>`__.
