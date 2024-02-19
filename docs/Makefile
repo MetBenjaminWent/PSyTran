@@ -19,11 +19,20 @@ help:
 .PHONY: apidoc help Makefile
 
 copy_demos:
+	# Copy demo Python scripts into docs source
 	install -d $(SOURCEDIR)/demos
 	cp -r ../demos/*.py $(SOURCEDIR)/demos
+	# Render Python scripts as ReStructuredText using Pylit
 	for f in $(SOURCEDIR)/demos/*.py; do pylit -c $$f; mv $$f.txt $$f.rst; done
+	# Copy demo Python scripts into docs build
 	install -d $(BUILDDIR)/html/demos
 	cp source/demos/*.py $(BUILDDIR)/html/demos
+	# Copy demo Fortran scripts into docs source
+	install -d $(SOURCEDIR)/demos/fortran
+	cp -r ../demos/fortran/*.F90 $(SOURCEDIR)/demos/fortran
+	# Copy demo Fortran scripts into docs build
+	install -d $(BUILDDIR)/html/demos/fortran
+	cp -r source/demos/fortran/*.F90 $(BUILDDIR)/html/demos/fortran
 
 # Catch-all target: route all unknown targets to Sphinx using the new "make mode"
 # option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
