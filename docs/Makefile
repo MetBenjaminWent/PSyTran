@@ -19,24 +19,23 @@ help:
 .PHONY: apidoc help Makefile
 
 copy_demos:
-	# Copy demo Python scripts into docs source
+	# Copy demo Python and Bash scripts into source and build directories
 	install -d $(SOURCEDIR)/demos
 	cp -r ../demos/*.py $(SOURCEDIR)/demos
-	# Render Python scripts as ReStructuredText using Pylit
-	for f in $(SOURCEDIR)/demos/*.py; do pylit -c $$f; mv $$f.txt $$f.rst; done
-	# Copy demo Python scripts into docs build
+	cp -r ../demos/*.sh $(SOURCEDIR)/demos
 	install -d $(BUILDDIR)/html/demos
 	cp source/demos/*.py $(BUILDDIR)/html/demos
-	# Copy demo Fortran scripts into docs source
+	cp source/demos/*.sh $(BUILDDIR)/html/demos
+	# Render Python scripts as ReStructuredText using Pylit
+	for f in $(SOURCEDIR)/demos/*.py; do pylit -c $$f; mv $$f.txt $$f.rst; done
+	# Copy demo Fortran scripts into source and build directories
 	install -d $(SOURCEDIR)/demos/fortran
 	cp -r ../demos/fortran/*.F90 $(SOURCEDIR)/demos/fortran
-	# Copy demo Fortran scripts into docs build
 	install -d $(BUILDDIR)/html/demos/fortran
 	cp -r source/demos/fortran/*.F90 $(BUILDDIR)/html/demos/fortran
-	# Copy demo outputs into docs source
+	# Copy demo outputs into source and build directories
 	install -d $(SOURCEDIR)/demos/outputs
 	cp -r ../demos/outputs/*.F90 $(SOURCEDIR)/demos/outputs
-	# Copy demo outputs into docs build
 	install -d $(BUILDDIR)/html/demos/outputs
 	cp -r source/demos/outputs/*.F90 $(BUILDDIR)/html/demos/outputs
 
