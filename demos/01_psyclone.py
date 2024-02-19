@@ -36,21 +36,13 @@
 # PSyclone requires an API to be chosen, i.e., the argument following ``-api``. Since
 # PSyACC is designed to use the NEMO API, we should always choose this.
 #
-# Configuration
-# -------------
-#
-# PSyclone also requires a configuration file, i.e., the argument following
-# ``--config``. For simplicity, we provide the path to a copy of the default one used
-# by PSyclone. However, feel free to change this or modify it, as desired. Editing the
-# PSyclone configuration is considered advanced, so don't worry about this if you are
-# only just getting started.
-#
 # Source code
 # -----------
 #
-# Perhaps the most important argument is the source code to be transformed. We provide
-# a subdirectory of Fortran source to be used for this purpose. In this demo, we parse
-# the ``empty.F90`` file, which contains a 'Hello, World!' Fortran program:
+# Perhaps the most important argument is the source code to be transformed (the last
+# argument). We provide a subdirectory of Fortran source to be used for this purpose.
+# In this demo, we parse the ``empty.F90`` file, which contains a 'Hello, World!'
+# Fortran program:
 #
 # .. literalinclude:: fortran/empty.F90
 #    :language: fortran
