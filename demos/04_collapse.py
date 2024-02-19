@@ -74,25 +74,8 @@ def trans(psy):
 # Running this example using the PSyclone command above, you should find that the output
 # in ``outputs/04_collapse-double_loop.F90`` reads as follows.
 #
-# .. code-block:: fortran
-#
-#    program double_loop
-#      integer, parameter :: m = 10
-#      integer, parameter :: n = 1000
-#      integer :: i
-#      integer :: j
-#      real, dimension(m,n) :: arr
-#
-#      !$acc kernels
-#      !$acc loop independent collapse(2)
-#      do j = 1, n, 1
-#        do i = 1, m, 1
-#          arr(i,j) = 0.0
-#        enddo
-#      enddo
-#      !$acc end kernels
-#
-#    end program double_loop
+# .. literalinclude:: outputs/04_collapse-double_loop.F90
+#    :language: fortran
 #
 # Exercises
 # ---------

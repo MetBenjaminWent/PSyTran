@@ -162,27 +162,8 @@ def trans(psy):
 # Running the PSyclone command given at the beginning of this demo should generate the
 # output ``02_kernels-single_loop.F90`` with contents as follows:
 #
-# .. code-block:: fortran
-#
-#    module single_loop_mod
-#      implicit none
-#      public
-#
-#      contains
-#      subroutine single_loop(n, arr)
-#        integer, intent(in) :: n
-#        real, dimension(n), intent(out) :: arr
-#        integer :: i
-#
-#        !$acc kernels
-#        do i = 1, n, 1
-#          arr(i) = 0.0
-#        enddo
-#        !$acc end kernels
-#
-#      end subroutine single_loop
-#
-#    end module single_loop_mod
+# .. literalinclude:: outputs/02_kernels-single_loop.F90
+#    :language: fortran
 #
 # Again, the source code has clearly been reformatted to use lower case and increased
 # spacing. (A few other reformattings are left as a spot-the-difference exercise!) The

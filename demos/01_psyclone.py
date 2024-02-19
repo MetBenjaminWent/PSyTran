@@ -86,13 +86,8 @@ def trans(psy):
 #
 # Inspecting the output file, it should look something like.
 #
-# .. code-block:: fortran
-#
-#    program intro
-#
-#      PRINT *, "Hello, Fortran World!"
-#
-#    end program intro
+# .. literalinclude:: outputs/01_psyclone-empty.F90
+#    :language: fortran
 #
 # It doesn't take a Fortran expert to realise that running the two versions of the
 # Fortran code will give the same result. However, the files themselves are slightly

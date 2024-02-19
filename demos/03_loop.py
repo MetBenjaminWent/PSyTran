@@ -115,33 +115,8 @@ def trans(psy):
 
 # The output in ``output/03_loop-double_loop.F90`` should be as follows.
 #
-# .. code-block:: fortran
-#
-#    module double_loop_mod
-#      implicit none
-#      public
-#
-#      contains
-#      subroutine double_loop(m, n, arr)
-#        integer, intent(in) :: m
-#        integer, intent(in) :: n
-#        real, dimension(m,n), intent(out) :: arr
-#        integer :: i
-#        integer :: j
-#
-#        !$acc kernels
-#        !$acc loop gang vector independent
-#        do j = 1, n, 1
-#          !$acc loop seq
-#          do i = 1, m, 1
-#            arr(i,j) = 0.0
-#          enddo
-#        enddo
-#        !$acc end kernels
-#
-#      end subroutine double_loop
-#
-#    end module double_loop_mod
+# .. literalinclude:: outputs/03_loop-double_loop.F90
+#    :language: fortran
 #
 # Hopefully that is as expected.
 #
