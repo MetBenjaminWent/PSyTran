@@ -25,6 +25,22 @@ def collapse(request):
     return request.param
 
 
+@pytest.fixture(params=["before", "after"])
+def imperfection(request):
+    return request.param
+
+
+imperfectly_nested_triple_loop1 = {
+    "before": cs.imperfectly_nested_triple_loop1_before,
+    "after": cs.imperfectly_nested_triple_loop1_after,
+}
+
+imperfectly_nested_triple_loop2 = {
+    "before": cs.imperfectly_nested_triple_loop2_before,
+    "after": cs.imperfectly_nested_triple_loop2_after,
+}
+
+
 def test_prepare_loop_for_clause_no_kernels_error(parser):
     """
     Test that a :class:`ValueError` is raised when
@@ -240,3 +256,49 @@ def test_apply_loop_collapse_subnest(parser, collapse):
         assert has_collapse_clause(loops[i])
     assert loops[-1].parent.parent.collapse is None
     assert not has_collapse_clause(loops[-1])
+
+
+def test_apply_loop_collapse_default(parser, collapse):
+    """
+    Test that :func:`apply_loop_collapse` is correctly applied to a full nest when the
+    `collapse` keyword argument is not used.
+    """
+    schedule = get_schedule(parser, simple_loop_code(collapse))
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_directive(loops[0])
+    apply_loop_collapse(loops[0])
+    assert loops[0].parent.parent.collapse == collapse
+    for loop in loops:
+        assert has_collapse_clause(loop)
+
+
+def test_apply_loop_collapse_imperfect_default(parser, imperfection):
+    """
+    Test that :func:`apply_loop_collapse` is correctly applied to an imperfect nest when
+    the `collapse` keyword argument is not used.
+    """
+    schedule = get_schedule(parser, imperfectly_nested_triple_loop2[imperfection])
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_directive(loops[0])
+    apply_loop_collapse(loops[0])
+    assert loops[0].parent.parent.collapse == 2
+    assert has_collapse_clause(loops[0])
+    assert has_collapse_clause(loops[1])
+    assert not has_collapse_clause(loops[2])
+
+
+def test_apply_loop_collapse_imperfect_default_error(parser, imperfection):
+    """
+    Test calling that :func:`apply_loop_collapse` without a `collapse` keyword argument
+    raises an error when applied to an imperfect nest for which the outer loop is not
+    itself in a perfect nest.
+    """
+    schedule = get_schedule(parser, imperfectly_nested_triple_loop1[imperfection])
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_directive(loops[0])
+    expected = "Expected an integer greater than one, not 1."
+    with pytest.raises(ValueError, match=expected):
+        apply_loop_collapse(loops[0])

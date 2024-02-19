@@ -5,10 +5,13 @@
 
 from psyclone.psyir import nodes
 from psyclone.psyir.tools import DependencyTools
-from psyacc.family import get_children
+from psyacc.family import get_children, get_descendents
+from collections.abc import Iterable
 
 __all__ = [
     "is_outer_loop",
+    "loop2nest",
+    "nest2loop",
     "is_perfectly_nested",
     "is_simple_loop",
     "get_loop_variable_name",
@@ -34,37 +37,84 @@ def is_outer_loop(loop):
     return loop.ancestor(nodes.Loop) is None
 
 
-def _perfect_nest_iter(loops, non_loops):
+def loop2nest(loop):
     """
-    Determine whether a nest iteration is perfect.
+    Given a loop, obtain all of its descendent loops (inclusive).
+
+    :arg loop: the :class:`Loop`
     """
-    return (len(loops) == 1 and not non_loops) or (
-        not loops and not (any([node.walk(nodes.Loop) for node in non_loops]))
-    )
+    _check_loop(loop)
+    return get_descendents(loop, node_type=nodes.Loop, inclusive=True)
 
 
-def is_perfectly_nested(loop):
+def nest2loop(loops):
     """
-    Determine whether a loop nest is perfectly nested, i.e., each level except
-    the deepest contains only the next loop.
+    Given a loop nest, validate it and return its outer-most loop.
+    """
+    outer_loop = loops[0]
+    descendents = loop2nest(outer_loop)
+    for loop in loops:
+        _check_loop(loop)
+        assert loop in descendents
+    return outer_loop
+
+
+def is_perfectly_nested(outer_loop_or_subnest):
+    r"""
+    Determine whether a loop (sub)nest is perfect, i.e., each level except the deepest
+    contains only the next loop.
 
     Note that we ignore nodes of type :class:`Literal` and :class:`Reference`.
 
-    :arg loop: the outer-most loop of the nest
+    Note also that the 'outer loop' here is not necessarily the outer-most loop in the
+    schedule, just the outer-most loop in the sub-nest.
+
+    :arg outer_loop_or_subnest: either the outer loop of the subnest, or the subnest as
+        a list of :class:`Loop`\s
     """
-    _check_loop(loop)
     exclude = (
         nodes.literal.Literal,
         nodes.reference.Reference,
         nodes.Loop,
         nodes.IntrinsicCall,
     )
-    loops, non_loops = [loop], []
+
+    # Switch for input type
+    if isinstance(outer_loop_or_subnest, Iterable):
+        subnest = outer_loop_or_subnest
+        outer_loop = nest2loop(subnest)
+    else:
+        outer_loop = outer_loop_or_subnest
+        subnest = loop2nest(outer_loop)
+
+    def intersect(list1, list2):
+        r"""
+        Return the intersection of two lists. Note that we cannot use the in-built set
+        intersection functionality because PSyclone :class:`Node`\s are not hashable.
+        """
+        return [item for item in list1 if item in list2]
+
+    # Check whether the subnest is perfect by checking each level in turn
+    loops, non_loops = [outer_loop], []
     while len(loops) > 0:
         non_loops = get_children(loops[0], exclude=exclude)
-        loops = get_children(loops[0], node_type=nodes.Loop)
-        if not _perfect_nest_iter(loops, non_loops):
-            return False
+        loops = intersect(get_children(loops[0], node_type=nodes.Loop), subnest)
+
+        # Case of one loop and no non-loops: this nest level is okay
+        if len(loops) == 1 and not non_loops:
+            continue
+
+        # Case of no loops and no non-loops with descendents outside of the subnest:
+        # this nest level is also okay
+        if not loops:
+            for node in non_loops:
+                if intersect(node.walk(nodes.Loop), subnest):
+                    break
+            else:
+                continue
+
+        # Otherwise, the nest level is not okay
+        return False
     else:
         return True
 
@@ -79,7 +129,7 @@ def is_simple_loop(loop):
     return is_perfectly_nested(loop) and all(
         [
             isinstance(child, nodes.Assignment) and child.walk(nodes.Literal)
-            for child in get_children(loop.walk(nodes.Loop)[-1])
+            for child in get_children(loop2nest(loop)[-1])
         ]
     )
 
@@ -98,7 +148,7 @@ def get_loop_nest_variable_names(loop):
     contains.
     """
     assert isinstance(loop, nodes.Loop)
-    return [get_loop_variable_name(loop) for loop in loop.walk(nodes.Loop)]
+    return [get_loop_variable_name(loop) for loop in loop2nest(loop)]
 
 
 def is_independent(loop):
