@@ -119,6 +119,28 @@ def trans(psy):
 #
 # Hopefully that is as expected.
 #
+# Again, let's try compiling the PSyclone-generated program. This time, the required
+# command is
+#
+# .. code-block:: bash
+#
+#    nvfortran -c -acc=gpu -Minfo=accel outputs/03_loop-double_loop.F90
+#
+# The expected compiler output is
+#
+# .. code-block::
+#
+#    double_loop:
+#         13, Generating implicit copyout(arr(:m,:n)) [if not already present]
+#         15, Loop is parallelizable
+#         17, Generating NVIDIA GPU code
+#             15, !$acc loop gang, vector(128) ! blockidx%x threadidx%x
+#             17, !$acc loop seq
+#
+# Again, we see implicit use of the ``copyout`` clause. The loop on line 15 is
+# determined to be parallelisable, and is parallelised in the way that we instructed,
+# with a vector length of 128.
+#
 # Exercises
 # ---------
 #
