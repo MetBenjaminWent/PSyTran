@@ -11,3 +11,7 @@ run:
 	./02_kernels.sh
 	./03_loop.sh
 	./04_collapse.sh
+
+clean:
+	rm -rf __pycache__/
+	rm -f *.mod *.o
