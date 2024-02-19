@@ -3,16 +3,24 @@
 ! This file is part of PSyACC and is released under the BSD 3-Clause license.
 ! See LICENSE in the root of the repository for full licensing details.
 
-PROGRAM double_loop
-  IMPLICIT NONE
-  INTEGER, PARAMETER :: m = 10
-  INTEGER, PARAMETER :: n = 1000
-  INTEGER :: i, j
-  REAL :: arr(m,n)
+MODULE double_loop_mod
 
-  DO j = 1, n
-    DO i = 1, m
-      arr(i,j) = 0.0
-    END DO
-  END DO
-END PROGRAM double_loop
+  IMPLICIT NONE
+
+  CONTAINS
+
+    SUBROUTINE double_loop(m, n, arr)
+      IMPLICIT NONE
+      INTEGER, INTENT(IN) :: m
+      INTEGER, INTENT(IN) :: n
+      REAL, INTENT(OUT) :: arr(m,n)
+      INTEGER :: i, j
+    
+      DO j = 1, n
+        DO i = 1, m
+          arr(i,j) = 0.0
+        END DO
+      END DO
+    END SUBROUTINE double_loop
+
+END MODULE double_loop_mod

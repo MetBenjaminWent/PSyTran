@@ -14,24 +14,32 @@
 # loops within such regions and configure them with different clauses.
 #
 # We have already considered a single loop for zeroing every entry of an array. Now
-# consider the extension of this to the case of a 2D array, of dimension
-# :math:`10\times1000`, as given in ``fortran/double_loop.py``:
+# consider the extension of this to the case of a 2D array, as given in
+# ``fortran/double_loop.py``:
 #
 # .. code-block:: fortran
 #
-#    PROGRAM double_loop
-#      IMPLICIT NONE
-#      INTEGER, PARAMETER :: m = 10
-#      INTEGER, PARAMETER :: n = 1000
-#      INTEGER :: i, j
-#      REAL :: arr(m,n)
+#    MODULE double_loop_mod
 #
-#      DO j = 1, n
-#        DO i = 1, m
-#          arr(i,j) = 0.0
-#        END DO
-#      END DO
-#    END PROGRAM double_loop
+#      IMPLICIT NONE
+#
+#      CONTAINS
+#
+#        SUBROUTINE double_loop(m, n, arr)
+#          IMPLICIT NONE
+#          INTEGER, INTENT(IN) :: m
+#          INTEGER, INTENT(IN) :: n
+#          REAL, INTENT(OUT) :: arr(m,n)
+#          INTEGER :: i, j
+#
+#          DO j = 1, n
+#            DO i = 1, m
+#              arr(i,j) = 0.0
+#            END DO
+#          END DO
+#        END SUBROUTINE double_loop
+#
+#    END MODULE double_loop_mod
 #
 # Use the following command for this demo:
 #
@@ -129,24 +137,31 @@ def trans(psy):
 #
 # .. code-block:: fortran
 #
-#    program double_loop
-#      integer, parameter :: m = 10
-#      integer, parameter :: n = 1000
-#      integer :: i
-#      integer :: j
-#      real, dimension(m,n) :: arr
+#    module double_loop_mod
+#      implicit none
+#      public
 #
-#      !$acc kernels
-#      !$acc loop gang vector independent
-#      do j = 1, n, 1
-#        !$acc loop seq
-#        do i = 1, m, 1
-#          arr(i,j) = 0.0
+#      contains
+#      subroutine double_loop(m, n, arr)
+#        integer, intent(in) :: m
+#        integer, intent(in) :: n
+#        real, dimension(m,n), intent(out) :: arr
+#        integer :: i
+#        integer :: j
+#
+#        !$acc kernels
+#        !$acc loop gang vector independent
+#        do j = 1, n, 1
+#          !$acc loop seq
+#          do i = 1, m, 1
+#            arr(i,j) = 0.0
+#          enddo
 #        enddo
-#      enddo
-#      !$acc end kernels
+#        !$acc end kernels
 #
-#    end program double_loop
+#      end subroutine double_loop
+#
+#    end module double_loop_mod
 #
 # Hopefully that is as expected.
 #
