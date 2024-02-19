@@ -79,11 +79,14 @@ def trans(psy):
 # Exercises
 # ---------
 #
-# 1. Recall the exercise in the `previous demo <03_loop.py.html>`__ where we applied
+# 1. Following the same approach as in the previous demos, check that you can compile
+#    the PSyclone-generated Fortran file. Does the compiler output look reasonable?
+#
+# 2. Recall the exercise in the `previous demo <03_loop.py.html>`__ where we applied
 #    the transformation script to ``single_loop.F90``, as opposed to
 #    ``double_loop.F90``. What happens when we do that in this case?
 #
-# 2. What happens when the ``collapse`` argument is removed from the call to
+# 3. What happens when the ``collapse`` argument is removed from the call to
 #    :func:`psyacc.clauses.apply_loop_collapse` in the transformation script? Is the
 #    output the same? Convince yourself that everything is working as expected by
 #    reading the `API documentation <../psyacc.html>`__.
