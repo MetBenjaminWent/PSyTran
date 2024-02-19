@@ -23,10 +23,9 @@
 #
 # Use the following command for this demo:
 #
-# .. code-block:: bash
-#
-#    psyclone -api nemo --config ../.psyclone/psyclone.cfg fortran/double_loop.F90 \
-#       --script 03_loop.py -opsy outputs/03_loop-double_loop.F90
+# .. literalinclude:: 03_loop.sh
+#    :language: bash
+#    :lines: 8-
 #
 # Again, begin by importing from the namespace PSyACC, as well as the ``nodes`` module
 # of PSyclone. ::

@@ -25,10 +25,9 @@
 #
 # In this case, the recommended command is
 #
-# .. code-block:: bash
-#
-#    psyclone -api nemo --config ../.psyclone/psyclone.cfg fortran/single_loop.F90 \
-#       --script 02_kernels.py -opsy outputs/02_kernels-single_loop.F90
+# .. literalinclude:: 02_kernels.sh
+#    :language: bash
+#    :lines: 8-
 #
 # We begin by importing from the namespace PSyACC, as well as the ``nodes`` module of
 # PSyclone. ::

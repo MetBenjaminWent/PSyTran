@@ -36,10 +36,9 @@
 #
 # The PSyclone command for this demo is as follows.
 #
-# .. code-block:: bash
-#
-#    psyclone -api nemo --config ../.psyclone/psyclone.cfg fortran/double_loop.F90 \
-#       --script 04_collapse.py -opsy outputs/04_collapse-double_loop.F90
+# .. literalinclude:: 04_collapse.sh
+#    :language: bash
+#    :lines: 8-
 #
 # Again, begin by importing from the namespace PSyACC, as well as the ``nodes`` module
 # of PSyclone. ::
