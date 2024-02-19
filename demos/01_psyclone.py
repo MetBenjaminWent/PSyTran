@@ -53,12 +53,9 @@
 # a subdirectory of Fortran source to be used for this purpose. In this demo, we parse
 # the ``empty.F90`` file, which contains a 'Hello, World!' Fortran program:
 #
-# .. code-block:: fortran
-#
-#    PROGRAM intro
-#      IMPLICIT NONE
-#      PRINT *, "Hello, Fortran World!"
-#    END PROGRAM intro
+# .. literalinclude:: fortran/empty.F90
+#    :language: fortran
+#    :lines: 6-
 #
 # Transformation script
 # ---------------------

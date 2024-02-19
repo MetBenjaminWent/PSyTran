@@ -16,24 +16,9 @@
 # We also consider a slightly more interesting snippet of Fortran source, as given in
 # ``fortran/single_loop.py``:
 #
-# .. code-block:: fortran
-#
-#    MODULE single_loop_mod
-#
-#      CONTAINS
-#
-#        SUBROUTINE single_loop(n, arr)
-#          IMPLICIT NONE
-#          INTEGER, INTENT(IN) :: n
-#          REAL, INTENT(OUT) :: arr(n)
-#          INTEGER :: i
-#
-#          DO i = 1, n
-#            arr(i) = 0.0
-#          END DO
-#        END SUBROUTINE single_loop
-#
-#    END MODULE single_loop_mod
+# .. literalinclude:: fortran/single_loop.F90
+#    :language: fortran
+#    :lines: 6-
 #
 # That is, we have a subroutine involving a loop over an array of floating point numbers
 # and just set each entry to zero.

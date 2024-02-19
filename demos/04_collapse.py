@@ -16,21 +16,9 @@
 #
 # Consider again the same double loop example:
 #
-# .. code-block:: fortran
-#
-#    PROGRAM double_loop
-#      IMPLICIT NONE
-#      INTEGER, PARAMETER :: m = 10
-#      INTEGER, PARAMETER :: n = 1000
-#      INTEGER :: i, j
-#      REAL :: arr(m,n)
-#
-#      DO j = 1, n
-#        DO i = 1, m
-#          arr(i,j) = 0.0
-#        END DO
-#      END DO
-#    END PROGRAM double_loop
+# .. literalinclude:: fortran/double_loop.F90
+#    :language: fortran
+#    :lines: 6-
 #
 # Convince yourself that combining the ``j`` and ``i`` loops as follows would have the
 # same result.

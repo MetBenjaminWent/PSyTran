@@ -17,29 +17,9 @@
 # consider the extension of this to the case of a 2D array, as given in
 # ``fortran/double_loop.py``:
 #
-# .. code-block:: fortran
-#
-#    MODULE double_loop_mod
-#
-#      IMPLICIT NONE
-#
-#      CONTAINS
-#
-#        SUBROUTINE double_loop(m, n, arr)
-#          IMPLICIT NONE
-#          INTEGER, INTENT(IN) :: m
-#          INTEGER, INTENT(IN) :: n
-#          REAL, INTENT(OUT) :: arr(m,n)
-#          INTEGER :: i, j
-#
-#          DO j = 1, n
-#            DO i = 1, m
-#              arr(i,j) = 0.0
-#            END DO
-#          END DO
-#        END SUBROUTINE double_loop
-#
-#    END MODULE double_loop_mod
+# .. literalinclude:: fortran/double_loop.F90
+#    :language: fortran
+#    :lines: 6-
 #
 # Use the following command for this demo:
 #
