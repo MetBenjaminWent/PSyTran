@@ -27,7 +27,7 @@
 # .. code-block:: bash
 #
 #    psyclone -api nemo --config ../.psyclone/psyclone.cfg \
-#        fortran/empty.F90 --script ./01_psyclone.py -opsy outputs/01_psyclone.F90
+#        fortran/empty.F90 --script ./01_psyclone.py -opsy outputs/01_psyclone-empty.F90
 #
 # There is a lot to unpack here! Let's work through the arguments one by one.
 #
