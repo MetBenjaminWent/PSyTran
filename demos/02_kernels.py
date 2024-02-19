@@ -18,19 +18,25 @@
 #
 # .. code-block:: fortran
 #
-#    PROGRAM single_loop
-#      IMPLICIT NONE
-#      INTEGER, PARAMETER :: n = 10
-#      INTEGER :: i
-#      REAL :: arr(n)
+#    MODULE single_loop_mod
 #
-#      DO i = 1, n
-#        arr(i) = 0.0
-#      END DO
-#    END PROGRAM single_loop
+#      CONTAINS
 #
-# That is, we loop over an array of floating point numbers and just set each entry to
-# zero.
+#        SUBROUTINE single_loop(n, arr)
+#          IMPLICIT NONE
+#          INTEGER, INTENT(IN) :: n
+#          REAL, INTENT(OUT) :: arr(n)
+#          INTEGER :: i
+#
+#          DO i = 1, n
+#            arr(i) = 0.0
+#          END DO
+#        END SUBROUTINE single_loop
+#
+#    END MODULE single_loop_mod
+#
+# That is, we have a subroutine involving a loop over an array of floating point numbers
+# and just set each entry to zero.
 #
 # In this case, the recommended command is
 #
@@ -173,18 +179,25 @@ def trans(psy):
 #
 # .. code-block:: fortran
 #
-#    program single_loop
-#      integer, parameter :: n = 10
-#      integer :: i
-#      real, dimension(n) :: arr
+#    module single_loop_mod
+#      implicit none
+#      public
 #
-#      !$acc kernels
-#      do i = 1, n, 1
-#        arr(i) = 0.0
-#      enddo
-#      !$acc end kernels
+#      contains
+#      subroutine single_loop(n, arr)
+#        integer, intent(in) :: n
+#        real, dimension(n), intent(out) :: arr
+#        integer :: i
 #
-#    end program single_loop
+#        !$acc kernels
+#        do i = 1, n, 1
+#          arr(i) = 0.0
+#        enddo
+#        !$acc end kernels
+#
+#      end subroutine single_loop
+#
+#    end module single_loop_mod
 #
 # Again, the source code has clearly been reformatted to use lower case and increased
 # spacing. (A few other reformattings are left as a spot-the-difference exercise!) The
