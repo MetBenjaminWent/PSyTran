@@ -24,7 +24,7 @@ install:
 	@pre-commit install
 	@echo "Done."
 
-docs:
+docs: demos
 	@echo "Building PSyACC docs..."
 	@cd docs && make html
 	@echo "Done."

@@ -33,6 +33,12 @@ copy_demos:
 	# Copy demo Fortran scripts into docs build
 	install -d $(BUILDDIR)/html/demos/fortran
 	cp -r source/demos/fortran/*.F90 $(BUILDDIR)/html/demos/fortran
+	# Copy demo outputs into docs source
+	install -d $(SOURCEDIR)/demos/outputs
+	cp -r ../demos/outputs/*.F90 $(SOURCEDIR)/demos/outputs
+	# Copy demo outputs into docs build
+	install -d $(BUILDDIR)/html/demos/outputs
+	cp -r source/demos/outputs/*.F90 $(BUILDDIR)/html/demos/outputs
 
 # Catch-all target: route all unknown targets to Sphinx using the new "make mode"
 # option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
