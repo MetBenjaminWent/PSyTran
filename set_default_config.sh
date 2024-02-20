@@ -5,6 +5,20 @@
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
-PSYCLONE_DIR=$(python3 -c "import psyclone; print(psyclone.__path__[0])")/../..
 mkdir -p ${VIRTUAL_ENV}/share/psyclone
-cp ${PSYCLONE_DIR}/config/psyclone.cfg ${VIRTUAL_ENV}/share/psyclone
+PSYCLONE_CFG=$(python3 -c """
+import psyclone
+import os
+for path in psyclone.__path__:
+    cfg = os.path.join(path, '..', '..', 'config', 'psyclone.cfg')
+    if os.path.exists(cfg):
+        print(cfg)
+        break
+""")
+if [ -z ${PSYCLONE_CFG} ]
+then
+        echo "Could not find a 'psyclone.cfg' file to use as default."
+        exit 1
+else
+        cp ${PSYCLONE_CFG} ${VIRTUAL_ENV}/share/psyclone
+fi
