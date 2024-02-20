@@ -14,31 +14,18 @@
 # loops within such regions and configure them with different clauses.
 #
 # We have already considered a single loop for zeroing every entry of an array. Now
-# consider the extension of this to the case of a 2D array, of dimension
-# :math:`10\times1000`, as given in ``fortran/double_loop.py``:
+# consider the extension of this to the case of a 2D array, as given in
+# ``fortran/double_loop.py``:
 #
-# .. code-block:: fortran
-#
-#    PROGRAM double_loop
-#      IMPLICIT NONE
-#      INTEGER, PARAMETER :: m = 10
-#      INTEGER, PARAMETER :: n = 1000
-#      INTEGER :: i, j
-#      REAL :: arr(m,n)
-#
-#      DO j = 1, n
-#        DO i = 1, m
-#          arr(i,j) = 0.0
-#        END DO
-#      END DO
-#    END PROGRAM double_loop
+# .. literalinclude:: fortran/double_loop.F90
+#    :language: fortran
+#    :lines: 6-
 #
 # Use the following command for this demo:
 #
-# .. code-block:: bash
-#
-#    psyclone -api nemo --config ../.psyclone/psyclone.cfg fortran/double_loop.F90 \
-#       --script 03_loop.py -opsy outputs/03_loop-double_loop.F90
+# .. literalinclude:: 03_loop.sh
+#    :language: bash
+#    :lines: 8-
 #
 # Again, begin by importing from the namespace PSyACC, as well as the ``nodes`` module
 # of PSyclone. ::
@@ -127,28 +114,32 @@ def trans(psy):
 
 # The output in ``output/03_loop-double_loop.F90`` should be as follows.
 #
-# .. code-block:: fortran
-#
-#    program double_loop
-#      integer, parameter :: m = 10
-#      integer, parameter :: n = 1000
-#      integer :: i
-#      integer :: j
-#      real, dimension(m,n) :: arr
-#
-#      !$acc kernels
-#      !$acc loop gang vector independent
-#      do j = 1, n, 1
-#        !$acc loop seq
-#        do i = 1, m, 1
-#          arr(i,j) = 0.0
-#        enddo
-#      enddo
-#      !$acc end kernels
-#
-#    end program double_loop
+# .. literalinclude:: outputs/03_loop-double_loop.F90
+#    :language: fortran
 #
 # Hopefully that is as expected.
+#
+# Again, let's try compiling the PSyclone-generated program. This time, the required
+# command is
+#
+# .. code-block:: bash
+#
+#    nvfortran -c -acc=gpu -Minfo=accel outputs/03_loop-double_loop.F90
+#
+# The expected compiler output is
+#
+# .. code-block::
+#
+#    double_loop:
+#         13, Generating implicit copyout(arr(:m,:n)) [if not already present]
+#         15, Loop is parallelizable
+#         17, Generating NVIDIA GPU code
+#             15, !$acc loop gang, vector(128) ! blockidx%x threadidx%x
+#             17, !$acc loop seq
+#
+# Again, we see implicit use of the ``copyout`` clause. The loop on line 15 is
+# determined to be parallelisable, and is parallelised in the way that we instructed,
+# with a vector length of 128.
 #
 # Exercises
 # ---------

@@ -24,10 +24,9 @@
 #
 # The recommended command for this demo is as follows.
 #
-# .. code-block:: bash
-#
-#    psyclone -api nemo --config ../.psyclone/psyclone.cfg \
-#        fortran/empty.F90 --script ./01_psyclone.py -opsy outputs/01_psyclone.F90
+# .. literalinclude:: 01_psyclone.sh
+#    :language: bash
+#    :lines: 8-
 #
 # There is a lot to unpack here! Let's work through the arguments one by one.
 #
@@ -53,12 +52,9 @@
 # a subdirectory of Fortran source to be used for this purpose. In this demo, we parse
 # the ``empty.F90`` file, which contains a 'Hello, World!' Fortran program:
 #
-# .. code-block:: fortran
-#
-#    PROGRAM intro
-#      IMPLICIT NONE
-#      PRINT *, "Hello, Fortran World!"
-#    END PROGRAM intro
+# .. literalinclude:: fortran/empty.F90
+#    :language: fortran
+#    :lines: 6-
 #
 # Transformation script
 # ---------------------
@@ -89,13 +85,8 @@ def trans(psy):
 #
 # Inspecting the output file, it should look something like.
 #
-# .. code-block:: fortran
-#
-#    program intro
-#
-#      PRINT *, "Hello, Fortran World!"
-#
-#    end program intro
+# .. literalinclude:: outputs/01_psyclone-empty.F90
+#    :language: fortran
 #
 # It doesn't take a Fortran expert to realise that running the two versions of the
 # Fortran code will give the same result. However, the files themselves are slightly

@@ -16,21 +16,9 @@
 #
 # Consider again the same double loop example:
 #
-# .. code-block:: fortran
-#
-#    PROGRAM double_loop
-#      IMPLICIT NONE
-#      INTEGER, PARAMETER :: m = 10
-#      INTEGER, PARAMETER :: n = 1000
-#      INTEGER :: i, j
-#      REAL :: arr(m,n)
-#
-#      DO j = 1, n
-#        DO i = 1, m
-#          arr(i,j) = 0.0
-#        END DO
-#      END DO
-#    END PROGRAM double_loop
+# .. literalinclude:: fortran/double_loop.F90
+#    :language: fortran
+#    :lines: 6-
 #
 # Convince yourself that combining the ``j`` and ``i`` loops as follows would have the
 # same result.
@@ -48,10 +36,9 @@
 #
 # The PSyclone command for this demo is as follows.
 #
-# .. code-block:: bash
-#
-#    psyclone -api nemo --config ../.psyclone/psyclone.cfg fortran/double_loop.F90 \
-#       --script 04_collapse.py -opsy outputs/04_collapse-double_loop.F90
+# .. literalinclude:: 04_collapse.sh
+#    :language: bash
+#    :lines: 8-
 #
 # Again, begin by importing from the namespace PSyACC, as well as the ``nodes`` module
 # of PSyclone. ::
@@ -86,34 +73,20 @@ def trans(psy):
 # Running this example using the PSyclone command above, you should find that the output
 # in ``outputs/04_collapse-double_loop.F90`` reads as follows.
 #
-# .. code-block:: fortran
-#
-#    program double_loop
-#      integer, parameter :: m = 10
-#      integer, parameter :: n = 1000
-#      integer :: i
-#      integer :: j
-#      real, dimension(m,n) :: arr
-#
-#      !$acc kernels
-#      !$acc loop independent collapse(2)
-#      do j = 1, n, 1
-#        do i = 1, m, 1
-#          arr(i,j) = 0.0
-#        enddo
-#      enddo
-#      !$acc end kernels
-#
-#    end program double_loop
+# .. literalinclude:: outputs/04_collapse-double_loop.F90
+#    :language: fortran
 #
 # Exercises
 # ---------
 #
-# 1. Recall the exercise in the `previous demo <03_loop.py.html>`__ where we applied
+# 1. Following the same approach as in the previous demos, check that you can compile
+#    the PSyclone-generated Fortran file. Does the compiler output look reasonable?
+#
+# 2. Recall the exercise in the `previous demo <03_loop.py.html>`__ where we applied
 #    the transformation script to ``single_loop.F90``, as opposed to
 #    ``double_loop.F90``. What happens when we do that in this case?
 #
-# 2. What happens when the ``collapse`` argument is removed from the call to
+# 3. What happens when the ``collapse`` argument is removed from the call to
 #    :func:`psyacc.clauses.apply_loop_collapse` in the transformation script? Is the
 #    output the same? Convince yourself that everything is working as expected by
 #    reading the `API documentation <../psyacc.html>`__.

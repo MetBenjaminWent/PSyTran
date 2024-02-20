@@ -16,28 +16,18 @@
 # We also consider a slightly more interesting snippet of Fortran source, as given in
 # ``fortran/single_loop.py``:
 #
-# .. code-block:: fortran
+# .. literalinclude:: fortran/single_loop.F90
+#    :language: fortran
+#    :lines: 6-
 #
-#    PROGRAM single_loop
-#      IMPLICIT NONE
-#      INTEGER, PARAMETER :: n = 10
-#      INTEGER :: i
-#      REAL :: arr(n)
-#
-#      DO i = 1, n
-#        arr(i) = 0.0
-#      END DO
-#    END PROGRAM single_loop
-#
-# That is, we loop over an array of floating point numbers and just set each entry to
-# zero.
+# That is, we have a subroutine involving a loop over an array of floating point numbers
+# and just set each entry to zero.
 #
 # In this case, the recommended command is
 #
-# .. code-block:: bash
-#
-#    psyclone -api nemo --config ../.psyclone/psyclone.cfg fortran/single_loop.F90 \
-#       --script 02_kernels.py -opsy outputs/02_kernels-single_loop.F90
+# .. literalinclude:: 02_kernels.sh
+#    :language: bash
+#    :lines: 8-
 #
 # We begin by importing from the namespace PSyACC, as well as the ``nodes`` module of
 # PSyclone. ::
@@ -171,25 +161,64 @@ def trans(psy):
 # Running the PSyclone command given at the beginning of this demo should generate the
 # output ``02_kernels-single_loop.F90`` with contents as follows:
 #
-# .. code-block:: fortran
-#
-#    program single_loop
-#      integer, parameter :: n = 10
-#      integer :: i
-#      real, dimension(n) :: arr
-#
-#      !$acc kernels
-#      do i = 1, n, 1
-#        arr(i) = 0.0
-#      enddo
-#      !$acc end kernels
-#
-#    end program single_loop
+# .. literalinclude:: outputs/02_kernels-single_loop.F90
+#    :language: fortran
 #
 # Again, the source code has clearly been reformatted to use lower case and increased
 # spacing. (A few other reformattings are left as a spot-the-difference exercise!) The
 # main thing to note, though, is that an OpenACC ``kernels`` directive has indeed been
 # applied to the loop.
+#
+# Let's check that we are able to compile the PSyclone-generated program. First, load
+# a working NVHPC installation. Usually, this is achieved with commands of the form
+#
+# .. code-block::
+#
+#    module use path/to/nvhpc/modulefiles
+#    module load nvhpc/XX.Y
+#
+# where ``path/to/nvhpc/modulefiles`` should be replaced by the path to the modulefile
+# for the NVHPC installation and ``XX.Y`` should be replaced with the version to be
+# loaded.
+#
+# .. note::
+#    For internal Met Office users, the instructions on
+#    `this page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/OpenACC-GPU-Porting.aspx>`__
+#    may be of use. If you are using Isambard then see the instructions in the
+#    Compilation section of the
+#    `MACS page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/GPU-Isambard-MACS.aspx#compilation>`__
+#    and/or the
+#    `Phase-3 page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/GPU-Isambard-Phase3.aspx#compilation>`__.
+#
+#
+# Loading an NVHPC installation as above will put an ``nvfortran`` binary in your path.
+# Compile the generated Fortran file with
+#
+# .. code-block:: bash
+#
+#    nvfortran -c -acc=gpu -Minfo=accel outputs/02_kernels-single_loop.F90
+#
+# Here, we instruct the compiler to target the accelerator type 'GPU'. This will enable
+# OpenACC syntax. The additional ``-Minfo=accel`` flag tells the compiler to print
+# information related to the accelerator. You should see compiler output
+#
+# .. code-block::
+#
+#    single_loop:
+#         11, Generating implicit copyout(arr(:n)) [if not already present]
+#         12, Loop is parallelizable
+#             Generating NVIDIA GPU code
+#             12, !$acc loop gang, vector(128) ! blockidx%x threadidx%x
+#
+# From this, we may deduce a few things.
+#
+# * The loop on line 12 is deemed to be parallelisable.
+# * The compiler opts to parallelise this loop using both gang and vector parallelism,
+#   with a vector length of 128.
+# * OpenACC's *managed memory* functionality is being used by default. As such, the
+#   compiler determines that a GPU-to-CPU data transfer is required to copy the array
+#   ``arr`` (which has ``intent(out)``) out of the subroutine. This is indicated by the
+#   use of an implicit use of the OpenACC data directive clause ``copyout``.
 #
 # In the `next demo <03_loop.py.html>`__ we'll build on this and additionally apply
 # an OpenACC ``loop`` directive, with appropriate clauses.
