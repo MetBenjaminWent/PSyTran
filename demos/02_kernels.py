@@ -184,10 +184,11 @@ def trans(psy):
 # .. note::
 #    For internal Met Office users, the instructions on
 #    `this page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/OpenACC-GPU-Porting.aspx>`__
-#    may be of use. If you are using Isambard then see the instructions on the
-#    `MACS page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/GPU-Isambard-MACS.aspx>`__
+#    may be of use. If you are using Isambard then see the instructions in the
+#    Compilation section of the
+#    `MACS page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/GPU-Isambard-MACS.aspx#compilation>`__
 #    and/or the
-#    `Phase-3 page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/GPU-Isambard-Phase3.aspx>`__.
+#    `Phase-3 page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/GPU-Isambard-Phase3.aspx#compilation>`__.
 #
 #
 # Loading an NVHPC installation as above will put an ``nvfortran`` binary in your path.
