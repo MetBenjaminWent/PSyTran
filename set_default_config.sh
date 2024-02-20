@@ -18,7 +18,8 @@ for path in psyclone.__path__:
 if [ -z ${PSYCLONE_CFG} ]
 then
         echo "Could not find a 'psyclone.cfg' file to use as default."
-        exit 1
+        curl -OL https://raw.githubusercontent.com/stfc/PSyclone/master/config/psyclone.cfg
+        mv psyclone.cfg ${VIRTUAL_ENV}/share/psyclone
 else
         cp ${PSYCLONE_CFG} ${VIRTUAL_ENV}/share/psyclone
 fi
