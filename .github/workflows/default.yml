@@ -36,6 +36,7 @@ jobs:
         run: |
           source /home/runner/work/psyacc-ci/bin/activate
           make install
+          ./set_default_config.sh
 
       - name: Test linting
         run: |
