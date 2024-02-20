@@ -170,10 +170,28 @@ def trans(psy):
 # applied to the loop.
 #
 # Let's check that we are able to compile the PSyclone-generated program. First, load
-# a working NVHPC installation. For internal Met Office users, the instructions on
-# `this page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/OpenACC-GPU-Porting.aspx>`__
-# may be of use. This will put an ``nvfortran`` binary in your path. Compile the
-# generated Fortran file with
+# a working NVHPC installation. Usually, this is achieved with commands of the form
+#
+# .. code-block::
+#
+#    module use path/to/nvhpc/modulefiles
+#    module load nvhpc/XX.Y
+#
+# where ``path/to/nvhpc/modulefiles`` should be replaced by the path to the modulefile
+# for the NVHPC installation and ``XX.Y`` should be replaced with the version to be
+# loaded.
+#
+# .. note::
+#    For internal Met Office users, the instructions on
+#    `this page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/OpenACC-GPU-Porting.aspx>`__
+#    may be of use. If you are using Isambard then see the instructions on the
+#    `MACS page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/GPU-Isambard-MACS.aspx>`__
+#    and/or the
+#    `Phase-3 page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/GPU-Isambard-Phase3.aspx>`__.
+#
+#
+# Loading an NVHPC installation as above will put an ``nvfortran`` binary in your path.
+# Compile the generated Fortran file with
 #
 # .. code-block:: bash
 #
