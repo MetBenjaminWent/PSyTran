@@ -38,12 +38,17 @@ format:
 	@black test/*.py
 	@echo "Done."
 
-lint:
-	@echo "Checking lint..."
-	@flake8
+codestyle:
+	@echo "Checking codestyle..."
+	@python3 -m pycodestyle .
 	@echo "PASS"
 
-test: lint
+lint:
+	@echo "Checking lint..."
+	@python3 -m pylint psyacc
+	@echo "PASS"
+
+test:
 	@echo "testing psyacc..."
 	@python3 -m pytest -v --durations=20 test
 	@echo "PASS"
