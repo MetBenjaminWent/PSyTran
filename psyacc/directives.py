@@ -9,6 +9,7 @@ This module implements functions for querying whether code blocks and
 applying such directives.
 """
 
+from collections.abc import Iterable
 from psyclone.psyir import nodes
 from psyclone.transformations import (
     ACCKernelsDirective,
@@ -16,7 +17,6 @@ from psyclone.transformations import (
     ACCLoopDirective,
     ACCLoopTrans,
 )
-from collections.abc import Iterable
 from psyacc.family import get_parent
 from psyacc.loop import _check_loop
 
@@ -28,7 +28,7 @@ __all__ = [
 ]
 
 
-def apply_kernels_directive(block, options={}):
+def apply_kernels_directive(block, options=None):
     """
     Apply a ``kernels`` directive to a block of code.
 
@@ -39,7 +39,7 @@ def apply_kernels_directive(block, options={}):
 
     :raises TypeError: if the options argument is not a dictionary.
     """
-    if not isinstance(options, dict):
+    if options is not None and not isinstance(options, dict):
         raise TypeError(f"Expected a dict, not '{type(options)}'.")
     ACCKernelsTrans().apply(block, options=options)
 
@@ -60,7 +60,7 @@ def has_kernels_directive(node):
     return bool(node.ancestor(ACCKernelsDirective))
 
 
-def apply_loop_directive(loop, options={}):
+def apply_loop_directive(loop, options=None):
     """
     Apply a ``loop`` directive.
 
@@ -73,7 +73,7 @@ def apply_loop_directive(loop, options={}):
     :raises ValueError: if a ``kernels`` directive has not yet been applied.
     """
     _check_loop(loop)
-    if not isinstance(options, dict):
+    if options is not None and not isinstance(options, dict):
         raise TypeError(f"Expected a dict, not '{type(options)}'.")
     if not has_kernels_directive(loop):
         raise ValueError(
