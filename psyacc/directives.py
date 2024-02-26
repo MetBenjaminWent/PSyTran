@@ -12,6 +12,7 @@ from psyclone.transformations import (
 )
 from collections.abc import Iterable
 from psyacc.family import get_parent
+from psyacc.loop import _check_loop
 
 __all__ = [
     "apply_kernels_directive",
@@ -29,6 +30,8 @@ def apply_kernels_directive(block, options={}):
     :type block: :py:class:`list`
     :kwarg options: a dictionary of clause options.
     :type options: :py:class:`dict`
+
+    :raises TypeError: if the options argument is not a dictionary.
     """
     if not isinstance(options, dict):
         raise TypeError(f"Expected a dict, not '{type(options)}'.")
@@ -59,9 +62,11 @@ def apply_loop_directive(loop, options={}):
     :type loop: :py:class:`Loop`
     :kwarg options: a dictionary of clause options.
     :type options: :py:class:`dict`
+
+    :raises TypeError: if the options argument is not a dictionary.
+    :raises ValueError: if a ``kernels`` directive has not yet been applied.
     """
-    if not isinstance(loop, nodes.Loop):
-        raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
+    _check_loop(loop)
     if not isinstance(options, dict):
         raise TypeError(f"Expected a dict, not '{type(options)}'.")
     if not has_kernels_directive(loop):

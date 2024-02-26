@@ -27,6 +27,8 @@ def _check_loop(node):
 
     :arg node: the Node to check.
     :type node: :py:class:`Node`
+
+    :raises TypeError: if the loop argument is not a Loop Node.
     """
     if not isinstance(node, nodes.Loop):
         raise TypeError(f"Expected a Loop, not '{type(node)}'.")
@@ -206,6 +208,8 @@ def is_independent(loop):
 
     :returns: ``True`` if the Loop nest is independent, else ``False``.
     :rtype: :py:class:`bool`
+
+    :raises ValueError: if the loop is not perfectly nested.
     """
     if not is_perfectly_nested(loop):
         raise ValueError(
