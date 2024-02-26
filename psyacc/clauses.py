@@ -159,8 +159,7 @@ def has_collapse_clause(loop):
             collapse = loop_dir.collapse
             if collapse is None:
                 continue
-            else:
-                return collapse > i
+            return collapse > i
     return False
 
 

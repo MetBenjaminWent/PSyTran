@@ -9,10 +9,10 @@ Nodes, as well as for going between outer Loops and their associated Loop
 nests.
 """
 
+from collections.abc import Iterable
 from psyclone.psyir import nodes
 from psyclone.psyir.tools import DependencyTools
 from psyacc.family import get_children, get_descendents
-from collections.abc import Iterable
 
 __all__ = [
     "is_outer_loop",
@@ -234,8 +234,7 @@ def is_independent(loop):
             for ref in bound.walk(nodes.Reference):
                 if ref.symbol in previous_variables:
                     return False
-    else:
-        return True
+    return True
 
 
 def is_parallelisable(loop):

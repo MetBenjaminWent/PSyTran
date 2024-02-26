@@ -47,9 +47,9 @@ def convert_range_loops(schedule):
     :type schedule: :py:class:`Schedule`
     """
     before = str(schedule)
-    for r in schedule.walk(nodes.Range):
+    for rang in schedule.walk(nodes.Range):
         try:
-            NemoArrayRange2LoopTrans().apply(r)
+            NemoArrayRange2LoopTrans().apply(rang)
         except TransformationError:  # pragma: no cover
             pass
 
