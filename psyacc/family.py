@@ -22,13 +22,18 @@ def get_descendents(
     node, node_type=nodes.Node, inclusive=False, exclude=(), depth=None
 ):
     """
-    Get all ancestors of a node with a given type.
+    Get all ancestors of a Node with a given type.
 
-    :arg node: the node to search for descendents of.
+    :arg node: the Node to search for descendents of.
+    :type node: :py:class:`Node`
     :kwarg node_type: the type of node to search for.
+    :type node_type: :py:class:`type`
     :kwarg inclusive: if ``True``, the current node is included.
+    :type inclusive: :py:class:`bool`
     :kwarg exclude: type(s) of node to exclude.
+    :type exclude: :py:class:`bool`
     :kwarg depth: specify a depth for the descendents to have.
+    :type depth: :py:class:`int`
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
     assert isinstance(inclusive, bool), f"Expected a bool, not '{type(inclusive)}'."
@@ -44,13 +49,18 @@ def get_descendents(
 
 def get_ancestors(node, node_type=nodes.Loop, inclusive=False, exclude=(), depth=None):
     """
-    Get all ancestors of a node with a given type.
+    Get all ancestors of a Node with a given type.
 
-    :arg node: the node to search for ancestors of.
+    :arg node: the Node to search for ancestors of.
+    :type node: :py:class:`Node`
     :kwarg node_type: the type of node to search for.
+    :type node_type: :py:class:`type`
     :kwarg inclusive: if ``True``, the current node is included.
+    :type inclusive: :py:class:`bool`
     :kwarg exclude: type(s) of node to exclude.
+    :type exclude: :py:class:`bool`
     :kwarg depth: specify a depth for the ancestors to have.
+    :type depth: :py:class:`int`
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
     assert isinstance(inclusive, bool), f"Expected a bool, not '{type(inclusive)}'."
@@ -69,12 +79,15 @@ def get_ancestors(node, node_type=nodes.Loop, inclusive=False, exclude=(), depth
 
 def get_children(node, node_type=nodes.Node, exclude=()):
     """
-    Get all immediate descendents of a node with a given type, i.e., those at
+    Get all immediate descendents of a Node with a given type, i.e., those at
     the next depth level.
 
-    :arg node: the node to search for descendents of.
+    :arg node: the Node to search for descendents of.
+    :type node: :py:class:`Node`
     :kwarg node_type: the type of node to search for.
+    :type node_type: :py:class:`type`
     :kwarg exclude: type(s) of node to exclude.
+    :type exclude: :py:class:`bool`
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
     if not isinstance(node_type, tuple):
@@ -91,9 +104,10 @@ def get_children(node, node_type=nodes.Node, exclude=()):
 
 def get_parent(node):
     """
-    Get the immediate ancestor of a node.
+    Get the immediate ancestor of a Node.
 
-    :arg node: the node to search for ancestors of.
+    :arg node: the Node to search for ancestors of.
+    :type node: :py:class:`Node`
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
     parent = node.parent.parent
@@ -102,12 +116,16 @@ def get_parent(node):
 
 def get_siblings(node, node_type=nodes.Node, inclusive=False, exclude=()):
     """
-    Get all nodes with a given type at the same depth level.
+    Get all Nodes with a given type at the same depth level.
 
-    :arg node: the node to search for siblings of.
+    :arg node: the Node to search for siblings of.
+    :type node: :py:class:`Node`
     :kwarg node_type: the type of node to search for.
+    :type node_type: :py:class:`type`
     :kwarg inclusive: if ``True``, the current node is included.
+    :type inclusive: :py:class:`bool`
     :kwarg exclude: type(s) of node to exclude.
+    :type exclude: :py:class:`bool`
     """
     return [
         sibling
@@ -120,23 +138,30 @@ def get_siblings(node, node_type=nodes.Node, inclusive=False, exclude=()):
 
 def has_descendent(node, node_type, inclusive=False):
     """
-    Check whether a node has a descendent node with a given type.
+    Check whether a Node has a descendent node with a given type.
 
-    :arg node: the node to check for descendents of.
+    :arg node: the Node to check for descendents of.
+    :type node: :py:class:`Node`
     :arg node_type: the type of node to search for.
+    :type node_type: :py:class:`type`
     :kwarg inclusive: if ``True``, the current node is included.
+    :type inclusive: :py:class:`bool`
     """
     return bool(get_descendents(node, inclusive=inclusive, node_type=node_type))
 
 
-def has_ancestor(node, node_type=nodes.Loop, name=None, inclusive=False):
+def has_ancestor(node, node_type=nodes.Loop, inclusive=False, name=None):
     """
-    Check whether a node has an ancestor node with a given type.
+    Check whether a Node has an ancestor node with a given type.
 
-    :arg node: the node to check for ancestors of.
-    :kwarg inclusive: if ``True``, the current node is included.
+    :arg node: the Node to check for ancestors of.
+    :type node: :py:class:`Node`
     :kwarg node_type: the type of node to search for.
+    :type node_type: :py:class:`type`
+    :kwarg inclusive: if ``True``, the current node is included.
+    :type inclusive: :py:class:`bool`
     :kwarg name: check whether the node has an ancestor with a particular name.
+    :type name: :py:class:`str`
     """
     ancestors = get_ancestors(node, inclusive=inclusive, node_type=node_type)
     if name:
@@ -146,7 +171,10 @@ def has_ancestor(node, node_type=nodes.Loop, name=None, inclusive=False):
 
 def are_siblings(*nodes):
     r"""
-    Determine whether a collection of :class:`Node`\s have the same parent.
+    Determine whether a collection of Nodes have the same parent.
+
+    :arg nodes: tuple of Nodes to check.
+    :type node: :py:class:`tuple` of :py:class:`Node`\s
     """
     assert len(nodes) > 1
     return all([node in nodes[0].siblings for node in nodes])
@@ -154,9 +182,11 @@ def are_siblings(*nodes):
 
 def is_next_sibling(node1, node2):
     """
-    Determine whether one :class:`Node` immediately follows another.
+    Determine whether one Node immediately follows another.
 
     :arg node1: the first node.
+    :type node1: :py:class:`Node`
     :arg node2: the second node.
+    :type node2: :py:class:`Node`
     """
     return node2.immediately_follows(node1)

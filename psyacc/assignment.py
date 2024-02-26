@@ -12,6 +12,7 @@ def is_literal_assignment(node):
     """
     Determine whether a Node corresponds to an assignment of a literal value.
 
-    :arg node: the :class:`Node` in question
+    :arg node: the Node to query
+    :type node: :py:class:`Node`
     """
     return isinstance(node, nodes.Assignment) and isinstance(node.rhs, nodes.Literal)

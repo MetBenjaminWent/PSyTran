@@ -21,17 +21,23 @@ __all__ = [
 ]
 
 
-def _check_loop(loop):
+def _check_loop(node):
     """
-    Check that we do indeed have a :class:`Loop` node.
+    Check that we do indeed have a Loop Node.
+
+    :arg node: the Node to check.
+    :type node: :py:class:`Node`
     """
-    if not isinstance(loop, nodes.Loop):
-        raise TypeError(f"Expected a Loop, not '{type(loop)}'.")
+    if not isinstance(node, nodes.Loop):
+        raise TypeError(f"Expected a Loop, not '{type(node)}'.")
 
 
 def is_outer_loop(loop):
     """
-    Determine whether a loop is outer-most in its nest.
+    Determine whether a Loop is outer-most in its nest.
+
+    :arg loop: the Loop Node to query.
+    :type loop: :py:class:`Loop`
     """
     _check_loop(loop)
     return loop.ancestor(nodes.Loop) is None
@@ -39,9 +45,10 @@ def is_outer_loop(loop):
 
 def loop2nest(loop):
     """
-    Given a loop, obtain all of its descendent loops (inclusive).
+    Given a Loop, obtain all of its descendent loops (inclusive).
 
-    :arg loop: the :class:`Loop`
+    :arg loop: the Loop Node to extract a nest from.
+    :type loop: :py:class:`Loop`
     """
     _check_loop(loop)
     return get_descendents(loop, node_type=nodes.Loop, inclusive=True)
@@ -49,7 +56,10 @@ def loop2nest(loop):
 
 def nest2loop(loops):
     """
-    Given a loop nest, validate it and return its outer-most loop.
+    Given a Loop nest, validate it and return its outer-most Loop.
+
+    :arg loops: the nest to extract the outer-most Loop from.
+    :type loops: :py:class:`list`
     """
     outer_loop = loops[0]
     descendents = loop2nest(outer_loop)
@@ -61,8 +71,8 @@ def nest2loop(loops):
 
 def is_perfectly_nested(outer_loop_or_subnest):
     r"""
-    Determine whether a loop (sub)nest is perfect, i.e., each level except the deepest
-    contains only the next loop.
+    Determine whether a Loop (sub)nest is perfect, i.e., each level except the deepest
+    contains only the next Loop.
 
     Note that we ignore nodes of type :class:`Literal` and :class:`Reference`.
 
@@ -70,7 +80,8 @@ def is_perfectly_nested(outer_loop_or_subnest):
     schedule, just the outer-most loop in the sub-nest.
 
     :arg outer_loop_or_subnest: either the outer loop of the subnest, or the subnest as
-        a list of :class:`Loop`\s
+        a list of Loops
+    :type outer_loop_or_subnest: :py:class:`list` or :py:class:`Loop`
     """
     exclude = (
         nodes.literal.Literal,
@@ -91,6 +102,11 @@ def is_perfectly_nested(outer_loop_or_subnest):
         r"""
         Return the intersection of two lists. Note that we cannot use the in-built set
         intersection functionality because PSyclone :class:`Node`\s are not hashable.
+
+        :arg list1: the first list
+        :type list1: :py:class:`list`
+        :arg list2: the second list
+        :type list2: :py:class:`list`
         """
         return [item for item in list1 if item in list2]
 
@@ -121,10 +137,11 @@ def is_perfectly_nested(outer_loop_or_subnest):
 
 def is_simple_loop(loop):
     """
-    Determine whether a loop nest is simple, i.e., perfectly nested, with only
+    Determine whether a Loop nest is simple, i.e., perfectly nested, with only
     literal assignments at the deepest level.
 
-    :arg loop: the outer-most loop of the nest
+    :arg loop: the outer-most Loop of the nest
+    :type loop: :py:class:`Loop`
     """
     return is_perfectly_nested(loop) and all(
         [
@@ -136,7 +153,10 @@ def is_simple_loop(loop):
 
 def get_loop_variable_name(loop):
     """
-    Given a :class:`Loop` node, return its variable name.
+    Determine the variable name associated with a Loop Node.
+
+    :arg loop: the Loop to query.
+    :type loop: :py:class:`Loop`
     """
     assert isinstance(loop, nodes.Loop)
     return loop.variable.name
@@ -144,8 +164,10 @@ def get_loop_variable_name(loop):
 
 def get_loop_nest_variable_names(loop):
     """
-    Given a :class:`Loop` node, return the variable names of each loop it
-    contains.
+    Determine the variable names associated with a Loop nest.
+
+    :arg loop: the outer Loop to query.
+    :type loop: :py:class:`Loop`
     """
     assert isinstance(loop, nodes.Loop)
     return [get_loop_variable_name(loop) for loop in loop2nest(loop)]
@@ -153,7 +175,10 @@ def get_loop_nest_variable_names(loop):
 
 def is_independent(loop):
     """
-    Determine whether a perfectly nested :class:`Loop` is independent.
+    Determine whether a perfectly nested Loop is independent.
+
+    :arg loop: the Loop to query.
+    :type loop: :py:class:`Loop`
     """
     if not is_perfectly_nested(loop):
         raise ValueError(
@@ -175,8 +200,11 @@ def is_independent(loop):
 
 def is_parallelisable(loop):
     """
-    Determine whether a :class:`Loop` can be parallelised.
+    Determine whether a Loop can be parallelised.
 
     Note: wraps the :meth:`can_loop_be_parallelised` method of :class:`DependencyTools`.
+
+    :arg loop: the Loop to query.
+    :type loop: :py:class:`Loop`
     """
     return DependencyTools().can_loop_be_parallelised(loop)
