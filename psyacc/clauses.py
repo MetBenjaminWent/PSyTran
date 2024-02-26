@@ -43,6 +43,9 @@ def has_seq_clause(loop):
 
     :arg loop: the Loop Node to query.
     :type loop: :py:class:`Loop`
+
+    :returns: ``True`` if the Loop has a ``seq`` clause, else ``False``.
+    :rtype: :py:class:`bool`
     """
     return has_loop_directive(loop) and loop.parent.parent.sequential
 
@@ -70,6 +73,9 @@ def has_gang_clause(loop):
 
     :arg loop: the Loop Node to query.
     :type loop: :py:class:`Loop`
+
+    :returns: ``True`` if the Loop has a ``gang`` clause, else ``False``.
+    :rtype: :py:class:`bool`
     """
     return has_loop_directive(loop) and loop.parent.parent.gang
 
@@ -95,6 +101,9 @@ def has_vector_clause(loop):
 
     :arg loop: the Loop Node to query.
     :type loop: :py:class:`Loop`
+
+    :returns: ``True`` if the Loop has a ``vector`` clause, else ``False``.
+    :rtype: :py:class:`bool`
     """
     return has_loop_directive(loop) and loop.parent.parent.vector
 
@@ -120,6 +129,9 @@ def has_collapse_clause(loop):
 
     :arg loop: the Loop Node to query.
     :type loop: :py:class:`Loop`
+
+    :returns: ``True`` if the Loop has a ``collapse`` clause, else ``False``.
+    :rtype: :py:class:`bool`
     """
     _check_loop(loop)
     if not has_kernels_directive(loop):

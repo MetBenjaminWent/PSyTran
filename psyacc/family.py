@@ -34,6 +34,9 @@ def get_descendents(
     :type exclude: :py:class:`bool`
     :kwarg depth: specify a depth for the descendents to have.
     :type depth: :py:class:`int`
+
+    :returns: list of descendents according to specifications.
+    :rtype: :py:class:`list`
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
     assert isinstance(inclusive, bool), f"Expected a bool, not '{type(inclusive)}'."
@@ -61,6 +64,9 @@ def get_ancestors(node, node_type=nodes.Loop, inclusive=False, exclude=(), depth
     :type exclude: :py:class:`bool`
     :kwarg depth: specify a depth for the ancestors to have.
     :type depth: :py:class:`int`
+
+    :returns: list of ancestors according to specifications.
+    :rtype: :py:class:`list`
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
     assert isinstance(inclusive, bool), f"Expected a bool, not '{type(inclusive)}'."
@@ -88,6 +94,9 @@ def get_children(node, node_type=nodes.Node, exclude=()):
     :type node_type: :py:class:`type`
     :kwarg exclude: type(s) of node to exclude.
     :type exclude: :py:class:`bool`
+
+    :returns: list of children according to specifications.
+    :rtype: :py:class:`list`
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
     if not isinstance(node_type, tuple):
@@ -108,6 +117,9 @@ def get_parent(node):
 
     :arg node: the Node to search for ancestors of.
     :type node: :py:class:`Node`
+
+    :returns: the parent Node
+    :rtype: :py:class:`Node`
     """
     assert isinstance(node, nodes.Node), f"Expected a Node, not '{type(node)}'."
     parent = node.parent.parent
@@ -126,6 +138,9 @@ def get_siblings(node, node_type=nodes.Node, inclusive=False, exclude=()):
     :type inclusive: :py:class:`bool`
     :kwarg exclude: type(s) of node to exclude.
     :type exclude: :py:class:`bool`
+
+    :returns: list of siblings according to specifications.
+    :rtype: :py:class:`list`
     """
     return [
         sibling
@@ -146,6 +161,9 @@ def has_descendent(node, node_type, inclusive=False):
     :type node_type: :py:class:`type`
     :kwarg inclusive: if ``True``, the current node is included.
     :type inclusive: :py:class:`bool`
+
+    :returns: ``True`` if there are descendents meeting specifications, else ``False``.
+    :rtype: :py:class:`bool`
     """
     return bool(get_descendents(node, inclusive=inclusive, node_type=node_type))
 
@@ -162,6 +180,9 @@ def has_ancestor(node, node_type=nodes.Loop, inclusive=False, name=None):
     :type inclusive: :py:class:`bool`
     :kwarg name: check whether the node has an ancestor with a particular name.
     :type name: :py:class:`str`
+
+    :returns: ``True`` if there are ancestors meeting specifications, else ``False``.
+    :rtype: :py:class:`bool`
     """
     ancestors = get_ancestors(node, inclusive=inclusive, node_type=node_type)
     if name:
@@ -175,6 +196,9 @@ def are_siblings(*nodes):
 
     :arg nodes: tuple of Nodes to check.
     :type node: :py:class:`tuple` of :py:class:`Node`\s
+
+    :returns: ``True`` if the Nodes are siblings, else ``False``.
+    :rtype: :py:class:`bool`
     """
     assert len(nodes) > 1
     return all([node in nodes[0].siblings for node in nodes])
@@ -188,5 +212,8 @@ def is_next_sibling(node1, node2):
     :type node1: :py:class:`Node`
     :arg node2: the second node.
     :type node2: :py:class:`Node`
+
+    :returns: ``True`` if the Nodes are adjacent siblings, else ``False``.
+    :rtype: :py:class:`bool`
     """
     return node2.immediately_follows(node1)

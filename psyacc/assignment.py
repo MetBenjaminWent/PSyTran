@@ -14,5 +14,8 @@ def is_literal_assignment(node):
 
     :arg node: the Node to query
     :type node: :py:class:`Node`
+
+    :returns: ``True`` if the Node assigns a literal value, else ``False``
+    :rtype: :py:class:`bool`
     """
     return isinstance(node, nodes.Assignment) and isinstance(node.rhs, nodes.Literal)

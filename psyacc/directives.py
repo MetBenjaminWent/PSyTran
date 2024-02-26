@@ -41,6 +41,9 @@ def has_kernels_directive(node):
 
     :arg node: the Node to check.
     :type node: :py:class:`Node`
+
+    :returns: ``True`` if the Node has a ``kernels`` directive, else ``False``.
+    :rtype: :py:class:`bool`
     """
     if isinstance(node, Iterable):
         return has_kernels_directive(node[0])
@@ -72,6 +75,9 @@ def has_loop_directive(loop):
 
     :arg loop: the Loop Node to check.
     :type loop: :py:class:`Loop`
+
+    :returns: ``True`` if the Node has a ``loop`` directive, else ``False``.
+    :rtype: :py:class:`bool`
     """
     assert isinstance(loop, nodes.Loop)
     parent = get_parent(loop)
