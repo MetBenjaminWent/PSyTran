@@ -4,8 +4,9 @@
 # See LICENSE in the root of the repository for full licensing details.
 
 r"""
-This module provides various utility functions for querying :py:class:`Loop` Nodes, as
-well as for going between outer Loops and their associated Loop nests.
+This module provides various utility functions for querying :py:class:`Loop`
+Nodes, as well as for going between outer Loops and their associated Loop
+nests.
 """
 
 from psyclone.psyir import nodes

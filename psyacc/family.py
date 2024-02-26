@@ -4,8 +4,9 @@
 # See LICENSE in the root of the repository for full licensing details.
 
 r"""
-This module provides functions for determining the ancestors, descendents, and siblings
-of :py:class:`Node`\s, as well as for querying their existence and nature.
+This module provides functions for determining the ancestors, descendents, and
+siblings of :py:class:`Node`\s, as well as for querying their existence and
+nature.
 """
 
 from psyclone.psyir import nodes
