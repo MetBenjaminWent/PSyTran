@@ -3,6 +3,11 @@
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
+"""
+This module provides functions for checking whether ``CHARACTER`` assignments are
+associated with a :py:class:`Node` or its descendents.
+"""
+
 from psyclone.psyir import nodes
 from psyacc.family import get_descendents
 

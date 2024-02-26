@@ -3,6 +3,11 @@
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
+r"""
+This module implements functions for querying whether code blocks and :py:class:`Loop`\s
+have OpenACC directives associated with them, as well as for applying such directives.
+"""
+
 from psyclone.psyir import nodes
 from psyclone.transformations import (
     ACCKernelsDirective,

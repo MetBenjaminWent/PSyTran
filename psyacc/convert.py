@@ -3,6 +3,11 @@
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
+"""
+This module provides functions for converting the array notation used in a
+:py:class:`Schedule`.
+"""
+
 from psyclone.psyir import nodes
 from psyclone.psyir import transformations as trans
 from psyclone.domain.nemo.transformations import NemoArrayRange2LoopTrans

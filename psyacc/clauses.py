@@ -3,6 +3,11 @@
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
+r"""
+This module implements functions for querying whether :py:class:`Node`\s have OpenACC
+clauses associated with them, as well as for applying such clauses.
+"""
+
 from psyacc.directives import (
     has_kernels_directive,
     apply_loop_directive,

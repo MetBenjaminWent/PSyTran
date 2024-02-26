@@ -3,6 +3,11 @@
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
+r"""
+This module provides various utility functions for querying :py:class:`Loop` Nodes, as
+well as for going between outer Loops and their associated Loop nests.
+"""
+
 from psyclone.psyir import nodes
 from psyclone.psyir.tools import DependencyTools
 from psyacc.family import get_children, get_descendents

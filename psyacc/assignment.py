@@ -3,6 +3,10 @@
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
+"""
+This module implements query functions related to assignment operations.
+"""
+
 from psyclone.psyir import nodes
 
 __all__ = ["is_literal_assignment"]
