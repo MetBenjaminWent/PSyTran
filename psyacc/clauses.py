@@ -32,7 +32,10 @@ def _prepare_loop_for_clause(loop):
     """
     Prepare to apply a clause to a ``loop`` directive.
 
-    :arg loop: the :class:`Loop` node.
+    :arg loop: the Loop Node to prepare.
+    :type loop: :py:class:`Loop`
+
+    :raises ValueError: if a ``kernels`` directive has not yet been applied.
     """
     _check_loop(loop)
     if not has_kernels_directive(loop):
@@ -45,7 +48,11 @@ def has_seq_clause(loop):
     """
     Determine whether a loop has a ``seq`` clause.
 
-    :arg loop: the :class:`Loop` node.
+    :arg loop: the Loop Node to query.
+    :type loop: :py:class:`Loop`
+
+    :returns: ``True`` if the Loop has a ``seq`` clause, else ``False``.
+    :rtype: :py:class:`bool`
     """
     return has_loop_directive(loop) and loop.parent.parent.sequential
 
@@ -56,7 +63,11 @@ def apply_loop_seq(loop):
 
     A ``loop`` directive is also applied, if it does not already exist.
 
-    :arg loop: the :class:`Loop` node.
+    :arg loop: the Loop Node to apply ``seq`` to.
+    :type loop: :py:class:`Loop`
+
+    :raises ValueError: if a ``gang`` clause has already been applied.
+    :raises ValueError: if a ``vector`` clause has already been applied.
     """
     _prepare_loop_for_clause(loop)
     if has_gang_clause(loop):
@@ -70,7 +81,11 @@ def has_gang_clause(loop):
     """
     Determine whether a loop has a ``gang`` clause.
 
-    :arg loop: the :class:`Loop` node.
+    :arg loop: the Loop Node to query.
+    :type loop: :py:class:`Loop`
+
+    :returns: ``True`` if the Loop has a ``gang`` clause, else ``False``.
+    :rtype: :py:class:`bool`
     """
     return has_loop_directive(loop) and loop.parent.parent.gang
 
@@ -81,7 +96,10 @@ def apply_loop_gang(loop):
 
     A ``loop`` directive is also applied, if it does not already exist.
 
-    :arg loop: the :class:`Loop` node.
+    :arg loop: the Loop Node to apply ``gang`` to.
+    :type loop: :py:class:`Loop`
+
+    :raises ValueError: if a ``seq`` clause has already been applied.
     """
     _prepare_loop_for_clause(loop)
     if has_seq_clause(loop):
@@ -93,7 +111,11 @@ def has_vector_clause(loop):
     """
     Determine whether a loop has a ``vector`` clause.
 
-    :arg loop: the :class:`Loop` node.
+    :arg loop: the Loop Node to query.
+    :type loop: :py:class:`Loop`
+
+    :returns: ``True`` if the Loop has a ``vector`` clause, else ``False``.
+    :rtype: :py:class:`bool`
     """
     return has_loop_directive(loop) and loop.parent.parent.vector
 
@@ -104,7 +126,10 @@ def apply_loop_vector(loop):
 
     A ``loop`` directive is also applied, if it does not already exist.
 
-    :arg loop: the :class:`Loop` node.
+    :arg loop: the Loop Node to apply ``vector`` to.
+    :type loop: :py:class:`Loop`
+
+    :raises ValueError: if a ``seq`` clause has already been applied.
     """
     _prepare_loop_for_clause(loop)
     if has_seq_clause(loop):
@@ -116,7 +141,11 @@ def has_collapse_clause(loop):
     """
     Determine whether a loop lies within a collapsed loop nest.
 
-    :arg loop: the :class:`Loop` node.
+    :arg loop: the Loop Node to query.
+    :type loop: :py:class:`Loop`
+
+    :returns: ``True`` if the Loop has a ``collapse`` clause, else ``False``.
+    :rtype: :py:class:`bool`
     """
     _check_loop(loop)
     if not has_kernels_directive(loop):
@@ -139,8 +168,14 @@ def apply_loop_collapse(loop, collapse=None):
 
     A ``loop`` directive is also applied, if it does not already exist.
 
-    :arg loop: the :class:`Loop` node.
-    :kwarg collapse: the number of loops to collapse
+    :arg loop: the Loop Node to apply ``collapse`` to.
+    :type loop: :py:class:`Loop`
+    :kwarg collapse: the number of loops to collapse.
+    :type collapse: :py:class:`int`
+
+    :raises TypeError: if the collapse argument is non-integer.
+    :raises ValueError: if the collapse value is less than 2.
+    :raises ValueError: if the collapse value is greater than the nest depth.
     """
     _prepare_loop_for_clause(loop)
     loops = loop2nest(loop)
