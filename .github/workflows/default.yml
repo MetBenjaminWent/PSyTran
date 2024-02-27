@@ -43,6 +43,11 @@ jobs:
           source /home/runner/work/psyacc-ci/bin/activate
           make lint
 
+      - name: Test codestyle
+        run: |
+          source /home/runner/work/psyacc-ci/bin/activate
+          make codestyle
+
       - name: Test PSyACC
         run: |
           source /home/runner/work/psyacc-ci/bin/activate
