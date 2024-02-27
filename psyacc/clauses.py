@@ -183,7 +183,8 @@ def apply_loop_collapse(loop, collapse=None):
     if collapse is None:
         while len(loops) > 0:
             if is_perfectly_nested(loops):
-                return apply_loop_collapse(loop, len(loops))
+                apply_loop_collapse(loop, len(loops))
+                return
             loops.pop(-1)
     if not isinstance(collapse, int):
         raise TypeError(f"Expected an integer, not '{type(collapse)}'.")
