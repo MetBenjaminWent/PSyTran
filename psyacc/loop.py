@@ -157,8 +157,7 @@ def is_perfectly_nested(outer_loop_or_subnest):
 
         # Otherwise, the nest level is not okay
         return False
-    else:
-        return True
+    return True
 
 
 def is_simple_loop(loop):
