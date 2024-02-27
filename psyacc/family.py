@@ -212,7 +212,7 @@ def has_ancestor(node, node_type=nodes.Loop, inclusive=False, name=None):
     """
     ancestors = get_ancestors(node, inclusive=inclusive, node_type=node_type)
     if name:
-        return any([ancestor.variable.name == name for ancestor in ancestors])
+        return any(ancestor.variable.name == name for ancestor in ancestors)
     return bool(ancestors)
 
 
@@ -227,7 +227,7 @@ def are_siblings(*nodes):
     :rtype: :py:class:`bool`
     """
     assert len(nodes) > 1
-    return all([node in nodes[0].siblings for node in nodes])
+    return all(node in nodes[0].siblings for node in nodes)
 
 
 def is_next_sibling(node1, node2):
