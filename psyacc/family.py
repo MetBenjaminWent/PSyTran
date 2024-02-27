@@ -9,7 +9,7 @@ siblings of :py:class:`Node`\s, as well as for querying their existence and
 nature.
 """
 
-from psyclone.psyir import nodes
+from psyclone.psyir.nodes import Loop, Node
 
 __all__ = [
     "get_descendents",
@@ -25,7 +25,7 @@ __all__ = [
 
 
 def get_descendents(
-    node, node_type=nodes.Node, inclusive=False, exclude=(), depth=None
+    node, node_type=Node, inclusive=False, exclude=(), depth=None
 ):
     """
     Get all ancestors of a Node with a given type.
@@ -44,13 +44,11 @@ def get_descendents(
     :returns: list of descendents according to specifications.
     :rtype: :py:class:`list`
     """
-    assert isinstance(
-        node, nodes.Node
-    ), f"Expected a Node, not '{type(node)}'."
+    assert isinstance(node, Node), f"Expected a Node, not '{type(node)}'."
     assert isinstance(
         inclusive, bool
     ), f"Expected a bool, not '{type(inclusive)}'."
-    assert isinstance(node_type, tuple) or issubclass(node_type, nodes.Node)
+    assert isinstance(node_type, tuple) or issubclass(node_type, Node)
     if depth is not None:
         assert isinstance(depth, int), f"Expected an int, not '{type(depth)}'."
     return [
@@ -62,7 +60,7 @@ def get_descendents(
 
 
 def get_ancestors(
-    node, node_type=nodes.Loop, inclusive=False, exclude=(), depth=None
+    node, node_type=Loop, inclusive=False, exclude=(), depth=None
 ):
     """
     Get all ancestors of a Node with a given type.
@@ -81,13 +79,11 @@ def get_ancestors(
     :returns: list of ancestors according to specifications.
     :rtype: :py:class:`list`
     """
-    assert isinstance(
-        node, nodes.Node
-    ), f"Expected a Node, not '{type(node)}'."
+    assert isinstance(node, Node), f"Expected a Node, not '{type(node)}'."
     assert isinstance(
         inclusive, bool
     ), f"Expected a bool, not '{type(inclusive)}'."
-    assert isinstance(node_type, tuple) or issubclass(node_type, nodes.Node)
+    assert isinstance(node_type, tuple) or issubclass(node_type, Node)
     if depth is not None:
         assert isinstance(depth, int), f"Expected an int, not '{type(depth)}'."
     ancestors = []
@@ -100,7 +96,7 @@ def get_ancestors(
     return ancestors
 
 
-def get_children(node, node_type=nodes.Node, exclude=()):
+def get_children(node, node_type=Node, exclude=()):
     """
     Get all immediate descendents of a Node with a given type, i.e., those at
     the next depth level.
@@ -115,11 +111,9 @@ def get_children(node, node_type=nodes.Node, exclude=()):
     :returns: list of children according to specifications.
     :rtype: :py:class:`list`
     """
-    assert isinstance(
-        node, nodes.Node
-    ), f"Expected a Node, not '{type(node)}'."
+    assert isinstance(node, Node), f"Expected a Node, not '{type(node)}'."
     if not isinstance(node_type, tuple):
-        issubclass(node_type, nodes.Node)
+        issubclass(node_type, Node)
         node_type = (node_type,)
     children = [
         grandchild
@@ -141,14 +135,12 @@ def get_parent(node):
     :returns: the parent Node
     :rtype: :py:class:`Node`
     """
-    assert isinstance(
-        node, nodes.Node
-    ), f"Expected a Node, not '{type(node)}'."
+    assert isinstance(node, Node), f"Expected a Node, not '{type(node)}'."
     parent = node.parent.parent
     return parent
 
 
-def get_siblings(node, node_type=nodes.Node, inclusive=False, exclude=()):
+def get_siblings(node, node_type=Node, inclusive=False, exclude=()):
     """
     Get all Nodes with a given type at the same depth level.
 
@@ -193,7 +185,7 @@ def has_descendent(node, node_type, inclusive=False):
     )
 
 
-def has_ancestor(node, node_type=nodes.Loop, inclusive=False, name=None):
+def has_ancestor(node, node_type=Loop, inclusive=False, name=None):
     """
     Check whether a Node has an ancestor node with a given type.
 
