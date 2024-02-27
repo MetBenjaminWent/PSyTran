@@ -172,10 +172,8 @@ def is_simple_loop(loop):
     :rtype: :py:class:`bool`
     """
     return is_perfectly_nested(loop) and all(
-        [
-            isinstance(child, nodes.Assignment) and child.walk(nodes.Literal)
-            for child in get_children(loop2nest(loop)[-1])
-        ]
+        isinstance(child, nodes.Assignment) and child.walk(nodes.Literal)
+        for child in get_children(loop2nest(loop)[-1])
     )
 
 
