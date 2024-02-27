@@ -4,11 +4,11 @@
 # See LICENSE in the root of the repository for full licensing details.
 
 black
-coverage
 dataclasses
 flake8
 parameterized
 pre-commit
 pylit
 pytest
+pytest-cov
 sphinx

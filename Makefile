@@ -55,9 +55,7 @@ test:
 
 coverage:
 	@echo "Generating coverage report..."
-	@python3 -m coverage erase
-	@python3 -m coverage run --source=psyacc -m pytest -v test
-	@python3 -m coverage html
+	@python3 -m pytest -v --cov-reset --cov=psyacc --cov-report=html test
 	@echo "Done."
 
 demos: setup
