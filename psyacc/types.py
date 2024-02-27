@@ -8,7 +8,7 @@ This module provides functions for checking whether ``CHARACTER`` assignments
 are associated with a :py:class:`Node` or its descendents.
 """
 
-from psyclone.psyir import nodes
+from psyclone.psyir.nodes import Reference
 from psyacc.family import get_descendents
 
 __all__ = ["is_character", "refers_to_character"]
@@ -24,7 +24,7 @@ def is_character(ref):
     :returns: ``True`` if the Reference is to a ``CHARACTER``, else ``False``.
     :rtype: :py:class:`bool`
     """
-    assert isinstance(ref, nodes.Reference)
+    assert isinstance(ref, Reference)
     return "CHARACTER" in ref.datatype.type_text
 
 
@@ -39,6 +39,4 @@ def refers_to_character(node):
         ``False``.
     :rtype: :py:class:`bool`
     """
-    return any(
-        [is_character(ref) for ref in get_descendents(node, nodes.Reference)]
-    )
+    return any(is_character(ref) for ref in get_descendents(node, Reference))
