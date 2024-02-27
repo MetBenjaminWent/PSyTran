@@ -1,7 +1,12 @@
-# (C) Crown Copyright, Met Office. All rights reserved.
+# (C) Crown Copyright 2023, Met Office. All rights reserved.
 #
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
+
+r"""
+This module implements functions for querying whether :py:class:`Node`\s have
+OpenACC clauses associated with them, as well as for applying such clauses.
+"""
 
 from psyacc.directives import (
     has_kernels_directive,
@@ -34,7 +39,9 @@ def _prepare_loop_for_clause(loop):
     """
     _check_loop(loop)
     if not has_kernels_directive(loop):
-        raise ValueError("Cannot apply a loop clause without a kernels directive.")
+        raise ValueError(
+            "Cannot apply a loop clause without a kernels directive."
+        )
     if not has_loop_directive(loop):
         apply_loop_directive(loop)
 
@@ -152,8 +159,7 @@ def has_collapse_clause(loop):
             collapse = loop_dir.collapse
             if collapse is None:
                 continue
-            else:
-                return collapse > i
+            return collapse > i
     return False
 
 
@@ -182,9 +188,12 @@ def apply_loop_collapse(loop, collapse=None):
     if not isinstance(collapse, int):
         raise TypeError(f"Expected an integer, not '{type(collapse)}'.")
     if collapse <= 1:
-        raise ValueError(f"Expected an integer greater than one, not {collapse}.")
+        raise ValueError(
+            f"Expected an integer greater than one, not {collapse}."
+        )
     if len(loops) < collapse:
         raise ValueError(
-            f"Cannot apply collapse to {collapse} loops in a sub-nest of {len(loops)}."
+            f"Cannot apply collapse to {collapse} loops in a sub-nest of"
+            f" {len(loops)}."
         )
     loop.parent.parent._collapse = collapse

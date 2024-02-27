@@ -1,8 +1,15 @@
-# (C) Crown Copyright, Met Office. All rights reserved.
+# (C) Crown Copyright 2023, Met Office. All rights reserved.
 #
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
+r"""
+This module implements functions for querying whether code blocks and
+:py:class:`Loop`\s have OpenACC directives associated with them, as well as for
+applying such directives.
+"""
+
+from collections.abc import Iterable
 from psyclone.psyir import nodes
 from psyclone.transformations import (
     ACCKernelsDirective,
@@ -10,7 +17,6 @@ from psyclone.transformations import (
     ACCLoopDirective,
     ACCLoopTrans,
 )
-from collections.abc import Iterable
 from psyacc.family import get_parent
 from psyacc.loop import _check_loop
 
@@ -22,7 +28,7 @@ __all__ = [
 ]
 
 
-def apply_kernels_directive(block, options={}):
+def apply_kernels_directive(block, options=None):
     """
     Apply a ``kernels`` directive to a block of code.
 
@@ -33,7 +39,7 @@ def apply_kernels_directive(block, options={}):
 
     :raises TypeError: if the options argument is not a dictionary.
     """
-    if not isinstance(options, dict):
+    if options is not None and not isinstance(options, dict):
         raise TypeError(f"Expected a dict, not '{type(options)}'.")
     ACCKernelsTrans().apply(block, options=options)
 
@@ -54,7 +60,7 @@ def has_kernels_directive(node):
     return bool(node.ancestor(ACCKernelsDirective))
 
 
-def apply_loop_directive(loop, options={}):
+def apply_loop_directive(loop, options=None):
     """
     Apply a ``loop`` directive.
 
@@ -67,10 +73,12 @@ def apply_loop_directive(loop, options={}):
     :raises ValueError: if a ``kernels`` directive has not yet been applied.
     """
     _check_loop(loop)
-    if not isinstance(options, dict):
+    if options is not None and not isinstance(options, dict):
         raise TypeError(f"Expected a dict, not '{type(options)}'.")
     if not has_kernels_directive(loop):
-        raise ValueError("Cannot apply a loop directive without a kernels directive.")
+        raise ValueError(
+            "Cannot apply a loop directive without a kernels directive."
+        )
     ACCLoopTrans().apply(loop, options=options)
 
 

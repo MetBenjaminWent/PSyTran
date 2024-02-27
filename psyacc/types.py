@@ -1,7 +1,12 @@
-# (C) Crown Copyright, Met Office. All rights reserved.
+# (C) Crown Copyright 2023, Met Office. All rights reserved.
 #
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
+
+"""
+This module provides functions for checking whether ``CHARACTER`` assignments
+are associated with a :py:class:`Node` or its descendents.
+"""
 
 from psyclone.psyir import nodes
 from psyacc.family import get_descendents
@@ -30,7 +35,10 @@ def refers_to_character(node):
     :arg node: the Node to check.
     :type node: :py:class:`Node`
 
-    :returns: ``True`` if there are References to ``CHARACTER``\s, else ``False``.
+    :returns: ``True`` if there are References to ``CHARACTER``\s, else
+        ``False``.
     :rtype: :py:class:`bool`
     """
-    return any([is_character(ref) for ref in get_descendents(node, nodes.Reference)])
+    return any(
+        [is_character(ref) for ref in get_descendents(node, nodes.Reference)]
+    )

@@ -1,7 +1,12 @@
-# (C) Crown Copyright, Met Office. All rights reserved.
+# (C) Crown Copyright 2023, Met Office. All rights reserved.
 #
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
+
+"""
+This module provides functions for converting the array notation used in a
+:py:class:`Schedule`.
+"""
 
 from psyclone.psyir import nodes
 from psyclone.psyir import transformations as trans
@@ -18,6 +23,8 @@ def convert_array_notation(schedule):
     Convert implicit array range assignments into explicit ones.
 
     Wrapper for the :meth:`apply` method of :class:`Reference2ArrayRangeTrans`.
+    If this fails due to a :class:`TransformationError` then the conversion is
+    skipped.
 
     :arg schedule: the Schedule to transform.
     :type schedule: :py:class:`Schedule`
@@ -37,14 +44,16 @@ def convert_range_loops(schedule):
     Convert explicit array range assignments into loops.
 
     Wrapper for the :meth:`apply` method of :class:`NemoArrayRange2LoopTrans`.
+    If this fails due to a :class:`TransformationError` then the conversion is
+    skipped.
 
     :arg schedule: the Schedule to transform.
     :type schedule: :py:class:`Schedule`
     """
     before = str(schedule)
-    for r in schedule.walk(nodes.Range):
+    for rang in schedule.walk(nodes.Range):
         try:
-            NemoArrayRange2LoopTrans().apply(r)
+            NemoArrayRange2LoopTrans().apply(rang)
         except TransformationError:  # pragma: no cover
             pass
 

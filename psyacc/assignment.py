@@ -1,7 +1,11 @@
-# (C) Crown Copyright, Met Office. All rights reserved.
+# (C) Crown Copyright 2023, Met Office. All rights reserved.
 #
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
+
+"""
+This module implements query functions related to assignment operations.
+"""
 
 from psyclone.psyir import nodes
 
@@ -18,4 +22,6 @@ def is_literal_assignment(node):
     :returns: ``True`` if the Node assigns a literal value, else ``False``
     :rtype: :py:class:`bool`
     """
-    return isinstance(node, nodes.Assignment) and isinstance(node.rhs, nodes.Literal)
+    return isinstance(node, nodes.Assignment) and isinstance(
+        node.rhs, nodes.Literal
+    )
