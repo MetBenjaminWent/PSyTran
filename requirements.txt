@@ -8,6 +8,7 @@ dataclasses
 flake8
 parameterized
 pre-commit
+pylint
 pylit
 pytest
 pytest-cov
