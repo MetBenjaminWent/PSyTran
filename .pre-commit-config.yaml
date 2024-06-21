@@ -4,7 +4,22 @@ repos:
     hooks:
     - id: black
       language_version: python3.10
--   repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
+-   repo: local
     hooks:
-    - id: flake8
+    - id: pylint
+      name: pylint
+      entry: pylint
+      language: system
+      types: [python]
+      args:
+        [
+          "-rn", # Only display messages
+          "-sn", # Don't display the score
+        ]
+-    repo: https://github.com/pre-commit/pre-commit-hooks
+     rev: v1.2.3
+     hooks:
+     - id: trailing-whitespace
+     - id: end-of-file-fixer
+     - id: check-yaml
+     - id: debug-statements

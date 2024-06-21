@@ -76,7 +76,8 @@ def apply_loop_seq(loop):
         raise ValueError("Cannot apply seq to a loop with a gang clause.")
     if has_vector_clause(loop):
         raise ValueError("Cannot apply seq to a loop with a vector clause.")
-    loop.parent.parent._sequential = True
+    loop.parent.parent._sequential = True  # pylint: disable=protected-access
+    # TODO: Add public setter method on PSyclone side  # pylint: disable=fixme
 
 
 def has_gang_clause(loop):
@@ -106,7 +107,8 @@ def apply_loop_gang(loop):
     _prepare_loop_for_clause(loop)
     if has_seq_clause(loop):
         raise ValueError("Cannot apply gang to a loop with a seq clause.")
-    loop.parent.parent._gang = True
+    loop.parent.parent._gang = True  # pylint: disable=protected-access
+    # TODO: Add public setter method on PSyclone side  # pylint: disable=fixme
 
 
 def has_vector_clause(loop):
@@ -136,7 +138,8 @@ def apply_loop_vector(loop):
     _prepare_loop_for_clause(loop)
     if has_seq_clause(loop):
         raise ValueError("Cannot apply vector to a loop with a seq clause.")
-    loop.parent.parent._vector = True
+    loop.parent.parent._vector = True  # pylint: disable=protected-access
+    # TODO: Add public setter method on PSyclone side  # pylint: disable=fixme
 
 
 def has_collapse_clause(loop):
@@ -183,7 +186,8 @@ def apply_loop_collapse(loop, collapse=None):
     if collapse is None:
         while len(loops) > 0:
             if is_perfectly_nested(loops):
-                return apply_loop_collapse(loop, len(loops))
+                apply_loop_collapse(loop, len(loops))
+                return
             loops.pop(-1)
     if not isinstance(collapse, int):
         raise TypeError(f"Expected an integer, not '{type(collapse)}'.")
@@ -196,4 +200,5 @@ def apply_loop_collapse(loop, collapse=None):
             f"Cannot apply collapse to {collapse} loops in a sub-nest of"
             f" {len(loops)}."
         )
-    loop.parent.parent._collapse = collapse
+    loop.parent.parent._collapse = collapse  # pylint: disable=protected-access
+    # TODO: Add public setter method on PSyclone side  # pylint: disable=fixme

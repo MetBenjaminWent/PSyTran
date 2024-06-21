@@ -1,4 +1,4 @@
-# (C) Crown Copyright, Met Office. All rights reserved.
+# (C) Crown Copyright 2023, Met Office. All rights reserved.
 #
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
@@ -260,8 +260,8 @@ def test_apply_loop_collapse_subnest(parser, collapse):
 
 def test_apply_loop_collapse_default(parser, collapse):
     """
-    Test that :func:`apply_loop_collapse` is correctly applied to a full nest when the
-    `collapse` keyword argument is not used.
+    Test that :func:`apply_loop_collapse` is correctly applied to a full nest
+    when the `collapse` keyword argument is not used.
     """
     schedule = get_schedule(parser, simple_loop_code(collapse))
     loops = schedule.walk(nodes.Loop)
@@ -275,10 +275,12 @@ def test_apply_loop_collapse_default(parser, collapse):
 
 def test_apply_loop_collapse_imperfect_default(parser, imperfection):
     """
-    Test that :func:`apply_loop_collapse` is correctly applied to an imperfect nest when
-    the `collapse` keyword argument is not used.
+    Test that :func:`apply_loop_collapse` is correctly applied to an imperfect
+    nest when the `collapse` keyword argument is not used.
     """
-    schedule = get_schedule(parser, imperfectly_nested_triple_loop2[imperfection])
+    schedule = get_schedule(
+        parser, imperfectly_nested_triple_loop2[imperfection]
+    )
     loops = schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
     apply_loop_directive(loops[0])
@@ -291,11 +293,13 @@ def test_apply_loop_collapse_imperfect_default(parser, imperfection):
 
 def test_apply_loop_collapse_imperfect_default_error(parser, imperfection):
     """
-    Test calling that :func:`apply_loop_collapse` without a `collapse` keyword argument
-    raises an error when applied to an imperfect nest for which the outer loop is not
-    itself in a perfect nest.
+    Test calling that :func:`apply_loop_collapse` without a `collapse` keyword
+    argument raises an error when applied to an imperfect nest for which the
+    outer loop is not itself in a perfect nest.
     """
-    schedule = get_schedule(parser, imperfectly_nested_triple_loop1[imperfection])
+    schedule = get_schedule(
+        parser, imperfectly_nested_triple_loop1[imperfection]
+    )
     loops = schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
     apply_loop_directive(loops[0])

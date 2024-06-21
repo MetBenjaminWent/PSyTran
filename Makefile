@@ -1,4 +1,4 @@
-# (C) Crown Copyright, Met Office. All rights reserved.
+# (C) Crown Copyright 2023, Met Office. All rights reserved.
 #
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
@@ -29,21 +29,33 @@ docs: demos
 	@cd docs && make html
 	@echo "Done."
 
-lint:
-	@echo "Checking lint..."
-	@flake8
+format:
+	@echo "Applying formatting..."
+	@black *.py
+	@black demos/*.py
+	@black docs/source/*.py
+	@black psyacc/*.py
+	@black test/*.py
+	@echo "Done."
+
+codestyle:
+	@echo "Checking codestyle..."
+	@python3 -m pycodestyle .
 	@echo "PASS"
 
-test: lint
+lint:
+	@echo "Checking lint..."
+	@python3 -m pylint psyacc
+	@echo "PASS"
+
+test:
 	@echo "testing psyacc..."
 	@python3 -m pytest -v --durations=20 test
 	@echo "PASS"
 
 coverage:
 	@echo "Generating coverage report..."
-	@python3 -m coverage erase
-	@python3 -m coverage run --source=psyacc -m pytest -v test
-	@python3 -m coverage html
+	@python3 -m pytest -v --cov-reset --cov=psyacc --cov-report=html test
 	@echo "Done."
 
 demos: setup
