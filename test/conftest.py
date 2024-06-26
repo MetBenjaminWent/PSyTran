@@ -3,4 +3,10 @@
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
-from psyclone.tests.conftest import _session_parser, parser  # noqa
+"""
+Module for setting up Pytest fixtures.
+"""
+# pylint: disable=W0611
+from psyclone.tests.conftest import fixture_fortran_reader
+
+# pylint: enable=W0611

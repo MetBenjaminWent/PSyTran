@@ -3,10 +3,23 @@
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
-from fparser.common.readfortran import FortranStringReader
-from psyclone.psyGen import PSyFactory
-from psyacc import *
+"""
+Various utility functions for PSyACC's test suite.
+"""
+
 import code_snippets as cs
+from psyacc import (
+    apply_loop_collapse,
+    apply_loop_gang,
+    apply_loop_seq,
+    apply_loop_vector,
+    has_collapse_clause,
+    has_gang_clause,
+    has_seq_clause,
+    has_vector_clause,
+)
+
+__all__ = ["has_clause", "apply_clause", "get_schedule", "simple_loop_code"]
 
 has_clause = {
     "sequential": has_seq_clause,
@@ -23,17 +36,15 @@ apply_clause = {
 }
 
 
-def get_schedule(parser, code_string):
+def get_schedule(fortran_reader, code_string):
     """
     Given a snippet of test code written as a string, get the schedule of the
     (first) invoke it contains.
 
-    :arg parser: the parser type to be used
+    :arg fortran_reader: PSyclone's fortran_reader fixture
     :arg code_string: the code to be parsed, as a string
     """
-    code = parser(FortranStringReader(code_string))
-    psy = PSyFactory("nemo", distributed_memory=False).create(code)
-    return psy.invokes.invoke_list[0].schedule
+    return fortran_reader.psyir_from_source(code_string).children[0]
 
 
 def simple_loop_code(depth):
@@ -45,11 +56,10 @@ def simple_loop_code(depth):
     """
     if depth == 1:
         return cs.loop_with_1_assignment
-    elif depth == 2:
+    if depth == 2:
         return cs.double_loop_with_1_assignment
-    elif depth == 3:
+    if depth == 3:
         return cs.triple_loop_with_1_assignment
-    elif depth == 4:
+    if depth == 4:
         return cs.quadruple_loop_with_1_assignment
-    else:
-        raise NotImplementedError
+    raise NotImplementedError
