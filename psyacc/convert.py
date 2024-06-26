@@ -53,9 +53,9 @@ def convert_range_loops(schedule):
     :type schedule: :py:class:`Schedule`
     """
     before = str(schedule)
-    for rang in schedule.walk(nodes.Range):
+    for assign in schedule.walk(nodes.Assignment):
         try:
-            ArrayAssignment2LoopsTrans().apply(rang)
+            ArrayAssignment2LoopsTrans().apply(assign)
         except TransformationError:  # pragma: no cover
             pass
 
