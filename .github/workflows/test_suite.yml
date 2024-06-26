@@ -1,4 +1,4 @@
-name: default
+name: Test suite
 
 on:
   # Trigger the workflow on certain events
@@ -12,7 +12,9 @@ on:
     - cron: "0 17 * * 6"
 
 jobs:
-  build:
+
+  test_suite:
+
     runs-on: ubuntu-latest
 
     steps:
@@ -48,10 +50,17 @@ jobs:
           source /home/runner/work/psyacc-ci/bin/activate
           make codestyle
 
-      - name: Test PSyACC
+      - name: PSyACC unit tests
         run: |
           source /home/runner/work/psyacc-ci/bin/activate
           python3 -m pytest -v --cov-reset --cov=psyacc -v test
+
+      - name: PSyACC integration tests
+        run: |
+          source /home/runner/work/psyacc-ci/bin/activate
+          cd demos
+          make run
+          make clean
 
       - name: Build docs
         run: |

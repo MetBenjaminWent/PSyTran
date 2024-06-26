@@ -15,3 +15,4 @@ run:
 clean:
 	rm -rf __pycache__/
 	rm -f *.mod *.o
+	rm -rf outputs/
