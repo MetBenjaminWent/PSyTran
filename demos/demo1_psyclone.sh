@@ -6,5 +6,5 @@
 # See LICENSE in the root of the repository for full licensing details.
 
 mkdir -p outputs
-psyclone --script ./demo1_psyclone.py -o outputs/demo1_psyclone-empty.F90 \
+psyclone -s ./demo1_psyclone.py -o outputs/demo1_psyclone-empty.F90 \
         fortran/empty.F90

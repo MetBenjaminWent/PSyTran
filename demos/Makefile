@@ -10,7 +10,7 @@ run:
 	./demo1_psyclone.sh
 	./demo2_kernels.sh
 	./demo3_loop.sh
-	./04_collapse.sh
+	./demo4_collapse.sh
 
 clean:
 	rm -rf __pycache__/
