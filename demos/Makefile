@@ -8,8 +8,8 @@ all: run
 run:
 	set -eu
 	./demo1_psyclone.sh
-	./02_kernels.sh
-	./03_loop.sh
+	./demo2_kernels.sh
+	./demo3_loop.sh
 	./04_collapse.sh
 
 clean:

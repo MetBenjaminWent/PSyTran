@@ -5,11 +5,14 @@
 #    license. See LICENSE in the root of the repository for full licensing
 #    details.
 #
+# .. # pylint: disable=C0114
+# .. # pylint: disable=C0116
+#
 #
 # Demo 3: Applying OpenACC ``loop`` directives using PSyACC
 # =========================================================
 #
-# The `previous demo <02_kernels.py.html>`__ showed how to insert OpenACC
+# The `previous demo <demo2_kernels.py.html>`__ showed how to insert OpenACC
 # ``kernels`` directives into Fortran code using PSyACC. Such directives mark
 # out sections of code to be run on the GPU. In this demo, we additionally
 # apply OpenACC `loop` directives to loops within such regions and configure
@@ -25,15 +28,22 @@
 #
 # Use the following command for this demo:
 #
-# .. literalinclude:: 03_loop.sh
+# .. literalinclude:: demo3_loop.sh
 #    :language: bash
 #    :lines: 8-
 #
 # Again, begin by importing from the namespace PSyACC, as well as the ``nodes``
 # module of PSyclone. ::
 
-from psyacc import *
 from psyclone.psyir import nodes
+from psyacc import (
+    apply_kernels_directive,
+    apply_loop_directive,
+    apply_loop_gang,
+    apply_loop_seq,
+    apply_loop_vector,
+    is_outer_loop,
+)
 
 # We already saw how to extract a loop from the schedule and apply an OpenACC
 # ``kernels`` directive to it. In this case, there are two loops. Loops are
@@ -47,7 +57,7 @@ from psyclone.psyir import nodes
 
 
 def apply_openacc_kernels(psy):
-    schedule = psy.invokes.invoke_list[0].schedule
+    schedule = psy.children[0]
 
     # Get the outer-most loop
     loops = schedule.walk(nodes.Loop)
@@ -66,7 +76,7 @@ def apply_openacc_kernels(psy):
 
 
 def apply_openacc_loops(psy):
-    schedule = psy.invokes.invoke_list[0].schedule
+    schedule = psy.children[0]
     for loop in schedule.walk(nodes.Loop):
         apply_loop_directive(loop)
     return psy
@@ -98,7 +108,7 @@ def apply_openacc_loops(psy):
 
 
 def insert_clauses(psy):
-    schedule = psy.invokes.invoke_list[0].schedule
+    schedule = psy.children[0]
     for loop in schedule.walk(nodes.Loop):
         if is_outer_loop(loop):
             apply_loop_gang(loop)
@@ -116,9 +126,9 @@ def trans(psy):
     return insert_clauses(apply_openacc_loops(apply_openacc_kernels(psy)))
 
 
-# The output in ``output/03_loop-double_loop.F90`` should be as follows.
+# The output in ``output/demo3_loop-double_loop.F90`` should be as follows.
 #
-# .. literalinclude:: outputs/03_loop-double_loop.F90
+# .. literalinclude:: outputs/demo3_loop-double_loop.F90
 #    :language: fortran
 #
 # Hopefully that is as expected.
@@ -128,7 +138,7 @@ def trans(psy):
 #
 # .. code-block:: bash
 #
-#    nvfortran -c -acc=gpu -Minfo=accel outputs/03_loop-double_loop.F90
+#    nvfortran -c -acc=gpu -Minfo=accel outputs/demo3_loop-double_loop.F90
 #
 # The expected compiler output is
 #
@@ -153,10 +163,13 @@ def trans(psy):
 #    links referenced above.
 #
 # 2. Try applying this transformation script to the Fortran source code from
-#    the `previous demo <02_kernels.py.html>`__, i.e.,
+#    the `previous demo <demo2_kernels.py.html>`__, i.e.,
 #    ``fortran/single_loop.py``.
 #
-# In the `next demo <04_collapse.py.html>`__, we'll revisit the double loop
+# In the `next demo <demo4_collapse.py.html>`__, we'll revisit the double loop
 # example and apply a different clause type: the ``collapse`` clause.
 #
-# This demo can also be viewed as a `Python script <03_loop.py>`__.
+# This demo can also be viewed as a `Python script <demo3_loop.py>`__.
+
+# .. # pylint: enable=C0114
+# .. # pylint: enable=C0116
