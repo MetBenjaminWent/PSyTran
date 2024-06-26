@@ -52,15 +52,8 @@ def convert_range_loops(schedule):
     :arg schedule: the Schedule to transform.
     :type schedule: :py:class:`Schedule`
     """
-    before = str(schedule)
     for assign in schedule.walk(nodes.Assignment):
         try:
             ArrayAssignment2LoopsTrans().apply(assign)
         except TransformationError:  # pragma: no cover
             pass
-
-    # The above will convert a multi-dimensional array range assignment into a
-    # loop containing an array range assignment with one fewer dimension. As
-    # such, we need to recurse to get rid of all array range assignments.
-    if str(schedule) != before and schedule.walk(nodes.Range):
-        convert_range_loops(schedule)
