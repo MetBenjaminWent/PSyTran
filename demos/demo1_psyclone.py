@@ -94,9 +94,9 @@ def trans(psy):
 # most part) and will put a single blank line at the start and end of any
 # program.
 #
-# In the `next demo <demo2_kernels.py.html>`__, we'll develop a more interesting
-# transformation script, which uses PSyACC to apply an OpenACC ``kernels``
-# directive to a simple loop.
+# In the `next demo <demo2_kernels.py.html>`__, we'll develop a more
+# interesting transformation script, which uses PSyACC to apply an OpenACC
+# ``kernels`` directive to a simple loop.
 #
 # This demo can also be viewed as a `Python script <demo2_psyclone.py>`__.
 #

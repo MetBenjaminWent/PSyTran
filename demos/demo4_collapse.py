@@ -11,11 +11,11 @@
 # Demo 4: Applying OpenACC ``collapse`` clauses using PSyACC
 # ==========================================================
 #
-# The `previous demo <demo3_loop.py.html>`__ showed how to insert OpenACC ``loop``
-# directives with ``gang``, ``vector``, and ``seq`` clauses into Fortran code
-# using PSyACC. In this demo, we consider the ``collapse`` clause, which can be
-# used to combine loops whose iterations are independent of one another, to
-# increase data throughput.
+# The `previous demo <demo3_loop.py.html>`__ showed how to insert OpenACC
+# ``loop`` directives with ``gang``, ``vector``, and ``seq`` clauses into
+# Fortran code using PSyACC. In this demo, we consider the ``collapse``
+# clause, which can be used to combine loops whose iterations are
+# independent of one another, to increase data throughput.
 #
 # Consider again the same double loop example:
 #

@@ -45,9 +45,9 @@ def convert_range_loops(schedule):
     """
     Convert explicit array range assignments into loops.
 
-    Wrapper for the :meth:`apply` method of :class:`ArrayAssignment2LoopsTrans`.
-    If this fails due to a :class:`TransformationError` then the conversion is
-    skipped.
+    Wrapper for the :meth:`apply` method of
+    :class:`ArrayAssignment2LoopsTrans`. If this fails due to a
+    :class:`TransformationError` then the conversion is skipped.
 
     :arg schedule: the Schedule to transform.
     :type schedule: :py:class:`Schedule`

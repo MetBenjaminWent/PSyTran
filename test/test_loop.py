@@ -38,8 +38,8 @@ def fixture_perfection(request):
 @pytest.fixture(name="imperfection", params=["before", "after", "if"])
 def fixture_imperfection(request):
     """
-    Pytest fixture determining whether a loop nest imperfection comes before or after a
-    loop.
+    Pytest fixture determining whether a loop nest imperfection comes before
+    or after a loop.
     """
     return request.param
 

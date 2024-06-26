@@ -40,7 +40,8 @@ format:
 
 codestyle:
 	@echo "Checking codestyle..."
-	@python3 -m pycodestyle .
+	@python3 -m pycodestyle psyacc/
+	@python3 -m pycodestyle test/
 	@echo "PASS"
 
 lint:

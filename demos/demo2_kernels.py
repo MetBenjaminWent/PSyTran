@@ -213,8 +213,8 @@ def trans(psy):
 #   subroutine. This is indicated by the use of an implicit use of the OpenACC
 #   data directive clause ``copyout``.
 #
-# In the `next demo <demo3_loop.py.html>`__ we'll build on this and additionally
-# apply an OpenACC ``loop`` directive, with appropriate clauses.
+# In the `next demo <demo3_loop.py.html>`__ we'll build on this and
+# additionally apply an OpenACC ``loop`` directive, with appropriate clauses.
 #
 # This demo can also be viewed as a `Python script <demo2_kernels.py>`__.
 #

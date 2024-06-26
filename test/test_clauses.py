@@ -46,8 +46,8 @@ def fixture_collapse(request):
 @pytest.fixture(name="imperfection", params=["before", "after"])
 def fixture_imperfection(request):
     """
-    Pytest fixture determining whether a loop nest imperfection comes before or after a
-    loop.
+    Pytest fixture determining whether a loop nest imperfection comes before
+    or after a loop.
     """
     return request.param
 

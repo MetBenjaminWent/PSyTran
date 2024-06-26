@@ -26,7 +26,10 @@ from psyacc.family import (
 
 @pytest.fixture(name="inclusive", params=[True, False])
 def fixture_inclusive(request):
-    """Pytest fixture to control whether the current node is included in searches."""
+    """
+    Pytest fixture to control whether the current node is included in
+    searches.
+    """
     return request.param
 
 
