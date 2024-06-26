@@ -3,24 +3,44 @@
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
-from psyclone.psyir import nodes
-from psyacc.loop import _check_loop
-from utils import *
+"""
+Unit tests for PSyACC's `loop` module.
+"""
+
+import code_snippets as cs
 import pytest
+from utils import get_schedule, simple_loop_code
+from psyclone.psyir import nodes
+from psyacc.loop import (
+    _check_loop,
+    get_loop_nest_variable_names,
+    get_loop_variable_name,
+    is_independent,
+    is_outer_loop,
+    is_parallelisable,
+    is_perfectly_nested,
+    is_simple_loop,
+)
 
 
-@pytest.fixture(params=[1, 2, 3, 4])
-def nest_depth(request):
+@pytest.fixture(name="nest_depth", params=[1, 2, 3, 4])
+def fixture_nest_depth(request):
+    """Pytest fixture for depth of a loop nest."""
     return request.param
 
 
-@pytest.fixture(params=["1_assign", "3_assigns", "if"])
-def perfection(request):
+@pytest.fixture(name="perfection", params=["1_assign", "3_assigns", "if"])
+def fixture_perfection(request):
+    """Pytest fixture for code found within a perfectly nested loop."""
     return request.param
 
 
-@pytest.fixture(params=["before", "after", "if"])
-def imperfection(request):
+@pytest.fixture(name="imperfection", params=["before", "after", "if"])
+def fixture_imperfection(request):
+    """
+    Pytest fixture determining whether a loop nest imperfection comes before or after a
+    loop.
+    """
     return request.param
 
 
@@ -52,12 +72,12 @@ conditional_perfectly_nested_subloop = {
 }
 
 
-def test_check_loop_typeerror(parser):
+def test_check_loop_typeerror(fortran_reader):
     """
     Test that a :class:`TypeError` is raised when :func:`_check_loop` is called
     with something other than a :class:`Loop`.
     """
-    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
+    schedule = get_schedule(fortran_reader, cs.double_loop_with_1_assignment)
     assignments = schedule.walk(nodes.Assignment)
     expected = (
         "Expected a Loop, not"
@@ -67,37 +87,37 @@ def test_check_loop_typeerror(parser):
         _check_loop(assignments[0])
 
 
-def test_is_outer_loop(parser, nest_depth):
+def test_is_outer_loop(fortran_reader, nest_depth):
     """
     Test that a :func:`is_outer_loop` correctly determines whether a loop is
     outer-most in its nest.
     """
-    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    schedule = get_schedule(fortran_reader, simple_loop_code(nest_depth))
     loops = schedule.walk(nodes.Loop)
     assert is_outer_loop(loops[0])
     for i in range(1, nest_depth):
         assert not is_outer_loop(loops[i])
 
 
-def test_is_perfectly_nested(parser, perfection):
+def test_is_perfectly_nested(fortran_reader, perfection):
     """
     Test that :func:`is_perfectly_nested` correctly identifies a perfectly
     nested loop.
     """
-    schedule = get_schedule(parser, perfectly_nested_loop[perfection])
+    schedule = get_schedule(fortran_reader, perfectly_nested_loop[perfection])
     loops = schedule.walk(nodes.Loop)
     assert is_perfectly_nested(loops[0])
     assert is_parallelisable(loops[0])
     assert is_independent(loops[0])
 
 
-def test_is_not_perfectly_nested_double(parser, imperfection):
+def test_is_not_perfectly_nested_double(fortran_reader, imperfection):
     """
     Test that :func:`is_perfectly_nested` correctly identifies an imperfectly
     nested double loop.
     """
     schedule = get_schedule(
-        parser, imperfectly_nested_double_loop[imperfection]
+        fortran_reader, imperfectly_nested_double_loop[imperfection]
     )
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
@@ -105,13 +125,13 @@ def test_is_not_perfectly_nested_double(parser, imperfection):
     assert is_parallelisable(loops[0])
 
 
-def test_is_not_perfectly_nested_triple(parser, imperfection):
+def test_is_not_perfectly_nested_triple(fortran_reader, imperfection):
     """
     Test that :func:`is_perfectly_nested` correctly identifies an imperfectly
     nested triple loop.
     """
     schedule = get_schedule(
-        parser, imperfectly_nested_triple_loop[imperfection]
+        fortran_reader, imperfectly_nested_triple_loop[imperfection]
     )
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
@@ -119,25 +139,25 @@ def test_is_not_perfectly_nested_triple(parser, imperfection):
     assert is_parallelisable(loops[0])
 
 
-def test_is_not_perfectly_nested_double_2_loop(parser):
+def test_is_not_perfectly_nested_double_2_loop(fortran_reader):
     """
     Test that :func:`is_perfectly_nested` correctly identifies an imperfectly
     nested double loop containing two loops.
     """
-    schedule = get_schedule(parser, cs.double_loop_with_2_loops)
+    schedule = get_schedule(fortran_reader, cs.double_loop_with_2_loops)
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
     assert not is_simple_loop(loops[0])
     assert is_parallelisable(loops[0])
 
 
-def test_is_perfectly_nested_subnest(parser, imperfection):
+def test_is_perfectly_nested_subnest(fortran_reader, imperfection):
     """
     Test that :func:`is_perfectly_nested` correctly identifies a perfectly
     nested sub-nest.
     """
     schedule = get_schedule(
-        parser, imperfectly_nested_triple_loop[imperfection]
+        fortran_reader, imperfectly_nested_triple_loop[imperfection]
     )
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
@@ -145,13 +165,13 @@ def test_is_perfectly_nested_subnest(parser, imperfection):
     assert is_parallelisable(loops[0])
 
 
-def test_is_perfectly_nested_subnest_conditional(parser, imperfection):
+def test_is_perfectly_nested_subnest_conditional(fortran_reader, imperfection):
     """
     Test that :func:`is_perfectly_nested` correctly identifies a perfectly
     nested sub-nest with conditional.
     """
     schedule = get_schedule(
-        parser, conditional_perfectly_nested_subloop[imperfection]
+        fortran_reader, conditional_perfectly_nested_subloop[imperfection]
     )
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
@@ -159,92 +179,98 @@ def test_is_perfectly_nested_subnest_conditional(parser, imperfection):
     assert is_perfectly_nested(loops[2])
 
 
-def test_is_perfectly_nested_subnest_index_array(parser):
+def test_is_perfectly_nested_subnest_index_array(fortran_reader):
     """
     Test that :func:`is_perfectly_nested` correctly identifies a perfectly
     nested sub-nest where an index array is used.
     """
-    schedule = get_schedule(parser, cs.double_loop_with_index_array)
+    schedule = get_schedule(fortran_reader, cs.double_loop_with_index_array)
     loops = schedule.walk(nodes.Loop)
     assert not is_perfectly_nested(loops[0])
     assert is_perfectly_nested(loops[1])
     assert not is_parallelisable(loops[0])
 
 
-def test_is_simple_loop_1_literal(parser, nest_depth):
+def test_is_simple_loop_1_literal(fortran_reader, nest_depth):
     """
     Test that :func:`is_simple_loop` correctly identifies a simple loop with
     one literal assignment.
     """
-    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    schedule = get_schedule(fortran_reader, simple_loop_code(nest_depth))
     loops = schedule.walk(nodes.Loop)
     assert is_simple_loop(loops[0])
     assert is_parallelisable(loops[0])
     assert is_independent(loops[0])
 
 
-def test_is_simple_loop_2_literals(parser):
+def test_is_simple_loop_2_literals(fortran_reader):
     """
     Test that :func:`is_simple_loop` correctly identifies a simple loop with
     two literal assignments.
     """
-    schedule = get_schedule(parser, cs.loop_with_2_literal_assignments)
+    schedule = get_schedule(fortran_reader, cs.loop_with_2_literal_assignments)
     loops = schedule.walk(nodes.Loop)
     assert is_simple_loop(loops[0])
     assert is_parallelisable(loops[0])
     assert is_independent(loops[0])
 
 
-def test_is_not_simple_loop_references(parser):
+def test_is_not_simple_loop_references(fortran_reader):
     """
     Test that :func:`is_simple_loop` correctly identifies a perfectly nested
     loop with a reference assignment as non-simple.
     """
-    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    schedule = get_schedule(fortran_reader, cs.loop_with_3_assignments)
     loops = schedule.walk(nodes.Loop)
     assert not is_simple_loop(loops[0])
     assert is_parallelisable(loops[0])
 
 
-def test_get_loop_variable_name(parser):
+def test_get_loop_variable_name(fortran_reader):
     """
     Test that :func:`get_loop_variable_name` correctly determines loop variable
     names.
     """
-    schedule = get_schedule(parser, cs.quadruple_loop_with_1_assignment)
+    schedule = get_schedule(
+        fortran_reader, cs.quadruple_loop_with_1_assignment
+    )
     loops = schedule.walk(nodes.Loop)
     for i, expected in enumerate(["l", "k", "j", "i"]):
         assert get_loop_variable_name(loops[i]) == expected
 
 
-def test_get_loop_nest_variable_names(parser):
+def test_get_loop_nest_variable_names(fortran_reader):
     """
     Test that :func:`get_loop_nest_variable_names` correctly determines all
     loop variable names in a nest.
     """
-    schedule = get_schedule(parser, cs.quadruple_loop_with_1_assignment)
+    schedule = get_schedule(
+        fortran_reader, cs.quadruple_loop_with_1_assignment
+    )
     indices = ["l", "k", "j", "i"]
     for i, loop in enumerate(schedule.walk(nodes.Loop)):
         assert get_loop_nest_variable_names(loop) == indices[i:]
 
 
-def test_is_independent_valueerror(parser):
+def test_is_independent_valueerror(fortran_reader):
     """
     Test that a :class:`ValueError` is raised when :func:`is_independent` is
     called with an imperfectly nested :class:`Loop`.
     """
-    schedule = get_schedule(parser, cs.imperfectly_nested_double_loop_before)
+    schedule = get_schedule(
+        fortran_reader, cs.imperfectly_nested_double_loop_before
+    )
     expected = "is_independent can only be applied to perfectly nested loops."
     with pytest.raises(ValueError, match=expected):
         is_independent(schedule.walk(nodes.Loop)[0])
 
 
-def test_is_not_independent_double_loop(parser):
+def test_is_not_independent_double_loop(fortran_reader):
     """
     Test that :func:`is_independent` correctly identifies a dependent double
     loop.
     """
-    schedule = get_schedule(parser, cs.dependent_double_loop)
+    schedule = get_schedule(fortran_reader, cs.dependent_double_loop)
     loops = schedule.walk(nodes.Loop)
     assert is_simple_loop(loops[0])
     assert is_parallelisable(loops[0])
@@ -252,12 +278,12 @@ def test_is_not_independent_double_loop(parser):
     assert is_independent(loops[1])
 
 
-def test_is_not_independent_triple_loop(parser):
+def test_is_not_independent_triple_loop(fortran_reader):
     """
     Test that :func:`is_independent` correctly identifies a dependent triple
     loop.
     """
-    schedule = get_schedule(parser, cs.dependent_triple_loop)
+    schedule = get_schedule(fortran_reader, cs.dependent_triple_loop)
     loops = schedule.walk(nodes.Loop)
     assert is_simple_loop(loops[0])
     assert is_parallelisable(loops[0])
@@ -266,12 +292,12 @@ def test_is_not_independent_triple_loop(parser):
     assert is_independent(loops[2])
 
 
-def test_is_not_independent_triple_subloop(parser):
+def test_is_not_independent_triple_subloop(fortran_reader):
     """
     Test that :func:`is_independent` correctly identifies a dependent triple
     loop.
     """
-    schedule = get_schedule(parser, cs.dependent_triple_subloop)
+    schedule = get_schedule(fortran_reader, cs.dependent_triple_subloop)
     loops = schedule.walk(nodes.Loop)
     assert is_simple_loop(loops[0])
     assert is_parallelisable(loops[0])
