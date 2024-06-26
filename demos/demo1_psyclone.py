@@ -5,6 +5,9 @@
 #    license. See LICENSE in the root of the repository for full licensing
 #    details.
 #
+# .. # pylint: disable=C0114
+# .. # pylint: disable=C0116
+#
 #
 # Demo 1: PSyclone transformations from the command line
 # ======================================================
@@ -25,9 +28,9 @@
 #
 # The recommended command for this demo is as follows.
 #
-# .. literalinclude:: 01_psyclone.sh
+# .. literalinclude:: demo1_psyclone.sh
 #    :language: bash
-#    :lines: 8-
+#    :lines: 9-
 #
 # There is a lot to unpack here! Let's work through the arguments one by one.
 #
@@ -52,7 +55,7 @@
 # Transformation script
 # ---------------------
 #
-# The ``--script`` option is used to provide a transformation script to
+# The ``-s`` option is used to provide a transformation script to
 # PSyclone. In this case, we pass this file. Given that almost all of it is
 # comprised of comments, the only Python syntax that will be picked up is the
 # following. ::
@@ -74,13 +77,13 @@ def trans(psy):
 #
 # Finally, we need to tell PSyclone where to write the transformed code to. If
 # this argument is dropped then the transformed code will be printed to screen.
-# We pass the location ``outputs/01_psyclone-empty.F90`` as a combination of
+# We pass the location ``outputs/demo1_psyclone-empty.F90`` as a combination of
 # the names of the source file and transformation script. The ``output``
 # subdirectory should have been created when you installed PSyACC.
 #
 # Inspecting the output file, it should look something like.
 #
-# .. literalinclude:: outputs/01_psyclone-empty.F90
+# .. literalinclude:: outputs/demo1_psyclone-empty.F90
 #    :language: fortran
 #
 # It doesn't take a Fortran expert to realise that running the two versions of
@@ -91,8 +94,11 @@ def trans(psy):
 # most part) and will put a single blank line at the start and end of any
 # program.
 #
-# In the `next demo <02_kernels.py.html>`__, we'll develop a more interesting
+# In the `next demo <demo2_kernels.py.html>`__, we'll develop a more interesting
 # transformation script, which uses PSyACC to apply an OpenACC ``kernels``
 # directive to a simple loop.
 #
-# This demo can also be viewed as a `Python script <02_psyclone.py>`__.
+# This demo can also be viewed as a `Python script <demo2_psyclone.py>`__.
+#
+# .. # pylint: enable=C0114
+# .. # pylint: enable=C0116
