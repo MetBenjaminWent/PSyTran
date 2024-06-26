@@ -11,12 +11,12 @@ applying such directives.
 
 from collections.abc import Iterable
 from psyclone.psyir import nodes
-from psyclone.transformations import (
+from psyclone.psyir.nodes.acc_directives import (
     ACCKernelsDirective,
-    ACCKernelsTrans,
     ACCLoopDirective,
-    ACCLoopTrans,
 )
+from psyclone.psyir.transformations import ACCKernelsTrans
+from psyclone.transformations import ACCLoopTrans
 from psyacc.family import get_parent
 from psyacc.loop import _check_loop
 
