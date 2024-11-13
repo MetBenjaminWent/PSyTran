@@ -23,8 +23,8 @@
 #
 # Instead of running the demos as Python scripts, they should be passed as
 # transformation scripts for the ``psyclone`` command. This command will only
-# install PSyclone be available if you have activated the virtual environment
-# you used to (and PSyACC).
+# be available if you have installed PSyclone and have activated the virtual
+# environment you used when installing it (and PSyACC).
 #
 # The recommended command for this demo is as follows.
 #
