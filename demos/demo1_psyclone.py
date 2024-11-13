@@ -98,7 +98,7 @@ def trans(psy):
 # interesting transformation script, which uses PSyACC to apply an OpenACC
 # ``kernels`` directive to a simple loop.
 #
-# This demo can also be viewed as a `Python script <demo2_psyclone.py>`__.
+# This demo can also be viewed as a `Python script <demo1_psyclone.py>`__.
 #
 # .. # pylint: enable=C0114
 # .. # pylint: enable=C0116
