@@ -7,10 +7,12 @@
 Unit tests for PSyACC's `loop` module.
 """
 
-import code_snippets as cs
 import pytest
-from utils import get_schedule, simple_loop_code
+
 from psyclone.psyir import nodes
+from utils import get_schedule, simple_loop_code
+
+import code_snippets as cs
 from psyacc.loop import (
     _check_loop,
     get_loop_nest_variable_names,

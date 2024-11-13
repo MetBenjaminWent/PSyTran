@@ -7,9 +7,10 @@
 Unit tests for PSyACC's `assignment` module.
 """
 
-import code_snippets as cs
-from utils import get_schedule
 from psyclone.psyir import nodes
+from utils import get_schedule
+
+import code_snippets as cs
 from psyacc.assignment import is_literal_assignment
 
 

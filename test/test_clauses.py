@@ -7,11 +7,13 @@
 Unit tests for PSyACC's `clauses` module.
 """
 
-import code_snippets as cs
 import pytest
-from utils import apply_clause, get_schedule, has_clause, simple_loop_code
+
+import code_snippets as cs
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective
+from utils import apply_clause, get_schedule, has_clause, simple_loop_code
+
 from psyacc.clauses import (
     _prepare_loop_for_clause,
     apply_loop_collapse,

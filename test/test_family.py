@@ -7,10 +7,12 @@
 Unit tests for PSyACC's `family` module.
 """
 
-import code_snippets as cs
 import pytest
-from utils import get_schedule, simple_loop_code
+
 from psyclone.psyir import nodes
+from utils import get_schedule, simple_loop_code
+
+import code_snippets as cs
 from psyacc.family import (
     are_siblings,
     get_ancestors,
