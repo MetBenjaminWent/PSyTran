@@ -5,15 +5,17 @@
 #    license. See LICENSE in the root of the repository for full licensing
 #    details.
 #
+# .. # pylint: disable=C0114
+# .. # pylint: disable=C0116
 #
 # Demo 4: Applying OpenACC ``collapse`` clauses using PSyACC
 # ==========================================================
 #
-# The `previous demo <03_loop.py.html>`__ showed how to insert OpenACC ``loop``
-# directives with ``gang``, ``vector``, and ``seq`` clauses into Fortran code
-# using PSyACC. In this demo, we consider the ``collapse`` clause, which can be
-# used to combine loops whose iterations are independent of one another, to
-# increase data throughput.
+# The `previous demo <demo3_loop.py.html>`__ showed how to insert OpenACC
+# ``loop`` directives with ``gang``, ``vector``, and ``seq`` clauses into
+# Fortran code using PSyACC. In this demo, we consider the ``collapse``
+# clause, which can be used to combine loops whose iterations are
+# independent of one another, to increase data throughput.
 #
 # Consider again the same double loop example:
 #
@@ -37,15 +39,15 @@
 #
 # The PSyclone command for this demo is as follows.
 #
-# .. literalinclude:: 04_collapse.sh
+# .. literalinclude:: demo4_collapse.sh
 #    :language: bash
 #    :lines: 8-
 #
 # Again, begin by importing from the namespace PSyACC, as well as the ``nodes``
 # module of PSyclone. ::
 
-from psyacc import *
 from psyclone.psyir import nodes
+from psyacc import apply_kernels_directive, apply_loop_collapse, is_outer_loop
 
 # In the demos so far, we have built up transformation scripts piece by piece.
 # This was done for demonstration purposes; in many cases, it is easier to
@@ -58,7 +60,7 @@ from psyclone.psyir import nodes
 
 
 def trans(psy):
-    schedule = psy.invokes.invoke_list[0].schedule
+    schedule = psy.children[0]
 
     # Get the outer-most loop
     loops = schedule.walk(nodes.Loop)
@@ -73,9 +75,9 @@ def trans(psy):
 
 
 # Running this example using the PSyclone command above, you should find that
-# the output in ``outputs/04_collapse-double_loop.F90`` reads as follows.
+# the output in ``outputs/demo4_collapse-double_loop.F90`` reads as follows.
 #
-# .. literalinclude:: outputs/04_collapse-double_loop.F90
+# .. literalinclude:: outputs/demo4_collapse-double_loop.F90
 #    :language: fortran
 #
 # Exercises
@@ -85,7 +87,7 @@ def trans(psy):
 #    compile the PSyclone-generated Fortran file. Does the compiler output look
 #    reasonable?
 #
-# 2. Recall the exercise in the `previous demo <03_loop.py.html>`__ where we
+# 2. Recall the exercise in the `previous demo <demo3_loop.py.html>`__ where we
 #    applied the transformation script to ``single_loop.F90``, as opposed to
 #    ``double_loop.F90``. What happens when we do that in this case?
 #
@@ -94,4 +96,7 @@ def trans(psy):
 #    Is the output the same? Convince yourself that everything is working as
 #    expected by reading the `API documentation <../psyacc.html>`__.
 #
-# This demo can also be viewed as a `Python script <04_collapse.py>`__.
+# This demo can also be viewed as a `Python script <demo4_collapse.py>`__.
+#
+# .. # pylint: enable=C0114
+# .. # pylint: enable=C0116

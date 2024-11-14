@@ -39,7 +39,7 @@ directives and clauses.
 .. toctree::
     :maxdepth: 1
 
-    1. Basic usage <demos/01_psyclone.py>
-    2. Inserting kernels directives <demos/02_kernels.py>
-    3. Inserting loop directives <demos/03_loop.py>
-    4. Adding collapse clauses <demos/04_collapse.py>
+    1. Basic usage <demos/demo1_psyclone.py>
+    2. Inserting kernels directives <demos/demo2_kernels.py>
+    3. Inserting loop directives <demos/demo3_loop.py>
+    4. Adding collapse clauses <demos/demo4_collapse.py>

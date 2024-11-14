@@ -7,11 +7,12 @@ all: run
 
 run:
 	set -eu
-	./01_psyclone.sh
-	./02_kernels.sh
-	./03_loop.sh
-	./04_collapse.sh
+	./demo1_psyclone.sh
+	./demo2_kernels.sh
+	./demo3_loop.sh
+	./demo4_collapse.sh
 
 clean:
 	rm -rf __pycache__/
 	rm -f *.mod *.o
+	rm -rf outputs/

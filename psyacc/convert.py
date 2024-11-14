@@ -10,7 +10,9 @@ This module provides functions for converting the array notation used in a
 
 from psyclone.psyir import nodes
 from psyclone.psyir import transformations as trans
-from psyclone.domain.nemo.transformations import NemoArrayRange2LoopTrans
+from psyclone.psyir.transformations.arrayassignment2loops_trans import (
+    ArrayAssignment2LoopsTrans,
+)
 from psyclone.psyir import symbols
 from psyclone.transformations import TransformationError
 from psyacc.family import has_ancestor
@@ -43,22 +45,15 @@ def convert_range_loops(schedule):
     """
     Convert explicit array range assignments into loops.
 
-    Wrapper for the :meth:`apply` method of :class:`NemoArrayRange2LoopTrans`.
-    If this fails due to a :class:`TransformationError` then the conversion is
-    skipped.
+    Wrapper for the :meth:`apply` method of
+    :class:`ArrayAssignment2LoopsTrans`. If this fails due to a
+    :class:`TransformationError` then the conversion is skipped.
 
     :arg schedule: the Schedule to transform.
     :type schedule: :py:class:`Schedule`
     """
-    before = str(schedule)
-    for rang in schedule.walk(nodes.Range):
+    for assign in schedule.walk(nodes.Assignment):
         try:
-            NemoArrayRange2LoopTrans().apply(rang)
+            ArrayAssignment2LoopsTrans().apply(assign)
         except TransformationError:  # pragma: no cover
             pass
-
-    # The above will convert a multi-dimensional array range assignment into a
-    # loop containing an array range assignment with one fewer dimension. As
-    # such, we need to recurse to get rid of all array range assignments.
-    if str(schedule) != before and schedule.walk(nodes.Range):
-        convert_range_loops(schedule)

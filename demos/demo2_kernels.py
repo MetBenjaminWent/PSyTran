@@ -5,11 +5,14 @@
 #    license. See LICENSE in the root of the repository for full licensing
 #    details.
 #
+# .. # pylint: disable=C0114
+# .. # pylint: disable=C0116
+#
 #
 # Demo 2: Inserting OpenACC ``kernels`` directives using PSyACC
 # =============================================================
 #
-# The `previous demo <01_psyclone.py.html>`__ showed how to run PSyclone in
+# The `previous demo <demo1_psyclone.py.html>`__ showed how to run PSyclone in
 # code transformation mode from the command line, albeit with a trivial
 # transformation function. Here, we use a more interesting transformation
 # function, which makes use of PSyACC.
@@ -26,15 +29,15 @@
 #
 # In this case, the recommended command is
 #
-# .. literalinclude:: 02_kernels.sh
+# .. literalinclude:: demo2_kernels.sh
 #    :language: bash
 #    :lines: 8-
 #
 # We begin by importing from the namespace PSyACC, as well as the ``nodes``
 # module of PSyclone. ::
 
-from psyacc import *
 from psyclone.psyir import nodes
+from psyacc.directives import apply_kernels_directive
 
 # Recall that the main thing that PSyclone will take from this file is the
 # ``trans`` function. For demonstration purposes, we decompose it into
@@ -43,35 +46,11 @@ from psyclone.psyir import nodes
 # :py:class:`psyclone.psyGen.PSy` instance ``psy`` as an argument and returns
 # it, with or without modification.
 #
-# First, let's count how many invokes are associated with ``psy``. ::
+# First, let's view the schedule for the invoke. ::
 
 
-def count_invokes(psy):
-    num_invokes = len(psy.invokes.invoke_list)
-    print(f"Number of invokes: {num_invokes}")
-    return psy
-
-
-# The result should be
-#
-# .. code-block::
-#
-#    Number of invokes: 1
-#
-# because our Fortran script is a program with no other modules or procedures.
-#
-# Next, we view the schedule for the invoke. ::
-
-
-def view_schedule(psy):
-    schedule = psy.invokes.invoke_list[0].schedule
-    print(
-        f"""
-Schedule
-~~~~~~~~
-
-{schedule}"""
-    )
+def view_schedule(psy, title="Schedule"):
+    print(title + "\n" + len(title) * "~" + 2 * "\n" + psy.view())
     return psy
 
 
@@ -80,19 +59,18 @@ Schedule
 #    Schedule
 #    ~~~~~~~~
 #
-#    NemoInvokeSchedule:
-#    NemoLoop[variable:'i', loop_type:'unknown']
-#    Literal[value:'1', Scalar<INTEGER, UNDEFINED>]
-#    Reference[name:'n']
-#    Literal[value:'1', Scalar<INTEGER, UNDEFINED>]
-#    Schedule:
-#    Assignment[]
-#    ArrayReference[name:'arr']
-#    Reference[name:'i']
-#    Literal[value:'0.0', Scalar<REAL, UNDEFINED>]
-#    End Schedule
-#    End NemoLoop
-#    End NemoInvokeSchedule
+#    FileContainer[single_loop.F90]
+#        Container[single_loop_mod]
+#            Routine[name:'single_loop']
+#                0: Loop[variable='i']
+#                    Literal[value:'1', Scalar<INTEGER, UNDEFINED>]
+#                    Reference[name:'n']
+#                    Literal[value:'1', Scalar<INTEGER, UNDEFINED>]
+#                    Schedule[]
+#                        0: Assignment[]
+#                            ArrayReference[name:'arr']
+#                                Reference[name:'i']
+#                            Literal[value:'0.0', Scalar<REAL, UNDEFINED>]
 #
 # Now for the more interesting bit: let's use PSyACC to add some OpenACC
 # syntax. To do this, we need to find the loop within the schedule. This can be
@@ -120,7 +98,7 @@ Schedule
 
 
 def apply_openacc_kernels(psy):
-    schedule = psy.invokes.invoke_list[0].schedule
+    schedule = psy.children[0]
 
     # Get the (only) loop
     loops = schedule.walk(nodes.Loop)
@@ -131,13 +109,7 @@ def apply_openacc_kernels(psy):
     apply_kernels_directive(loop)
 
     # View the modified schedule
-    print(
-        f"""
-Modified schedule
-~~~~~~~~~~~~~~~~~
-
-{schedule}"""
-    )
+    view_schedule(psy, title="Modified schedule")
     return psy
 
 
@@ -151,22 +123,33 @@ Modified schedule
 #    Modified schedule
 #    ~~~~~~~~~~~~~~~~~
 #
-#    NemoInvokeSchedule:
-#    ACCKernelsDirective[]
-#    End NemoInvokeSchedule
+#    FileContainer[single_loop.F90]
+#        Container[single_loop_mod]
+#            Routine[name:'single_loop']
+#                0: ACCKernelsDirective[]
+#                    Schedule[]
+#                        0: Loop[variable='i']
+#                            Literal[value:'1', Scalar<INTEGER, UNDEFINED>]
+#                            Reference[name:'n']
+#                            Literal[value:'1', Scalar<INTEGER, UNDEFINED>]
+#                            Schedule[]
+#                                0: Assignment[]
+#                                    ArrayReference[name:'arr']
+#                                        Reference[name:'i']
+#                                    Literal[value:'0.0', Scalar<REAL, UNDEFINED>]
 #
 # Finally, we bring all of the above together by combining them in the
 # ``trans`` function which will be picked up by PSyclone. ::
 
 
 def trans(psy):
-    return apply_openacc_kernels(view_schedule(count_invokes(psy)))
+    return apply_openacc_kernels(view_schedule(psy))
 
 
 # Running the PSyclone command given at the beginning of this demo should
-# generate the output ``02_kernels-single_loop.F90`` with contents as follows:
+# generate the output ``demo2_kernels-single_loop.F90`` with contents as follows:
 #
-# .. literalinclude:: outputs/02_kernels-single_loop.F90
+# .. literalinclude:: outputs/demo2_kernels-single_loop.F90
 #    :language: fortran
 #
 # Again, the source code has clearly been reformatted to use lower case and
@@ -187,6 +170,7 @@ def trans(psy):
 # modulefile for the NVHPC installation and ``XX.Y`` should be replaced with
 # the version to be loaded.
 #
+# .. # pylint: disable=C0301
 # .. note::
 #    For internal Met Office users, the instructions on
 #    `this page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/OpenACC-GPU-Porting.aspx>`__
@@ -195,6 +179,7 @@ def trans(psy):
 #    `MACS page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/GPU-Isambard-MACS.aspx#compilation>`__
 #    and/or the
 #    `Phase-3 page <https://metoffice.sharepoint.com/sites/MetOfficeSSECommunity/SitePages/GPU-Isambard-Phase3.aspx#compilation>`__.
+# .. # pylint: enable=C0301
 #
 #
 # Loading an NVHPC installation as above will put an ``nvfortran`` binary in
@@ -202,7 +187,7 @@ def trans(psy):
 #
 # .. code-block:: bash
 #
-#    nvfortran -c -acc=gpu -Minfo=accel outputs/02_kernels-single_loop.F90
+#    nvfortran -c -acc=gpu -Minfo=accel outputs/demo2_kernels-single_loop.F90
 #
 # Here, we instruct the compiler to target the accelerator type 'GPU'. This
 # will enable OpenACC syntax. The additional ``-Minfo=accel`` flag tells the
@@ -228,7 +213,10 @@ def trans(psy):
 #   subroutine. This is indicated by the use of an implicit use of the OpenACC
 #   data directive clause ``copyout``.
 #
-# In the `next demo <03_loop.py.html>`__ we'll build on this and additionally
-# apply an OpenACC ``loop`` directive, with appropriate clauses.
+# In the `next demo <demo3_loop.py.html>`__ we'll build on this and
+# additionally apply an OpenACC ``loop`` directive, with appropriate clauses.
 #
-# This demo can also be viewed as a `Python script <02_kernels.py>`__.
+# This demo can also be viewed as a `Python script <demo2_kernels.py>`__.
+#
+# .. # pylint: enable=C0114
+# .. # pylint: enable=C0116

@@ -3,23 +3,47 @@
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
-from psyclone.psyir import nodes
-from utils import *
+"""
+Unit tests for PSyACC's `family` module.
+"""
+
 import pytest
 
+from psyclone.psyir import nodes
+from utils import get_schedule, simple_loop_code
 
-@pytest.fixture(params=[True, False])
-def inclusive(request):
+import code_snippets as cs
+from psyacc.family import (
+    are_siblings,
+    get_ancestors,
+    get_children,
+    get_descendents,
+    get_parent,
+    get_siblings,
+    has_ancestor,
+    has_descendent,
+    is_next_sibling,
+)
+
+
+@pytest.fixture(name="inclusive", params=[True, False])
+def fixture_inclusive(request):
+    """
+    Pytest fixture to control whether the current node is included in
+    searches.
+    """
     return request.param
 
 
-@pytest.fixture(params=[1, 2, 3, 4])
-def nest_depth(request):
+@pytest.fixture(name="nest_depth", params=[1, 2, 3, 4])
+def fixture_nest_depth(request):
+    """Pytest fixture for depth of a loop nest."""
     return request.param
 
 
-@pytest.fixture(params=["descendent", "ancestor"])
-def relative(request):
+@pytest.fixture(name="relative", params=["ancestor", "descendent"])
+def fixture_relative(request):
+    """Pytest fixture for the type of relative."""
     return request.param
 
 
@@ -29,37 +53,37 @@ get_relative = {
 }
 
 
-def test_get_relatives_typeerror1(parser, relative):
+def test_get_relatives_typeerror1(fortran_reader, relative):
     """
     Test that a :class:`TypeError` is raised when :func:`get_descendents`
     or :func:`get_ancestors` is called with a non-Boolean ``inclusive`` flag.
     """
-    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
+    schedule = get_schedule(fortran_reader, cs.double_loop_with_1_assignment)
     loops = schedule.walk(nodes.Loop)
     expected = "Expected a bool, not '<class 'int'>'."
     with pytest.raises(AssertionError, match=expected):
         get_relative[relative](loops[0], inclusive=0)
 
 
-def test_get_relatives_typeerror2(parser, relative):
+def test_get_relatives_typeerror2(fortran_reader, relative):
     """
     Test that a :class:`TypeError` is raised when :func:`get_descendents`
     or :func:`get_ancestors` is called with a non-integer ``depth`` keyword
     argument.
     """
-    schedule = get_schedule(parser, cs.double_loop_with_1_assignment)
+    schedule = get_schedule(fortran_reader, cs.double_loop_with_1_assignment)
     loops = schedule.walk(nodes.Loop)
     expected = "Expected an int, not '<class 'float'>'."
     with pytest.raises(AssertionError, match=expected):
         get_relative[relative](loops[0], depth=2.0)
 
 
-def test_get_descendents_loop(parser, nest_depth, inclusive):
+def test_get_descendents_loop(fortran_reader, nest_depth, inclusive):
     """
     Test that :func:`get_descendents` correctly finds the right number of
     descendents of a loop.
     """
-    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    schedule = get_schedule(fortran_reader, simple_loop_code(nest_depth))
     loops = schedule.walk(nodes.Loop)
     for i in range(nest_depth):
         loop = loops[i]
@@ -70,12 +94,12 @@ def test_get_descendents_loop(parser, nest_depth, inclusive):
         assert len(get_descendents(loop, **kwargs)) == 0
 
 
-def test_get_ancestors_loop(parser, nest_depth, inclusive):
+def test_get_ancestors_loop(fortran_reader, nest_depth, inclusive):
     """
     Test that :func:`get_ancestors` correctly finds the right number of
     ancestors of a loop.
     """
-    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    schedule = get_schedule(fortran_reader, simple_loop_code(nest_depth))
     loops = schedule.walk(nodes.Loop)
     for i in range(nest_depth):
         loop = loops[nest_depth - 1 - i]
@@ -86,12 +110,12 @@ def test_get_ancestors_loop(parser, nest_depth, inclusive):
         assert len(get_ancestors(loop, **kwargs)) == 0
 
 
-def test_get_descendents_loop_depth(parser, nest_depth, inclusive):
+def test_get_descendents_loop_depth(fortran_reader, nest_depth, inclusive):
     """
     Test that :func:`get_descendents` correctly finds the right number of
     descendents of a loop of a specified depth.
     """
-    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    schedule = get_schedule(fortran_reader, simple_loop_code(nest_depth))
     loop = schedule.walk(nodes.Loop)[0]
     depth = loop.depth
     for i in range(nest_depth):
@@ -105,12 +129,12 @@ def test_get_descendents_loop_depth(parser, nest_depth, inclusive):
         depth += 2
 
 
-def test_get_ancestors_loop_depth(parser, nest_depth, inclusive):
+def test_get_ancestors_loop_depth(fortran_reader, nest_depth, inclusive):
     """
     Test that :func:`get_ancestors` correctly finds the right number of
     ancestors of a loop of a specified depth.
     """
-    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    schedule = get_schedule(fortran_reader, simple_loop_code(nest_depth))
     loop = schedule.walk(nodes.Loop)[nest_depth - 1]
     depth = loop.depth
     for i in range(nest_depth):
@@ -124,12 +148,12 @@ def test_get_ancestors_loop_depth(parser, nest_depth, inclusive):
         depth -= 2
 
 
-def test_get_descendents_assignment(parser, nest_depth, inclusive):
+def test_get_descendents_assignment(fortran_reader, nest_depth, inclusive):
     """
     Test that :func:`get_descendents` correctly finds the right number of
     descendents of an assignment.
     """
-    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    schedule = get_schedule(fortran_reader, simple_loop_code(nest_depth))
     assignment = schedule.walk(nodes.Assignment)[0]
     kwargs = {"inclusive": inclusive, "node_type": nodes.Loop}
     assert len(get_descendents(assignment, **kwargs)) == 0
@@ -137,12 +161,12 @@ def test_get_descendents_assignment(parser, nest_depth, inclusive):
     assert len(get_descendents(assignment, **kwargs)) == 0
 
 
-def test_get_ancestors_assignment(parser, nest_depth, inclusive):
+def test_get_ancestors_assignment(fortran_reader, nest_depth, inclusive):
     """
     Test that :func:`get_ancestors` correctly finds the right number of
     ancestors of an assignment.
     """
-    schedule = get_schedule(parser, simple_loop_code(nest_depth))
+    schedule = get_schedule(fortran_reader, simple_loop_code(nest_depth))
     assignment = schedule.walk(nodes.Assignment)[0]
     kwargs = {"inclusive": inclusive, "node_type": nodes.Loop}
     assert len(get_ancestors(assignment, **kwargs)) == nest_depth
@@ -150,11 +174,11 @@ def test_get_ancestors_assignment(parser, nest_depth, inclusive):
     assert len(get_ancestors(assignment, **kwargs)) == 0
 
 
-def test_get_children(parser):
+def test_get_children(fortran_reader):
     """
     Test that :func:`get_children` correctly determines a node's children.
     """
-    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    schedule = get_schedule(fortran_reader, cs.loop_with_3_assignments)
     loop = schedule.walk(nodes.Loop)[0]
     assignments = schedule.walk(nodes.Assignment)
     assert get_children(loop) == assignments
@@ -162,21 +186,21 @@ def test_get_children(parser):
     assert get_children(loop, exclude=nodes.Assignment) == []
 
 
-def test_get_parent(parser):
+def test_get_parent(fortran_reader):
     """
     Test that :func:`get_parent` correctly determines a node's parent.
     """
-    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    schedule = get_schedule(fortran_reader, cs.loop_with_3_assignments)
     loop = schedule.walk(nodes.Loop)[0]
     for assignment in schedule.walk(nodes.Assignment):
         assert get_parent(assignment) == loop
 
 
-def test_get_siblings(parser, inclusive):
+def test_get_siblings(fortran_reader, inclusive):
     """
     Test that :func:`get_siblings` correctly determines a node's siblings.
     """
-    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    schedule = get_schedule(fortran_reader, cs.loop_with_3_assignments)
     assignments = schedule.walk(nodes.Assignment)
     for i in range(3):
         kwargs = {"inclusive": inclusive}
@@ -190,12 +214,12 @@ def test_get_siblings(parser, inclusive):
         assert get_siblings(assignments[i], **kwargs) == []
 
 
-def test_has_ancestor_descendent(parser):
+def test_has_ancestor_descendent(fortran_reader):
     """
     Test that :func:`has_ancestor` and :func:`has_descendent` correctly
     determine whether nodes have ancestors or descendents of specified types.
     """
-    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    schedule = get_schedule(fortran_reader, cs.loop_with_1_assignment)
     loop = schedule.walk(nodes.Loop)[0]
     assignment = schedule.walk(nodes.Assignment)[0]
     assert has_descendent(loop, nodes.Assignment)
@@ -204,23 +228,23 @@ def test_has_ancestor_descendent(parser):
     assert not has_ancestor(assignment, nodes.Assignment)
 
 
-def test_has_ancestor_name(parser):
+def test_has_ancestor_name(fortran_reader):
     """
     Test that :func:`has_ancestor` correctly determine whether nodes have
     ancestors whose variables have particular names.
     """
-    schedule = get_schedule(parser, cs.loop_with_1_assignment)
+    schedule = get_schedule(fortran_reader, cs.loop_with_1_assignment)
     assignment = schedule.walk(nodes.Assignment)[0]
     assert has_ancestor(assignment, nodes.Loop, name="i")
     assert not has_ancestor(assignment, nodes.Loop, name="j")
 
 
-def test_are_siblings(parser):
+def test_are_siblings(fortran_reader):
     """
     Test that :func:`are_siblings` correctly determines whether nodes are
     siblings.
     """
-    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    schedule = get_schedule(fortran_reader, cs.loop_with_3_assignments)
     loop = schedule.walk(nodes.Loop)[0]
     assignments = schedule.walk(nodes.Assignment)
     assert are_siblings(*assignments[1:])
@@ -228,12 +252,12 @@ def test_are_siblings(parser):
     assert not are_siblings(assignments[0], loop)
 
 
-def test_is_next_sibling(parser):
+def test_is_next_sibling(fortran_reader):
     """
     Test that :func:`is_next_sibling` correctly determines whether one node
     follows another.
     """
-    schedule = get_schedule(parser, cs.loop_with_3_assignments)
+    schedule = get_schedule(fortran_reader, cs.loop_with_3_assignments)
     assignments = schedule.walk(nodes.Assignment)
     assert is_next_sibling(*assignments[:2])
     assert is_next_sibling(*assignments[1:])
