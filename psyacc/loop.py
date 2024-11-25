@@ -11,7 +11,6 @@ nests.
 
 from collections.abc import Iterable
 from psyclone.psyir import nodes
-from psyclone.psyir.tools import DependencyTools
 from psyacc.family import get_children, get_descendents
 
 __all__ = [
@@ -238,8 +237,7 @@ def is_parallelisable(loop):
     """
     Determine whether a Loop can be parallelised.
 
-    Note: wraps the :meth:`can_loop_be_parallelised` method of
-    :class:`DependencyTools`.
+    Note: wraps the :meth:`independent_iterations` method of the Loop node.
 
     :arg loop: the Loop to query.
     :type loop: :py:class:`Loop`
@@ -247,4 +245,4 @@ def is_parallelisable(loop):
     :returns: ``True`` if the Loop nest is parallelisable, else ``False``.
     :rtype: :py:class:`bool`
     """
-    return DependencyTools().can_loop_be_parallelised(loop)
+    return loop.independent_iterations()

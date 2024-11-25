@@ -132,7 +132,10 @@ def test_apply_loop_seq_gang_error(fortran_reader):
     loops = schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
     apply_loop_gang(loops[0])
-    expected = "Cannot apply seq to a loop with a gang clause."
+    expected = (
+        "The OpenACC seq clause cannot be used in conjunction with the gang or"
+        " vector clauses."
+    )
     with pytest.raises(ValueError, match=expected):
         apply_loop_seq(loops[0])
 
@@ -146,7 +149,10 @@ def test_apply_loop_seq_vector_error(fortran_reader):
     loops = schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
     apply_loop_vector(loops[0])
-    expected = "Cannot apply seq to a loop with a vector clause."
+    expected = (
+        "The OpenACC seq clause cannot be used in conjunction with the gang or"
+        " vector clauses."
+    )
     with pytest.raises(ValueError, match=expected):
         apply_loop_seq(loops[0])
 
@@ -160,7 +166,10 @@ def test_apply_loop_gang_seq_error(fortran_reader):
     loops = schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
     apply_loop_seq(loops[0])
-    expected = "Cannot apply gang to a loop with a seq clause."
+    expected = (
+        "The OpenACC seq clause cannot be used in conjunction with the gang or"
+        " vector clauses."
+    )
     with pytest.raises(ValueError, match=expected):
         apply_loop_gang(loops[0])
 
@@ -174,7 +183,10 @@ def test_apply_loop_vector_seq_error(fortran_reader):
     loops = schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
     apply_loop_seq(loops[0])
-    expected = "Cannot apply vector to a loop with a seq clause."
+    expected = (
+        "The OpenACC seq clause cannot be used in conjunction with the gang or"
+        " vector clauses."
+    )
     with pytest.raises(ValueError, match=expected):
         apply_loop_vector(loops[0])
 

@@ -72,11 +72,8 @@ def apply_loop_seq(loop):
     :raises ValueError: if a ``vector`` clause has already been applied.
     """
     _prepare_loop_for_clause(loop)
-    if has_gang_clause(loop):
-        raise ValueError("Cannot apply seq to a loop with a gang clause.")
-    if has_vector_clause(loop):
-        raise ValueError("Cannot apply seq to a loop with a vector clause.")
     loop.parent.parent._sequential = True  # pylint: disable=protected-access
+    loop.parent.parent._check_clauses_consistent()  # pylint: disable=W0212
     # TODO: Add public setter method on PSyclone side  # pylint: disable=fixme
 
 
@@ -105,9 +102,8 @@ def apply_loop_gang(loop):
     :raises ValueError: if a ``seq`` clause has already been applied.
     """
     _prepare_loop_for_clause(loop)
-    if has_seq_clause(loop):
-        raise ValueError("Cannot apply gang to a loop with a seq clause.")
     loop.parent.parent._gang = True  # pylint: disable=protected-access
+    loop.parent.parent._check_clauses_consistent()  # pylint: disable=W0212
     # TODO: Add public setter method on PSyclone side  # pylint: disable=fixme
 
 
@@ -136,9 +132,8 @@ def apply_loop_vector(loop):
     :raises ValueError: if a ``seq`` clause has already been applied.
     """
     _prepare_loop_for_clause(loop)
-    if has_seq_clause(loop):
-        raise ValueError("Cannot apply vector to a loop with a seq clause.")
     loop.parent.parent._vector = True  # pylint: disable=protected-access
+    loop.parent.parent._check_clauses_consistent()  # pylint: disable=W0212
     # TODO: Add public setter method on PSyclone side  # pylint: disable=fixme
 
 

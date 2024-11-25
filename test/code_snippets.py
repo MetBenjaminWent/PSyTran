@@ -3,6 +3,12 @@
 # This file is part of PSyACC and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
 
+"""
+This module contains Fortran code snippets used for testing.
+"""
+
+# pylint: disable=C0103
+
 loop_with_1_assignment = """
     PROGRAM test
       REAL :: a(10)
@@ -511,3 +517,13 @@ string_assignment = """
       c = "hello world"
     END PROGRAM test
     """
+
+char_assignment = """
+    PROGRAM test
+      CHARACTER :: c
+
+      c = "h"
+    END PROGRAM test
+    """
+
+# pylint: enable=C0103
