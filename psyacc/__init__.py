@@ -7,7 +7,6 @@
 This module imports everything from the public PSyACC namespace.
 """
 
-from psyacc.assignment import *  # noqa
 from psyacc.clauses import *  # noqa
 from psyacc.convert import *  # noqa
 from psyacc.directives import *  # noqa
