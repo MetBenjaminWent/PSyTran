@@ -13,7 +13,7 @@ import code_snippets as cs
 from psyclone.psyir import nodes
 from utils import get_schedule
 
-from psyacc.convert import convert_array_notation, convert_range_loops
+from psyacc.convert import convert_array_notation
 
 
 @pytest.fixture(name="dim", params=[1, 2, 3])
@@ -62,17 +62,3 @@ def test_avoid_array_notation_subroutine(fortran_reader):
     convert_array_notation(schedule)
     assert len(schedule.walk(nodes.Call)) == 1
     assert len(schedule.walk(nodes.Range)) == 0
-
-
-def test_convert_range_loops(fortran_reader, dim):
-    """
-    Test that :func:`convert_range_loops` successfully converts an array range
-    assignment into a loop. If dim > 1 then the loop should itself contain an
-    array range assignment.
-    """
-    schedule = get_schedule(fortran_reader, array_assignment[dim])
-    assert len(schedule.walk(nodes.Assignment)) == 1
-    assert len(schedule.walk(nodes.Loop)) == 0
-    convert_range_loops(schedule)
-    assert len(schedule.walk(nodes.Assignment)) == 1
-    assert len(schedule.walk(nodes.Loop)) == dim

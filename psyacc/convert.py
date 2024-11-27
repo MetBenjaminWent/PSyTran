@@ -10,14 +10,11 @@ This module provides functions for converting the array notation used in a
 
 from psyclone.psyir import nodes
 from psyclone.psyir import transformations as trans
-from psyclone.psyir.transformations.arrayassignment2loops_trans import (
-    ArrayAssignment2LoopsTrans,
-)
 from psyclone.psyir import symbols
 from psyclone.transformations import TransformationError
 from psyacc.family import has_ancestor
 
-__all__ = ["convert_array_notation", "convert_range_loops"]
+__all__ = ["convert_array_notation"]
 
 
 def convert_array_notation(schedule):
@@ -39,21 +36,3 @@ def convert_array_notation(schedule):
                 trans.Reference2ArrayRangeTrans().apply(reference)
             except TransformationError:  # pragma: no cover
                 pass
-
-
-def convert_range_loops(schedule):
-    """
-    Convert explicit array range assignments into loops.
-
-    Wrapper for the :meth:`apply` method of
-    :class:`ArrayAssignment2LoopsTrans`. If this fails due to a
-    :class:`TransformationError` then the conversion is skipped.
-
-    :arg schedule: the Schedule to transform.
-    :type schedule: :py:class:`Schedule`
-    """
-    for assign in schedule.walk(nodes.Assignment):
-        try:
-            ArrayAssignment2LoopsTrans().apply(assign)
-        except TransformationError:  # pragma: no cover
-            pass
