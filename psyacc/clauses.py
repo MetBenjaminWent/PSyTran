@@ -14,17 +14,13 @@ from psyacc.directives import (
     has_loop_directive,
 )
 from psyacc.family import get_ancestors
-from psyacc.loop import _check_loop, loop2nest, is_perfectly_nested
+from psyacc.loop import _check_loop
 
 __all__ = [
     "has_seq_clause",
-    "apply_loop_seq",
     "has_gang_clause",
-    "apply_loop_gang",
     "has_vector_clause",
-    "apply_loop_vector",
     "has_collapse_clause",
-    "apply_loop_collapse",
 ]
 
 
@@ -59,24 +55,6 @@ def has_seq_clause(loop):
     return has_loop_directive(loop) and loop.parent.parent.sequential
 
 
-def apply_loop_seq(loop):
-    """
-    Apply a ``seq`` clause to a loop.
-
-    A ``loop`` directive is also applied, if it does not already exist.
-
-    :arg loop: the Loop Node to apply ``seq`` to.
-    :type loop: :py:class:`Loop`
-
-    :raises ValueError: if a ``gang`` clause has already been applied.
-    :raises ValueError: if a ``vector`` clause has already been applied.
-    """
-    _prepare_loop_for_clause(loop)
-    loop.parent.parent._sequential = True  # pylint: disable=protected-access
-    loop.parent.parent._check_clauses_consistent()  # pylint: disable=W0212
-    # TODO: Add public setter method on PSyclone side  # pylint: disable=fixme
-
-
 def has_gang_clause(loop):
     """
     Determine whether a loop has a ``gang`` clause.
@@ -90,23 +68,6 @@ def has_gang_clause(loop):
     return has_loop_directive(loop) and loop.parent.parent.gang
 
 
-def apply_loop_gang(loop):
-    """
-    Apply a ``gang`` clause to a loop.
-
-    A ``loop`` directive is also applied, if it does not already exist.
-
-    :arg loop: the Loop Node to apply ``gang`` to.
-    :type loop: :py:class:`Loop`
-
-    :raises ValueError: if a ``seq`` clause has already been applied.
-    """
-    _prepare_loop_for_clause(loop)
-    loop.parent.parent._gang = True  # pylint: disable=protected-access
-    loop.parent.parent._check_clauses_consistent()  # pylint: disable=W0212
-    # TODO: Add public setter method on PSyclone side  # pylint: disable=fixme
-
-
 def has_vector_clause(loop):
     """
     Determine whether a loop has a ``vector`` clause.
@@ -118,23 +79,6 @@ def has_vector_clause(loop):
     :rtype: :py:class:`bool`
     """
     return has_loop_directive(loop) and loop.parent.parent.vector
-
-
-def apply_loop_vector(loop):
-    """
-    Apply a ``vector`` clause to a loop.
-
-    A ``loop`` directive is also applied, if it does not already exist.
-
-    :arg loop: the Loop Node to apply ``vector`` to.
-    :type loop: :py:class:`Loop`
-
-    :raises ValueError: if a ``seq`` clause has already been applied.
-    """
-    _prepare_loop_for_clause(loop)
-    loop.parent.parent._vector = True  # pylint: disable=protected-access
-    loop.parent.parent._check_clauses_consistent()  # pylint: disable=W0212
-    # TODO: Add public setter method on PSyclone side  # pylint: disable=fixme
 
 
 def has_collapse_clause(loop):
@@ -159,41 +103,3 @@ def has_collapse_clause(loop):
                 continue
             return collapse > i
     return False
-
-
-def apply_loop_collapse(loop, collapse=None):
-    """
-    Apply a ``collapse`` clause to a loop.
-
-    A ``loop`` directive is also applied, if it does not already exist.
-
-    :arg loop: the Loop Node to apply ``collapse`` to.
-    :type loop: :py:class:`Loop`
-    :kwarg collapse: the number of loops to collapse.
-    :type collapse: :py:class:`int`
-
-    :raises TypeError: if the collapse argument is non-integer.
-    :raises ValueError: if the collapse value is less than 2.
-    :raises ValueError: if the collapse value is greater than the nest depth.
-    """
-    _prepare_loop_for_clause(loop)
-    loops = loop2nest(loop)
-    if collapse is None:
-        while len(loops) > 0:
-            if is_perfectly_nested(loops):
-                apply_loop_collapse(loop, len(loops))
-                return
-            loops.pop(-1)
-    if not isinstance(collapse, int):
-        raise TypeError(f"Expected an integer, not '{type(collapse)}'.")
-    if collapse <= 1:
-        raise ValueError(
-            f"Expected an integer greater than one, not {collapse}."
-        )
-    if len(loops) < collapse:
-        raise ValueError(
-            f"Cannot apply collapse to {collapse} loops in a sub-nest of"
-            f" {len(loops)}."
-        )
-    loop.parent.parent._collapse = collapse  # pylint: disable=protected-access
-    # TODO: Add public setter method on PSyclone side  # pylint: disable=fixme
