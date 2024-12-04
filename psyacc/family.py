@@ -4,9 +4,8 @@
 # See LICENSE in the root of the repository for full licensing details.
 
 r"""
-This module provides functions for determining the ancestors, descendents, and
-siblings of :py:class:`Node`\s, as well as for querying their existence and
-nature.
+This module provides functions for determining the ancestors and descendents of
+:py:class:`Node`\s, as well as for querying their existence and nature.
 """
 
 from psyclone.psyir.nodes import Loop, Node
@@ -16,11 +15,8 @@ __all__ = [
     "get_ancestors",
     "get_children",
     "get_parent",
-    "get_siblings",
     "has_descendent",
     "has_ancestor",
-    "are_siblings",
-    "is_next_sibling",
 ]
 
 
@@ -140,31 +136,6 @@ def get_parent(node):
     return parent
 
 
-def get_siblings(node, node_type=Node, inclusive=False, exclude=()):
-    """
-    Get all Nodes with a given type at the same depth level.
-
-    :arg node: the Node to search for siblings of.
-    :type node: :py:class:`Node`
-    :kwarg node_type: the type of node to search for.
-    :type node_type: :py:class:`type`
-    :kwarg inclusive: if ``True``, the current node is included.
-    :type inclusive: :py:class:`bool`
-    :kwarg exclude: type(s) of node to exclude.
-    :type exclude: :py:class:`bool`
-
-    :returns: list of siblings according to specifications.
-    :rtype: :py:class:`list`
-    """
-    return [
-        sibling
-        for sibling in node.siblings
-        if isinstance(sibling, node_type)
-        and not isinstance(sibling, exclude)
-        and (inclusive or sibling is not node)
-    ]
-
-
 def has_descendent(node, node_type, inclusive=False):
     """
     Check whether a Node has a descendent node with a given type.
@@ -206,32 +177,3 @@ def has_ancestor(node, node_type=Loop, inclusive=False, name=None):
     if name:
         return any(ancestor.variable.name == name for ancestor in ancestors)
     return bool(ancestors)
-
-
-def are_siblings(*nodes):
-    r"""
-    Determine whether a collection of Nodes have the same parent.
-
-    :arg nodes: tuple of Nodes to check.
-    :type node: :py:class:`tuple` of :py:class:`Node`\s
-
-    :returns: ``True`` if the Nodes are siblings, else ``False``.
-    :rtype: :py:class:`bool`
-    """
-    assert len(nodes) > 1
-    return all(node in nodes[0].siblings for node in nodes)
-
-
-def is_next_sibling(node1, node2):
-    """
-    Determine whether one Node immediately follows another.
-
-    :arg node1: the first node.
-    :type node1: :py:class:`Node`
-    :arg node2: the second node.
-    :type node2: :py:class:`Node`
-
-    :returns: ``True`` if the Nodes are adjacent siblings, else ``False``.
-    :rtype: :py:class:`bool`
-    """
-    return node2.immediately_follows(node1)
