@@ -17,7 +17,6 @@ from psyacc.family import (
     get_ancestors,
     get_children,
     get_descendents,
-    get_parent,
     has_ancestor,
     has_descendent,
 )
@@ -181,16 +180,6 @@ def test_get_children(fortran_reader):
     assert get_children(loop) == assignments
     assert get_children(loop, node_type=nodes.Loop) == []
     assert get_children(loop, exclude=nodes.Assignment) == []
-
-
-def test_get_parent(fortran_reader):
-    """
-    Test that :func:`get_parent` correctly determines a node's parent.
-    """
-    schedule = get_schedule(fortran_reader, cs.loop_with_3_assignments)
-    loop = schedule.walk(nodes.Loop)[0]
-    for assignment in schedule.walk(nodes.Assignment):
-        assert get_parent(assignment) == loop
 
 
 def test_has_ancestor_descendent(fortran_reader):

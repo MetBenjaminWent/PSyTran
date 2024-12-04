@@ -14,7 +14,6 @@ __all__ = [
     "get_descendents",
     "get_ancestors",
     "get_children",
-    "get_parent",
     "has_descendent",
     "has_ancestor",
 ]
@@ -119,21 +118,6 @@ def get_children(node, node_type=Node, exclude=()):
         and not isinstance(grandchild, exclude)
     ]
     return children
-
-
-def get_parent(node):
-    """
-    Get the immediate ancestor of a Node.
-
-    :arg node: the Node to search for ancestors of.
-    :type node: :py:class:`Node`
-
-    :returns: the parent Node
-    :rtype: :py:class:`Node`
-    """
-    assert isinstance(node, Node), f"Expected a Node, not '{type(node)}'."
-    parent = node.parent.parent
-    return parent
 
 
 def has_descendent(node, node_type, inclusive=False):
