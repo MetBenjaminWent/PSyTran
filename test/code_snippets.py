@@ -510,20 +510,4 @@ subroutine_call = """
     END PROGRAM test
     """
 
-string_assignment = """
-    PROGRAM test
-      CHARACTER(LEN=11) :: c
-
-      c = "hello world"
-    END PROGRAM test
-    """
-
-char_assignment = """
-    PROGRAM test
-      CHARACTER :: c
-
-      c = "h"
-    END PROGRAM test
-    """
-
 # pylint: enable=C0103

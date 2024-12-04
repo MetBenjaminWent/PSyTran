@@ -17,7 +17,6 @@ from psyclone.psyir.nodes.acc_directives import (
 )
 from psyclone.psyir.transformations import ACCKernelsTrans
 from psyclone.transformations import ACCLoopTrans
-from psyacc.family import get_parent
 from psyacc.loop import _check_loop
 
 __all__ = [
@@ -93,5 +92,6 @@ def has_loop_directive(loop):
     :rtype: :py:class:`bool`
     """
     assert isinstance(loop, nodes.Loop)
-    parent = get_parent(loop)
-    return isinstance(parent, ACCLoopDirective) and has_kernels_directive(loop)
+    return isinstance(
+        loop.parent.parent, ACCLoopDirective
+    ) and has_kernels_directive(loop)

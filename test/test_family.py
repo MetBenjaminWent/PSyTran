@@ -14,15 +14,11 @@ from utils import get_schedule, simple_loop_code
 
 import code_snippets as cs
 from psyacc.family import (
-    are_siblings,
     get_ancestors,
     get_children,
     get_descendents,
-    get_parent,
-    get_siblings,
     has_ancestor,
     has_descendent,
-    is_next_sibling,
 )
 
 
@@ -186,34 +182,6 @@ def test_get_children(fortran_reader):
     assert get_children(loop, exclude=nodes.Assignment) == []
 
 
-def test_get_parent(fortran_reader):
-    """
-    Test that :func:`get_parent` correctly determines a node's parent.
-    """
-    schedule = get_schedule(fortran_reader, cs.loop_with_3_assignments)
-    loop = schedule.walk(nodes.Loop)[0]
-    for assignment in schedule.walk(nodes.Assignment):
-        assert get_parent(assignment) == loop
-
-
-def test_get_siblings(fortran_reader, inclusive):
-    """
-    Test that :func:`get_siblings` correctly determines a node's siblings.
-    """
-    schedule = get_schedule(fortran_reader, cs.loop_with_3_assignments)
-    assignments = schedule.walk(nodes.Assignment)
-    for i in range(3):
-        kwargs = {"inclusive": inclusive}
-        expected = list(assignments)
-        if not inclusive:
-            expected.pop(i)
-        assert get_siblings(assignments[i], **kwargs) == expected
-        kwargs["exclude"] = nodes.Assignment
-        assert get_siblings(assignments[i], **kwargs) == []
-        kwargs["node_type"] = nodes.Assignment
-        assert get_siblings(assignments[i], **kwargs) == []
-
-
 def test_has_ancestor_descendent(fortran_reader):
     """
     Test that :func:`has_ancestor` and :func:`has_descendent` correctly
@@ -237,28 +205,3 @@ def test_has_ancestor_name(fortran_reader):
     assignment = schedule.walk(nodes.Assignment)[0]
     assert has_ancestor(assignment, nodes.Loop, name="i")
     assert not has_ancestor(assignment, nodes.Loop, name="j")
-
-
-def test_are_siblings(fortran_reader):
-    """
-    Test that :func:`are_siblings` correctly determines whether nodes are
-    siblings.
-    """
-    schedule = get_schedule(fortran_reader, cs.loop_with_3_assignments)
-    loop = schedule.walk(nodes.Loop)[0]
-    assignments = schedule.walk(nodes.Assignment)
-    assert are_siblings(*assignments[1:])
-    assert are_siblings(*assignments)
-    assert not are_siblings(assignments[0], loop)
-
-
-def test_is_next_sibling(fortran_reader):
-    """
-    Test that :func:`is_next_sibling` correctly determines whether one node
-    follows another.
-    """
-    schedule = get_schedule(fortran_reader, cs.loop_with_3_assignments)
-    assignments = schedule.walk(nodes.Assignment)
-    assert is_next_sibling(*assignments[:2])
-    assert is_next_sibling(*assignments[1:])
-    assert not is_next_sibling(*assignments[::2])
