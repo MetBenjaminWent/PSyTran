@@ -106,7 +106,7 @@ def test_is_perfectly_nested(fortran_reader, perfection):
     """
     schedule = get_schedule(fortran_reader, perfectly_nested_loop[perfection])
     loops = schedule.walk(nodes.Loop)
-    assert is_perfectly_nested(loops[0])
+    assert is_perfectly_nested(loops)
     assert is_parallelisable(loops[0])
     assert is_independent(loops[0])
 
