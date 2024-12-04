@@ -36,14 +36,7 @@
 # module of PSyclone. ::
 
 from psyclone.psyir import nodes
-from psyacc import (
-    apply_kernels_directive,
-    apply_loop_directive,
-    apply_loop_gang,
-    apply_loop_seq,
-    apply_loop_vector,
-    is_outer_loop,
-)
+from psyacc import apply_kernels_directive, apply_loop_directive, is_outer_loop
 
 # We already saw how to extract a loop from the schedule and apply an OpenACC
 # ``kernels`` directive to it. In this case, there are two loops. Loops are
@@ -93,9 +86,10 @@ def apply_openacc_loops(psy):
 # A good general approach is to apply both ``gang`` and ``vector`` parallelism
 # to outer loops and ``seq`` to all other loops in the nest. We can again use
 # :py:func:`psyacc.loop.is_outer_loop` to query whether a loop is outer-most or
-# not. If so, we can apply both :py:func:`psyacc.clauses.apply_loop_gang` and
-# :py:func:`psyacc.clauses.apply_loop_vector`. If not, we can apply
-# :py:func:`psyacc.clauses.apply_loop_seq`.
+# not. If so, we can pass options to
+# :py:func:`psyacc.directives.apply_loop_directive` indicating to apply gang
+# and vector clauses. If not, we can pass options indicating to apply a
+# sequential clause.
 #
 # .. note::
 #
@@ -107,23 +101,23 @@ def apply_openacc_loops(psy):
 # ::
 
 
-def insert_clauses(psy):
+def apply_openacc_loops_with_clauses(psy):
     schedule = psy.children[0]
     for loop in schedule.walk(nodes.Loop):
         if is_outer_loop(loop):
-            apply_loop_gang(loop)
-            apply_loop_vector(loop)
+            apply_loop_directive(loop, options={"gang": True, "vector": True})
         else:
-            apply_loop_seq(loop)
+            apply_loop_directive(loop, options={"seq": True})
     return psy
 
 
 # Finally, we tie everything together by calling the composition of the above
-# functions within the ``trans`` function. ::
+# functions within the ``trans`` function. Note that in this case we use
+# apply_openacc_loops_with_clauses in place of apply_openacc_loops. ::
 
 
 def trans(psy):
-    return insert_clauses(apply_openacc_loops(apply_openacc_kernels(psy)))
+    return apply_openacc_loops_with_clauses(apply_openacc_kernels(psy))
 
 
 # The output in ``output/demo3_loop-double_loop.F90`` should be as follows.
