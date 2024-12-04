@@ -124,3 +124,66 @@ def test_has_collapse_clause_loop_no_collapse(fortran_reader):
     apply_kernels_directive(loops[0])
     apply_loop_directive(loops[0])
     assert not has_collapse_clause(loops[0])
+
+
+def test_apply_loop_collapse(fortran_reader, collapse):
+    """
+    Test that :func:`apply_loop_collapse` is correctly applied to a full nest.
+    """
+    schedule = get_schedule(fortran_reader, simple_loop_code(collapse))
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_directive(loops[0], options={"collapse": collapse})
+    assert loops[0].parent.parent.collapse == collapse
+    for loop in loops:
+        assert has_collapse_clause(loop)
+
+
+def test_apply_loop_collapse_subnest(fortran_reader, collapse):
+    """
+    Test that :func:`apply_loop_collapse` is correctly applied to a sub-nest.
+    """
+    schedule = get_schedule(fortran_reader, simple_loop_code(collapse + 1))
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_directive(loops[0])
+    apply_loop_directive(loops[-1])
+    apply_loop_directive(loops[0], options={"collapse": collapse})
+    assert loops[0].parent.parent.collapse == collapse
+    for i in range(collapse):
+        assert has_collapse_clause(loops[i])
+    assert loops[-1].parent.parent.collapse is None
+    assert not has_collapse_clause(loops[-1])
+
+
+def test_apply_loop_collapse_default(fortran_reader, collapse):
+    """
+    Test that :func:`apply_loop_collapse` is correctly applied to a full nest
+    when the `collapse` keyword argument is not used.
+    """
+    schedule = get_schedule(fortran_reader, simple_loop_code(collapse))
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_directive(loops[0], options={"collapse": collapse})
+    assert loops[0].parent.parent.collapse == collapse
+    for loop in loops:
+        assert has_collapse_clause(loop)
+
+
+def test_apply_loop_collapse_imperfect_default(
+    fortran_reader, imperfection, collapse
+):
+    """
+    Test that :func:`apply_loop_collapse` is correctly applied to an imperfect
+    nest when the `collapse` keyword argument is not used.
+    """
+    schedule = get_schedule(
+        fortran_reader, imperfectly_nested_triple_loop2[imperfection]
+    )
+    loops = schedule.walk(nodes.Loop)
+    apply_kernels_directive(loops[0])
+    apply_loop_directive(loops[0], options={"collapse": collapse})
+    assert loops[0].parent.parent.collapse == 2
+    assert has_collapse_clause(loops[0])
+    assert has_collapse_clause(loops[1])
+    assert not has_collapse_clause(loops[2])

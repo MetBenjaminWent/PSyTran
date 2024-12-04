@@ -19,8 +19,6 @@ __all__ = [
     "nest2loop",
     "is_perfectly_nested",
     "is_simple_loop",
-    "get_loop_variable_name",
-    "get_loop_nest_variable_names",
     "is_independent",
     "is_parallelisable",
 ]
@@ -174,34 +172,6 @@ def is_simple_loop(loop):
         isinstance(child, nodes.Assignment) and child.walk(nodes.Literal)
         for child in get_children(loop2nest(loop)[-1])
     )
-
-
-def get_loop_variable_name(loop):
-    """
-    Determine the variable name associated with a Loop Node.
-
-    :arg loop: the Loop to query.
-    :type loop: :py:class:`Loop`
-
-    :returns: the variable name.
-    :rtype: :py:class:`str`
-    """
-    assert isinstance(loop, nodes.Loop)
-    return loop.variable.name
-
-
-def get_loop_nest_variable_names(loop):
-    """
-    Determine the variable names associated with a Loop nest.
-
-    :arg loop: the outer Loop to query.
-    :type loop: :py:class:`Loop`
-
-    :returns: the list of variable names.
-    :rtype: :py:class:`list`
-    """
-    assert isinstance(loop, nodes.Loop)
-    return [get_loop_variable_name(loop) for loop in loop2nest(loop)]
 
 
 def is_independent(loop):
