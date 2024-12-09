@@ -12,16 +12,9 @@ import pytest
 import code_snippets as cs
 from psyclone.psyir import nodes
 from psyclone.transformations import ACCLoopDirective
-from utils import apply_clause, get_schedule, has_clause, simple_loop_code
+from utils import get_schedule, has_clause, simple_loop_code
 
-from psyacc.clauses import (
-    _prepare_loop_for_clause,
-    apply_loop_collapse,
-    apply_loop_gang,
-    apply_loop_seq,
-    apply_loop_vector,
-    has_collapse_clause,
-)
+from psyacc.clauses import _prepare_loop_for_clause, has_collapse_clause
 from psyacc.directives import apply_loop_directive, apply_kernels_directive
 
 
@@ -100,97 +93,6 @@ def test_no_loop_clause(fortran_reader, nest_depth, clause):
         assert not has_clause[clause](loops[i])
 
 
-def test_apply_loop_clause(fortran_reader, nest_depth, clause):
-    """
-    Test that each clause is correctly applied.
-    """
-    for i in range(nest_depth):
-        schedule = get_schedule(fortran_reader, simple_loop_code(nest_depth))
-        loops = schedule.walk(nodes.Loop)
-        apply_kernels_directive(loops[0])
-        if clause == "collapse":
-            collapse = nest_depth - i
-            if collapse == 1:
-                expected = "Expected an integer greater than one, not 1."
-                with pytest.raises(ValueError, match=expected):
-                    apply_clause[clause](loops[i], collapse)
-                continue
-            apply_clause[clause](loops[i], collapse)
-            assert getattr(loops[i].parent.parent, clause) == collapse
-        else:
-            apply_clause[clause](loops[i])
-            assert getattr(loops[i].parent.parent, clause)
-        assert has_clause[clause](loops[i])
-
-
-def test_apply_loop_seq_gang_error(fortran_reader):
-    """
-    Test that a :class:`ValueError` is raised when :func:`apply_loop_seq` is
-    applied to a loop with a ``gang`` clause.
-    """
-    schedule = get_schedule(fortran_reader, cs.loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    apply_loop_gang(loops[0])
-    expected = (
-        "The OpenACC seq clause cannot be used in conjunction with the gang or"
-        " vector clauses."
-    )
-    with pytest.raises(ValueError, match=expected):
-        apply_loop_seq(loops[0])
-
-
-def test_apply_loop_seq_vector_error(fortran_reader):
-    """
-    Test that a :class:`ValueError` is raised when :func:`apply_loop_seq` is
-    applied to a loop with a ``vector`` clause.
-    """
-    schedule = get_schedule(fortran_reader, cs.loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    apply_loop_vector(loops[0])
-    expected = (
-        "The OpenACC seq clause cannot be used in conjunction with the gang or"
-        " vector clauses."
-    )
-    with pytest.raises(ValueError, match=expected):
-        apply_loop_seq(loops[0])
-
-
-def test_apply_loop_gang_seq_error(fortran_reader):
-    """
-    Test that a :class:`ValueError` is raised when :func:`apply_loop_gang` is
-    applied to a loop with a ``seq`` clause.
-    """
-    schedule = get_schedule(fortran_reader, cs.loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    apply_loop_seq(loops[0])
-    expected = (
-        "The OpenACC seq clause cannot be used in conjunction with the gang or"
-        " vector clauses."
-    )
-    with pytest.raises(ValueError, match=expected):
-        apply_loop_gang(loops[0])
-
-
-def test_apply_loop_vector_seq_error(fortran_reader):
-    """
-    Test that a :class:`ValueError` is raised when :func:`apply_loop_vector` is
-    applied to a loop with a ``seq`` clause.
-    """
-    schedule = get_schedule(fortran_reader, cs.loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    apply_loop_seq(loops[0])
-    expected = (
-        "The OpenACC seq clause cannot be used in conjunction with the gang or"
-        " vector clauses."
-    )
-    with pytest.raises(ValueError, match=expected):
-        apply_loop_vector(loops[0])
-
-
 def test_has_collapse_clause_no_kernels(fortran_reader):
     """
     Test that :func:`has_collapse_clause` returns ``False`` for a loop with no
@@ -224,45 +126,6 @@ def test_has_collapse_clause_loop_no_collapse(fortran_reader):
     assert not has_collapse_clause(loops[0])
 
 
-def test_apply_loop_collapse_typeerror(fortran_reader):
-    """
-    Test that a :class:`TypeError` is raised when :func:`apply_loop_collapse`
-    is called with a non-integer collapse.
-    """
-    schedule = get_schedule(fortran_reader, cs.double_loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    expected = "Expected an integer, not '<class 'float'>'."
-    with pytest.raises(TypeError, match=expected):
-        apply_loop_collapse(loops[0], 2.0)
-
-
-def test_apply_loop_collapse_valueerror(fortran_reader):
-    """
-    Test that a :class:`ValueError` is raised when :func:`apply_loop_collapse`
-    is called with an invalid collapse.
-    """
-    schedule = get_schedule(fortran_reader, cs.double_loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    expected = "Expected an integer greater than one, not 1."
-    with pytest.raises(ValueError, match=expected):
-        apply_loop_collapse(loops[0], 1)
-
-
-def test_apply_loop_collapse_too_large_error(fortran_reader):
-    """
-    Test that a :class:`ValueError` is raised when :func:`apply_loop_collapse`
-    is called with too large a collapse.
-    """
-    schedule = get_schedule(fortran_reader, cs.double_loop_with_1_assignment)
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    expected = "Cannot apply collapse to 3 loops in a sub-nest of 2."
-    with pytest.raises(ValueError, match=expected):
-        apply_loop_collapse(loops[0], 3)
-
-
 def test_apply_loop_collapse(fortran_reader, collapse):
     """
     Test that :func:`apply_loop_collapse` is correctly applied to a full nest.
@@ -270,8 +133,7 @@ def test_apply_loop_collapse(fortran_reader, collapse):
     schedule = get_schedule(fortran_reader, simple_loop_code(collapse))
     loops = schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
-    apply_loop_directive(loops[0])
-    apply_loop_collapse(loops[0], collapse)
+    apply_loop_directive(loops[0], options={"collapse": collapse})
     assert loops[0].parent.parent.collapse == collapse
     for loop in loops:
         assert has_collapse_clause(loop)
@@ -286,7 +148,7 @@ def test_apply_loop_collapse_subnest(fortran_reader, collapse):
     apply_kernels_directive(loops[0])
     apply_loop_directive(loops[0])
     apply_loop_directive(loops[-1])
-    apply_loop_collapse(loops[0], collapse)
+    apply_loop_directive(loops[0], options={"collapse": collapse})
     assert loops[0].parent.parent.collapse == collapse
     for i in range(collapse):
         assert has_collapse_clause(loops[i])
@@ -302,14 +164,15 @@ def test_apply_loop_collapse_default(fortran_reader, collapse):
     schedule = get_schedule(fortran_reader, simple_loop_code(collapse))
     loops = schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
-    apply_loop_directive(loops[0])
-    apply_loop_collapse(loops[0])
+    apply_loop_directive(loops[0], options={"collapse": collapse})
     assert loops[0].parent.parent.collapse == collapse
     for loop in loops:
         assert has_collapse_clause(loop)
 
 
-def test_apply_loop_collapse_imperfect_default(fortran_reader, imperfection):
+def test_apply_loop_collapse_imperfect_default(
+    fortran_reader, imperfection, collapse
+):
     """
     Test that :func:`apply_loop_collapse` is correctly applied to an imperfect
     nest when the `collapse` keyword argument is not used.
@@ -319,28 +182,8 @@ def test_apply_loop_collapse_imperfect_default(fortran_reader, imperfection):
     )
     loops = schedule.walk(nodes.Loop)
     apply_kernels_directive(loops[0])
-    apply_loop_directive(loops[0])
-    apply_loop_collapse(loops[0])
+    apply_loop_directive(loops[0], options={"collapse": collapse})
     assert loops[0].parent.parent.collapse == 2
     assert has_collapse_clause(loops[0])
     assert has_collapse_clause(loops[1])
     assert not has_collapse_clause(loops[2])
-
-
-def test_apply_loop_collapse_imperfect_default_error(
-    fortran_reader, imperfection
-):
-    """
-    Test calling that :func:`apply_loop_collapse` without a `collapse` keyword
-    argument raises an error when applied to an imperfect nest for which the
-    outer loop is not itself in a perfect nest.
-    """
-    schedule = get_schedule(
-        fortran_reader, imperfectly_nested_triple_loop1[imperfection]
-    )
-    loops = schedule.walk(nodes.Loop)
-    apply_kernels_directive(loops[0])
-    apply_loop_directive(loops[0])
-    expected = "Expected an integer greater than one, not 1."
-    with pytest.raises(ValueError, match=expected):
-        apply_loop_collapse(loops[0])

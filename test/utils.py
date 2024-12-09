@@ -9,30 +9,19 @@ Various utility functions for PSyACC's test suite.
 
 import code_snippets as cs
 from psyacc import (
-    apply_loop_collapse,
-    apply_loop_gang,
-    apply_loop_seq,
-    apply_loop_vector,
     has_collapse_clause,
     has_gang_clause,
     has_seq_clause,
     has_vector_clause,
 )
 
-__all__ = ["has_clause", "apply_clause", "get_schedule", "simple_loop_code"]
+__all__ = ["has_clause", "get_schedule", "simple_loop_code"]
 
 has_clause = {
     "sequential": has_seq_clause,
     "gang": has_gang_clause,
     "vector": has_vector_clause,
     "collapse": has_collapse_clause,
-}
-
-apply_clause = {
-    "sequential": apply_loop_seq,
-    "gang": apply_loop_gang,
-    "vector": apply_loop_vector,
-    "collapse": apply_loop_collapse,
 }
 
 

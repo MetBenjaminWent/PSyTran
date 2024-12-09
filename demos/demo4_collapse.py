@@ -47,16 +47,16 @@
 # module of PSyclone. ::
 
 from psyclone.psyir import nodes
-from psyacc import apply_kernels_directive, apply_loop_collapse, is_outer_loop
+from psyacc import apply_kernels_directive, apply_loop_directive, is_outer_loop
 
 # In the demos so far, we have built up transformation scripts piece by piece.
 # This was done for demonstration purposes; in many cases, it is easier to
 # just write it out at once. In the following ``trans`` script, you will
 # recognise many of the elements from the previous demos. The difference is the
-# call to :func:`psyacc.clauses.apply_loop_collapse`, which takes a second
-# argument ``collapse``. This is the number of loops within the nest that
-# should be collapsed together, starting from the loop that it is being applied
-# to. ::
+# collapse option passed to :func:`psyacc.directives.apply_loop_directive`,
+# which accepts integer values as well as bools. This is the number of loops
+# within the nest that should be collapsed together, starting from the loop
+# that it is being applied to. ::
 
 
 def trans(psy):
@@ -70,7 +70,7 @@ def trans(psy):
 
     # Insert OpenACC syntax
     apply_kernels_directive(outer_loop)
-    apply_loop_collapse(outer_loop, collapse=2)
+    apply_loop_directive(outer_loop, options={"collapse": 2})
     return psy
 
 
@@ -91,10 +91,10 @@ def trans(psy):
 #    applied the transformation script to ``single_loop.F90``, as opposed to
 #    ``double_loop.F90``. What happens when we do that in this case?
 #
-# 3. What happens when the ``collapse`` argument is removed from the call to
-#    :func:`psyacc.clauses.apply_loop_collapse` in the transformation script?
-#    Is the output the same? Convince yourself that everything is working as
-#    expected by reading the `API documentation <../psyacc.html>`__.
+# 3. What happens when the collapse option is removed from the call to
+#    :func:`psyacc.directives.apply_loop_directive` in the transformation
+#    script? Is the output the same? Convince yourself that everything is
+#    working as expected by reading the `API documentation <../psyacc.html>`__.
 #
 # This demo can also be viewed as a `Python script <demo4_collapse.py>`__.
 #

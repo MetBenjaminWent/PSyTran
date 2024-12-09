@@ -15,8 +15,6 @@ from utils import get_schedule, simple_loop_code
 import code_snippets as cs
 from psyacc.loop import (
     _check_loop,
-    get_loop_nest_variable_names,
-    get_loop_variable_name,
     is_independent,
     is_outer_loop,
     is_parallelisable,
@@ -108,7 +106,7 @@ def test_is_perfectly_nested(fortran_reader, perfection):
     """
     schedule = get_schedule(fortran_reader, perfectly_nested_loop[perfection])
     loops = schedule.walk(nodes.Loop)
-    assert is_perfectly_nested(loops[0])
+    assert is_perfectly_nested(loops)
     assert is_parallelisable(loops[0])
     assert is_independent(loops[0])
 
@@ -226,32 +224,6 @@ def test_is_not_simple_loop_references(fortran_reader):
     loops = schedule.walk(nodes.Loop)
     assert not is_simple_loop(loops[0])
     assert is_parallelisable(loops[0])
-
-
-def test_get_loop_variable_name(fortran_reader):
-    """
-    Test that :func:`get_loop_variable_name` correctly determines loop variable
-    names.
-    """
-    schedule = get_schedule(
-        fortran_reader, cs.quadruple_loop_with_1_assignment
-    )
-    loops = schedule.walk(nodes.Loop)
-    for i, expected in enumerate(["l", "k", "j", "i"]):
-        assert get_loop_variable_name(loops[i]) == expected
-
-
-def test_get_loop_nest_variable_names(fortran_reader):
-    """
-    Test that :func:`get_loop_nest_variable_names` correctly determines all
-    loop variable names in a nest.
-    """
-    schedule = get_schedule(
-        fortran_reader, cs.quadruple_loop_with_1_assignment
-    )
-    indices = ["l", "k", "j", "i"]
-    for i, loop in enumerate(schedule.walk(nodes.Loop)):
-        assert get_loop_nest_variable_names(loop) == indices[i:]
 
 
 def test_is_independent_valueerror(fortran_reader):
