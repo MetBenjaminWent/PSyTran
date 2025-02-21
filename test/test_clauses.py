@@ -18,35 +18,6 @@ from psyacc.clauses import _prepare_loop_for_clause, has_collapse_clause
 from psyacc.directives import apply_loop_directive, apply_kernels_directive
 
 
-@pytest.fixture(name="nest_depth", params=[1, 2, 3, 4])
-def fixture_nest_depth(request):
-    """Pytest fixture for number of loops in a nest."""
-    return request.param
-
-
-@pytest.fixture(
-    name="clause", params=["sequential", "gang", "vector", "collapse"]
-)
-def fixture_clause(request):
-    """Pytest fixture for clause type."""
-    return request.param
-
-
-@pytest.fixture(name="collapse", params=[2, 3])
-def fixture_collapse(request):
-    """Pytest fixture for number of loops to collapse."""
-    return request.param
-
-
-@pytest.fixture(name="imperfection", params=["before", "after"])
-def fixture_imperfection(request):
-    """
-    Pytest fixture determining whether a loop nest imperfection comes before
-    or after a loop.
-    """
-    return request.param
-
-
 imperfectly_nested_triple_loop1 = {
     "before": cs.imperfectly_nested_triple_loop1_before,
     "after": cs.imperfectly_nested_triple_loop1_after,
@@ -177,6 +148,9 @@ def test_apply_loop_collapse_imperfect_default(
     Test that :func:`apply_loop_collapse` is correctly applied to an imperfect
     nest when the `collapse` keyword argument is not used.
     """
+    if imperfection == "if":
+        return
+
     schedule = get_schedule(
         fortran_reader, imperfectly_nested_triple_loop2[imperfection]
     )

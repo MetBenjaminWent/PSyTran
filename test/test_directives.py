@@ -23,12 +23,6 @@ from psyacc.directives import (
 )
 
 
-@pytest.fixture(name="clause", params=["sequential", "gang", "vector"])
-def fixture_clause(request):
-    """Pytest fixture for loop clause."""
-    return request.param
-
-
 def test_apply_kernels_directive_typeerror(fortran_reader):
     """
     Test that a :class:`TypeError` is raised when

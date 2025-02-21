@@ -21,28 +21,6 @@ from psyacc.family import (
     has_descendent,
 )
 
-
-@pytest.fixture(name="inclusive", params=[True, False])
-def fixture_inclusive(request):
-    """
-    Pytest fixture to control whether the current node is included in
-    searches.
-    """
-    return request.param
-
-
-@pytest.fixture(name="nest_depth", params=[1, 2, 3, 4])
-def fixture_nest_depth(request):
-    """Pytest fixture for depth of a loop nest."""
-    return request.param
-
-
-@pytest.fixture(name="relative", params=["ancestor", "descendent"])
-def fixture_relative(request):
-    """Pytest fixture for the type of relative."""
-    return request.param
-
-
 get_relative = {
     "descendent": get_descendents,
     "ancestor": get_ancestors,
