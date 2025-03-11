@@ -10,8 +10,17 @@ import pytest
 
 # pylint: disable=W0611
 from psyclone.tests.conftest import fixture_fortran_reader
+from psyclone.transformations import ACCLoopTrans, OMPLoopTrans
 
 # pylint: enable=W0611
+
+
+@pytest.fixture(
+    name="directive", params=[ACCLoopTrans, OMPLoopTrans], scope="module"
+)
+def fixture_directive(request):
+    """Pytest fixture for loop transformations."""
+    return request.param()
 
 
 @pytest.fixture(
@@ -59,6 +68,22 @@ def fixture_inclusive(request):
 @pytest.fixture(name="nest_depth", params=[1, 2, 3, 4], scope="module")
 def fixture_nest_depth(request):
     """Pytest fixture for depth of a loop nest."""
+    return request.param
+
+
+@pytest.fixture(
+    name="omp_directive",
+    params=[
+        "do",
+        "loop",
+        "paralleldo",
+        "teamsloop",
+        "teamsdistributeparalleldo",
+    ],
+    scope="module",
+)
+def fixture_omp_directive(request):
+    """Pytest fixture for omp directive parameter of OMPLoopTrans"""
     return request.param
 
 
