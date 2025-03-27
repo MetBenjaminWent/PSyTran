@@ -37,7 +37,7 @@ jobs:
       - name: Install PSyTran
         run: |
           source /home/runner/work/psytran-ci/bin/activate
-          make install
+          make install_dev
           ./set_default_config.sh
 
       - name: Test linting

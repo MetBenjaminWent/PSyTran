@@ -59,7 +59,9 @@ def apply_acc_kernels_directive(block, options=None):
 
     :raises TypeError: if the options argument is not a dictionary.
     """
-    if options is not None and not isinstance(options, dict):
+    if options is None:
+        options = {}
+    if not isinstance(options, dict):
         raise TypeError(f"Expected a dict, not '{type(options)}'.")
     ACCKernelsTrans().apply(block, options=options)
 
