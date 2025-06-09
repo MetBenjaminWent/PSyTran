@@ -12,7 +12,7 @@ object.
 '''
 
 from __future__ import print_function
-from family import (update_ignore_list, 
+from family import (update_ignore_list,
                     check_omp_ancestry,
                     span_parallel,
                     validate_rules,

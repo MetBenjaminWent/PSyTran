@@ -466,7 +466,7 @@ def span_check_loop(child_list, start_index_loop, loop_max_qty):
     return parallel_possible, last_good_index
 
 
-    def span_parallel(loop_node, loop_max_qty):
+def span_parallel(loop_node, loop_max_qty):
     '''
     Transformation used is omp_parallel. Span a parallel section.
     Get the ancestor node of the provided node, then grab it's children.
