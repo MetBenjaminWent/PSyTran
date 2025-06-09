@@ -313,7 +313,7 @@ def check_omp_ancestry(
     return omp_ancestry_presence
 
 
-    def get_last_child_shed(loop_node):
+def get_last_child_shed(loop_node):
     '''
     Get the last child loop schedule of the provided node.
     Then we can do some checks on it
