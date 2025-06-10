@@ -1,8 +1,8 @@
-##############################################################################
-# Copyright (c) 2025,  Met Office, on behalf of HMSO and Queen's Printer
-# For further details please refer to the file LICENCE.original which you
-# should have received as part of this distribution.
-##############################################################################
+# (C) Crown Copyright 2025, Met Office. All rights reserved.
+#
+# This file is part of PSyTran and is released under the BSD 3-Clause license.
+# See LICENSE in the root of the repository for full licensing details.
+
 '''
 Top level function(s) intended to be callable by
 PSyclone Transmute global and override functions.
@@ -12,13 +12,13 @@ object.
 '''
 
 from __future__ import print_function
+from psyclone.transformations import OMPLoopTrans
+from psyclone.psyir.nodes import Loop
 from psytran.family import (update_ignore_list,
                             check_omp_ancestry,
                             span_parallel,
                             validate_rules,
                             try_transformation)
-from psyclone.transformations import OMPLoopTrans
-from psyclone.psyir.nodes import Loop
 
 __all__ = [
     "TagOverride",
