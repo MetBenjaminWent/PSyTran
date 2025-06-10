@@ -8,7 +8,16 @@ This module provides functions for determining the ancestors and descendents of
 :py:class:`Node`\s, as well as for querying their existence and nature.
 """
 
-from psyclone.psyir.nodes import Loop, Node
+from psyclone.psyir.nodes import (Loop, Node, Assignment, Schedule,
+                                ArrayOfStructuresReference,
+                                IfBlock,
+                                OMPDoDirective,
+                                OMPParallelDirective,
+                                OMPParallelDoDirective)
+from psyclone.psyGen import Transformation
+from psyclone.transformations import (TransformationError,
+                                     OMPLoopTrans,
+                                     OMPParallelTrans)
 
 __all__ = [
     "get_descendents",
@@ -31,6 +40,14 @@ __all__ = [
     "validate_rules",
     "work_out_collapse_depth"
 ]
+
+# Setup transformations and their properties
+# OMP parallel do transformation
+omp_transform_par_do = OMPLoopTrans(omp_schedule="static",
+                                    omp_directive="paralleldo")
+omp_parallel = OMPParallelTrans()
+omp_transform_do = OMPLoopTrans(omp_schedule="static",
+                                omp_directive="do")
 
 
 def get_descendents(
