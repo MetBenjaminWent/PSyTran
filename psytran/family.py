@@ -2,7 +2,6 @@
 #
 # This file is part of PSyTran and is released under the BSD 3-Clause license.
 # See LICENSE in the root of the repository for full licensing details.
-
 r"""
 This module provides functions for determining the ancestors and descendents of
 :py:class:`Node`\s, as well as for querying their existence and nature.
@@ -20,6 +19,8 @@ from psyclone.transformations import (
     TransformationError,
     OMPLoopTrans,
     OMPParallelTrans)
+from psytran.prop_trans import PropTrans
+
 
 __all__ = [
     "get_descendents",
@@ -38,8 +39,6 @@ __all__ = [
     "try_transformation",
     "try_validation",
     "update_ignore_list",
-    "validate_rules_para",
-    "validate_rules",
     "work_out_collapse_depth"
 ]
 
@@ -279,10 +278,11 @@ def check_omp_ancestry(
 
     # DEFAULT result
     # The default presence of OMP given the below ancestry
-    # True is it thinking there is OMP present above, so it will not try.
-    # False is that there is no OMP ancestry.
-    # If there is a parallel ancestor and path, or there is a parallel do
-    # ancestor and path.
+    # True : There is an OpenMP Parallel section above the node,
+    #        This can be either a Parallel or Parallel Do section above
+    #        The default intended use is if this is True, do not do an
+    #        OpenMP transformation.
+    # False : There is no OpenMP Parallel sections detected above.
     if ((omp_ancestor_par and path_to_omp_par)
             or (omp_ancestor_par_do and path_to_omp_par_do)):
         print("Parallel OMP region ancestor found")
@@ -290,39 +290,35 @@ def check_omp_ancestry(
     else:
         omp_ancestry_presence = False
 
-    # Below are exceptions to the rules
-
-    # A do transformation wants a parallel section above, it checks and
-    # corrects. An occurrence where adjacent parallel do regions are being
-    # picked up and the parallel ancestor is misreporting. Therefore,
-    # if there a parallel ancestor and path, but there is not a path to a
-    # parallel do reference node. Checking the paths mitigates this occurrence.
-    # To be reported to STFC as a bug in psyclone.
-    if omp_ancestor_par and path_to_omp_par and not path_to_omp_par_do:
-        if transformation.omp_directive == "do":
+    # When adding a OpenMP DO transformation, it's a little more nuanced.
+    # We will in principle reverse the result.
+    # True : There is an OpenMP Parallel Do section above the node.
+    # False : There is a Parallel section above the Node, and it is safe.
+    if transformation.omp_directive == "do":
+        # A OpenMP do transformation needs a parallel section above,
+        # it checks and corrects.
+        # An occurrence where adjacent parallel do regions are being
+        # picked up and the parallel ancestor is misreporting. Therefore,
+        # if there a parallel ancestor and path, but there is not a path to a
+        # parallel do reference node. Checking the paths mitigates this
+        # occurrence. To be reported to STFC as a bug in psyclone.
+        if omp_ancestor_par and path_to_omp_par and not path_to_omp_par_do:
             print("Adjacent node detected in Ancestry")
             print("Parallel OMP region ignored as transformation is OMP do")
             omp_ancestry_presence = False
 
-    # Psyclone is trying to add a do, to a section without a parallel and is
-    # crashing We should handle this checking here for now and report back.
-    if transformation.omp_directive == "do":
+        # If there is no path to both an parallel or parallel do Node,
+        # but it has reported an parallel ancestor
         if not omp_ancestor_par and not path_to_omp_par:
             print("No Parallel region present, cannot try do")
             omp_ancestry_presence = True
 
-    # This stops the nesting of OMP do under parallel sections
-    # If there is one already present, it will effectively understand the above
-    # a parallel and a do, which we don't want to try parallelism in this
-    # occurrence.
-    if transformation.omp_directive == "do":
+        # This stops the nesting of OMP do under parallel sections
+        # If there is one already present, it will effectively understand the
+        # above a parallel and a do, which we don't want to try parallelism in
+        # this occurrence.
         if omp_ancestor_do:
             omp_ancestry_presence = True
-
-    # Generally returns True if OMP detected.
-    # Depending on the transformation provided, it may intentionally return
-    # False, for example if the transformation is a do, and it's found a
-    # parallel section.
 
     return omp_ancestry_presence
 
@@ -334,6 +330,9 @@ def get_last_child_shed(loop_node):
     '''
 
     loop_list = []
+
+    # Set to false if a Schedule cannot be found
+    ret_shed = None
 
     # Work through the schedule of the node
     # The first one will be the schedule of this loop
@@ -348,11 +347,6 @@ def get_last_child_shed(loop_node):
         if shed_list:
             # Return the first schedule for this loop.
             ret_shed = shed_list[0]
-        else:
-            ret_shed = False
-    # Always otherwise return False
-    else:
-        ret_shed = False
 
     return ret_shed
 
@@ -425,7 +419,8 @@ def span_check_loop(child_list, start_index_loop, loop_max_qty):
                     for index_inner in range(start_index_loop, index+1):
                         check_span_nodes.append(child_list[index_inner])
                     # Try the transformation
-                    error = try_validation(check_span_nodes, 
+                    error = try_validation(
+                        check_span_nodes,
                         trans.omp_parallel(), {})
                     # If there is an error, we cannot do this one and
                     # should break
@@ -435,8 +430,6 @@ def span_check_loop(child_list, start_index_loop, loop_max_qty):
                     else:
                         print(error)
                         break
-            # else:
-            #     break
         else:
             break
 
@@ -498,9 +491,11 @@ def span_parallel(loop_node, loop_max_qty):
         for index_inner in range(start_index_loop, last_good_index+1):
             span_nodes.append(child_list[index_inner])
         if len(span_nodes) > 1:
+            # Try the transformation
             error = try_transformation(span_nodes, trans.omp_parallel(), {})
+            # Confirm success and advise which nodes
             if len(error) == 0 or error == "":
-                print("Spanning over")
+                print("Spanning Parallel over:")
                 print(span_nodes)
 
 
@@ -581,14 +576,14 @@ def get_reference_tags(node):
             # manipulate to gather out the index reference
             if ("Reference[name:" in line and
                     "ArrayOfStructures" not in line):
-                reference_tags.append(strip_index(line,
-                                                    "Reference[name:"))
+                reference_tags.append(strip_index(
+                    line, "Reference[name:"))
 
     elif isinstance(node, Loop):
         for line in array_info:
             if "Loop[variable:" in line:
-                reference_tags.append(strip_index(line,
-                                                    "Loop[variable:"))
+                reference_tags.append(strip_index(
+                    line, "Loop[variable:"))
 
     else:
         raise TypeError(f"Node of type {type(node)} not currently supported "
@@ -696,10 +691,6 @@ def update_ignore_list(
                         override_options["ignore_dependencies_for"])
 
     current_options["ignore_dependencies_for"] = current_ignore_list
-
-    if current_options["ignore_dependencies_for"]:
-        print("ignore_dependencies_for")
-        print(current_options["ignore_dependencies_for"])
 
     return current_options
 

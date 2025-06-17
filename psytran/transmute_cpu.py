@@ -11,11 +11,16 @@ PSyclone Transmute global and override functions.
 from __future__ import print_function
 from psyclone.transformations import OMPLoopTrans
 from psyclone.psyir.nodes import Loop
-from psytran.family import (update_ignore_list,
-                            check_omp_ancestry,
-                            span_parallel,
-                            validate_rules,
-                            try_transformation)
+from psytran.family import (
+    update_ignore_list,
+    check_omp_ancestry,
+    span_parallel,
+    validate_rules,
+    try_transformation)
+from psytran.transmute_rules import (
+    OverridesClass,
+    validate_rules)
+from prop_trans import PropTrans
 
 __all__ = [
     "try_loop_omp_pardo"
@@ -42,7 +47,7 @@ def try_loop_omp_pardo(loop_node,
     :arg override_class:  Class containing a list of override classes to check
                           against for an ignore_dependencies_for list, etc.
                           Also contains master override settings.
-    :type override_class: :py:class:`override_class`
+    :type OverridesClass: :py:class:`OverridesClass`
     '''
 
     if not isinstance(loop_node, Loop):
@@ -56,6 +61,8 @@ def try_loop_omp_pardo(loop_node,
     # options dict setup
     options = {}
 
+    trans = PropTrans()
+
     # If there is an loop_tag_overrides_list, work through the objects
     # and update the options ignore_dependencies_for with tags where the
     # loop tags match
@@ -65,8 +72,8 @@ def try_loop_omp_pardo(loop_node,
     # omp_transform_do transformation is correct for the given node
     # We expect there to be no parallel ancestry for either transformation
     # when we are attempting to span a parallel region.
-    if (not check_omp_ancestry(loop_node, omp_transform_par_do) or
-            check_omp_ancestry(loop_node, omp_transform_do)):
+    if (not check_omp_ancestry(loop_node, trans.omp_transform_par_do()) or
+            check_omp_ancestry(loop_node, trans.omp_transform_do())):
         span_parallel(loop_node, override_class.get_loop_max_qty())
 
     # Given whether the loop is now currently in a parallel section
@@ -76,10 +83,10 @@ def try_loop_omp_pardo(loop_node,
     # check_omp_ancestry for the omp_transform_do will return false if there
     # is a parallel section for a omp_transform_do transformation
     # default transformation will be parallel do
-    if not check_omp_ancestry(loop_node, omp_transform_do):
-        transformation = omp_transform_do
+    if not check_omp_ancestry(loop_node, trans.omp_transform_do()):
+        transformation = trans.omp_transform_do()
     else:
-        transformation = omp_transform_par_do
+        transformation = trans.omp_transform_par_do()
 
     # Check the ability to transform given OMP ancestry
     if not check_omp_ancestry(loop_node, transformation):
