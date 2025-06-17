@@ -95,8 +95,8 @@ class OverridesClass:
         else:
             for override in tag_overrides:
                 if not isinstance(override, TagOverride):
-                    raise TypeError(f"Expected a tag_override object, not \
-                                    '{type(override)}'.")
+                    raise TypeError(f"Expected a tag_override object, not "
+                                    f"'{type(override)}'.")
             # Pass through the list of accepted loop tag overrides
             self._tag_overrides = tag_overrides
 
