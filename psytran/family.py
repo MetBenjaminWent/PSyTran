@@ -30,11 +30,11 @@ __all__ = [
     "child_valid_trans",
     "check_omp_ancestry",
     "get_last_child_shed",
-    "get_specific_children",
     "span_check_loop",
     "span_parallel",
-    "strip_index",
     "string_match_ref_var",
+    "strip_index",
+    "get_reference_tags",
     "try_transformation",
     "try_validation",
     "update_ignore_list",
@@ -42,14 +42,6 @@ __all__ = [
     "validate_rules",
     "work_out_collapse_depth"
 ]
-
-# Setup transformations and their properties
-# OMP parallel do transformation
-omp_transform_par_do = OMPLoopTrans(omp_schedule="static",
-                                    omp_directive="paralleldo")
-omp_parallel = OMPParallelTrans()
-omp_transform_do = OMPLoopTrans(omp_schedule="static",
-                                omp_directive="do")
 
 
 def get_descendents(
