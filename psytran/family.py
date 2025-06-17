@@ -204,13 +204,15 @@ def child_valid_trans(check_current_node):
     We check the current loop to see if it can be pardo.
     Checks are standard checks (ignoring OMP ancestry
     as this is done at the top level).
+
     '''
     valid_loop = False
 
     # Setup
     options = {}
+    trans = PropTrans()
 
-    loop_child_list = get_specific_children(check_current_node)
+    loop_child_list = get_descendents(check_current_node, Loop)
 
     # If there is a list of loops
     if loop_child_list:
@@ -219,20 +221,21 @@ def child_valid_trans(check_current_node):
             loop_child_list.insert(0, check_current_node)
 
         for loop in loop_child_list:
-            # check the validate rules list specific for parallel sections
-            loop_continue, options = validate_rules_para(check_current_node,
-                                                         options)
+            # If additional rules grow for checking what is a valid loop
+            # they may need to go here too on a case by case basis.
+            # Checking for the array of structs it not needed, as we can still
+            # parallelise something there.
+            options = work_out_collapse_depth(loop, options)
 
-            if loop_continue:
-                # Call the validation instead
-                error = try_validation(loop, omp_transform_par_do, options)
+            # Call the validation instead of try_transformation
+            error = try_validation(loop, trans.omp_transform_par_do(), options)
 
-                # IF there are no errors, continue, otherwise exit
-                if len(error) == 0 or error == "":
-                    valid_loop = True
-                else:
-                    valid_loop = False
-                    break
+            # IF there are no errors, continue, otherwise exit
+            if len(error) == 0 or error == "":
+                valid_loop = True
+            else:
+                valid_loop = False
+                break
 
     # Return number of children spanning over also
     # Used in in rule for no of loops spanning over
@@ -338,69 +341,28 @@ def get_last_child_shed(loop_node):
     Then we can do some checks on it
     '''
 
-    child_list = loop_node.children
     loop_list = []
 
-    if child_list:
-        # Work through the children
-        for node in loop_node.children:
-            # If its the Schedule - there is always a Schedule
-            if isinstance(node, Schedule):
-                loop_list = node.walk(Loop)
-                # The loop will find the first schedule. Then exit the loop.
-                break
+    # Work through the schedule of the node
+    # The first one will be the schedule of this loop
+    loop_shed_list = loop_node.walk(Schedule)
+    loop_list = loop_shed_list[0].walk(Loop)
 
-        # If there is a list of loops
-        if loop_list:
-            # Had an error when accessing the last of a
-            # single element array
-            if len(loop_list) > 1:
-                indexer = -1
-            else:
-                indexer = 0
-            # get the schedule of the last loop
-            shed_list = loop_list[indexer].walk(Schedule)
-            if shed_list:
-                # Had an error when accessing the last of a
-                # single element array
-                if len(shed_list) > 1:
-                    indexer = -1
-                else:
-                    indexer = 0
-                # If there are multiple
-                # schedules, get the of the last one
-                ret_shed = shed_list[indexer]
-            # Always otherwise return False
-            else:
-                ret_shed = False
-        # Always otherwise return False
+    # If there is a list of loops for this schedule
+    if loop_list:
+        # Get the last element and walk it's schedule
+        last_element = len(loop_list)-1
+        shed_list = loop_list[last_element].walk(Schedule)
+        if shed_list:
+            # Return the first schedule for this loop.
+            ret_shed = shed_list[0]
         else:
             ret_shed = False
-
     # Always otherwise return False
     else:
         ret_shed = False
 
     return ret_shed
-
-
-def get_specific_children(loop_node):
-    '''
-    Psytrans function only returns one child, we might want all children.
-    '''
-
-    ret_node_list = []
-    # The list of children is a node list
-    # Walk each node in the list for Loops
-    # If the node was a loop
-    # And the child returned is not itself
-    for node in loop_node.children:
-        for child in node.walk(Loop):
-            if loop_node != child:
-                ret_node_list.append(child)
-
-    # Return all of the children
-    return ret_node_list
 
 
 def span_check_loop(child_list, start_index_loop, loop_max_qty):
@@ -411,6 +373,9 @@ def span_check_loop(child_list, start_index_loop, loop_max_qty):
     and children. These loops are checked against their own set
     of rules and a provided limit from the override.
     '''
+
+    trans = PropTrans()
+
     # Setup for loop
     last_good_index = 0
     loop_child_qty = 0
@@ -468,7 +433,8 @@ def span_check_loop(child_list, start_index_loop, loop_max_qty):
                     for index_inner in range(start_index_loop, index+1):
                         check_span_nodes.append(child_list[index_inner])
                     # Try the transformation
-                    error = try_validation(check_span_nodes, omp_parallel, {})
+                    error = try_validation(check_span_nodes, 
+                        trans.omp_parallel(), {})
                     # If there is an error, we cannot do this one and
                     # should break
                     if len(error) == 0 or error == "":
@@ -492,6 +458,8 @@ def span_parallel(loop_node, loop_max_qty):
     This is a list of all nodes, including the provided node.
     This provided node will be the first node checked.
     '''
+
+    trans = PropTrans()
 
     # Find the ancestor schedule.
     # Given all of this stems from the first loop
@@ -538,10 +506,45 @@ def span_parallel(loop_node, loop_max_qty):
         for index_inner in range(start_index_loop, last_good_index+1):
             span_nodes.append(child_list[index_inner])
         if len(span_nodes) > 1:
-            error = try_transformation(span_nodes, omp_parallel, {})
+            error = try_transformation(span_nodes, trans.omp_parallel(), {})
             if len(error) == 0 or error == "":
                 print("Spanning over")
                 print(span_nodes)
+
+
+def string_match_ref_var(loop_node):
+    '''
+    We need to check the metadata of whether references of a
+    loop node match to certain properties.
+    Return True, if a Array of types (or ArrayOfStructures)
+    is found.
+    ArrayOfStructures is a good reference to find, it notes
+    that there is an array of objects in the children that is accessed
+    in the loop body, likely better being parallelised differently.
+    Therefore if we find this match, we want to skip it.
+    '''
+
+    # get the last child schedule, only do work if shed exists
+    last_child_shed = get_last_child_shed(loop_node)
+
+    struct_ref_exists = False
+
+    if last_child_shed:
+        reference_tags = []
+        for struct_ref in last_child_shed.walk(ArrayOfStructuresReference):
+            struct_ref_exists = True
+            reference_tags.extend(get_reference_tags(struct_ref))
+
+        # Only do the work if ArrayOfStructuresReference exists
+        if struct_ref_exists:
+            variable_tags = get_reference_tags(loop_node)
+            # The first is the current indexer of the loop
+            # If the loop index is in the indexes found related to the
+            # ArrayOfStructures reference, then we've found a match
+            if variable_tags[0] in reference_tags:
+                return True
+
+    return False
 
 
 def strip_index(line, str_tag):
@@ -567,80 +570,39 @@ def strip_index(line, str_tag):
     return indexer_ref
 
 
-def string_match_ref_var(loop_node):
+def get_reference_tags(node):
     '''
-    We need to check the metadata of whether references of a
-    loop node match to certain properties.
-    Return True, if a Array of types (or ArrayOfStructures)
-    is found.
-    ArrayOfStructures is a good reference to find, it notes
-    that there is an array of objects in the children that is accessed
-    in the loop body, likely better being parallelised differently.
-    Therefore if we find this match, we want to skip it.
+    Extracts tags found in schedules for different node types
     '''
+    # Create our empty list to store reference tags
+    reference_tags = []
 
-    # Note, I've tried to access things a bit more cleanly,
-    # but either way we are going to have to manipulate a
-    # string. This is functional and does the job required.
+    # get the reference the hard way as we cannot seem to
+    # access it directly
+    information = str(node)
+    array_info = information.splitlines()
 
-    # Find out whether there is an Array_struct_ref, and does
-    # it's reference patch the current loop nodes
-    ret_struct_ref = False
+    if isinstance(node, ArrayOfStructuresReference):
+        # Work through each line of the struct_ref turned into a str
+        for line in array_info:
+            # If there is a Reference, this is what we are going to
+            # manipulate to gather out the index reference
+            if ("Reference[name:" in line and
+                    "ArrayOfStructures" not in line):
+                reference_tags.append(strip_index(line,
+                                                    "Reference[name:"))
 
-    # get the last child schedule, only do work if shed exists
-    last_child_shed = get_last_child_shed(loop_node)
+    elif isinstance(node, Loop):
+        for line in array_info:
+            if "Loop[variable:" in line:
+                reference_tags.append(strip_index(line,
+                                                    "Loop[variable:"))
 
-    # Only do the work if ArrayOfStructuresReference exists
-    do_checks = False
+    else:
+        raise TypeError(f"Node of type {type(node)} not currently supported "
+                        f"for extracting tags")
 
-    if last_child_shed:
-        reference_tags = []
-        for struct_ref in last_child_shed.walk(ArrayOfStructuresReference):
-            if struct_ref:
-                do_checks = True
-
-                # get the reference the hard way as we cannot seem to
-                # access it directly
-                information = str(struct_ref)
-                array_info = information.splitlines()
-
-                # Work through each line of the struct_ref turned into a str
-                for line in array_info:
-                    # If there is a Reference, this is what we are going to
-                    # manipulate to gather out the index reference
-                    if ("Reference[name:" in line and
-                            "ArrayOfStructures" not in line):
-                        # This is an array of structure index references
-                        # that are present in the lowest down loop body
-                        # We are to use this list to check a loop variable
-                        reference_tags.append(strip_index(line,
-                                                          "Reference[name:"))
-
-        # Only do the work if ArrayOfStructuresReference exists
-        if do_checks:
-            # get the variable reference the hard way as we cannot seem to
-            # access it directly
-            information = str(loop_node)
-            array_info = information.splitlines()
-
-            # Note we can access loop_node.variable. However to remove all of
-            # the extra jargon, and just return the loop, we will have to do
-            # similar to the below anyway. Below is consistent
-            # with the above which still seems to be the only way to access the
-            # struct references with psyir.
-            variable_tags = []
-            for line in array_info:
-                if "Loop[variable:" in line:
-                    variable_tags.append(strip_index(line,
-                                                     "Loop[variable:"))
-
-            # The first is the current indexer of the loop
-            # If the loop index is in the indexes found related to the
-            # ArrayOfStructures reference, then we've found a match
-            if variable_tags[0] in reference_tags:
-                ret_struct_ref = True
-
-    return ret_struct_ref
+    return reference_tags
 
 
 def try_transformation(
@@ -673,10 +635,9 @@ def try_transformation(
         transformation.apply(node_target, options=options)
 
     except (TransformationError, IndexError) as err:
+        error_message = str(err)
         print(f"Could not transform "
-              f"because:\n{err.value}")
-        # Catch the error message for later comparison
-        error_message = str(err.value)
+              f"because:\n{error_message}")
 
     return error_message
 
@@ -708,14 +669,12 @@ def try_validation(
     error_message = ""
 
     try:
-        print("Validating")
         transformation.validate(node_target, options=options)
 
     except (TransformationError, IndexError) as err:
         error_message = str(err)
         print(f"Could not transform "
               f"because:\n{error_message}")
-    # Catch the error message for later comparison
 
     return error_message
 
@@ -753,47 +712,7 @@ def update_ignore_list(
     return current_options
 
 
-def validate_rules_para(loop_node, options):
-    '''
-    This is being duplicated in a few locations
-    Check the current Loop node against a number of
-    rule patterns to confirm whether we transform
-    or not
-    '''
-
-    valid_loop = False
-
-    n_collapse = work_out_collapse_depth(loop_node)
-    if n_collapse > 1:
-        options["collapse"] = n_collapse
-
-    valid_loop = True
-
-    return valid_loop, options
-
-
-def validate_rules(loop_node, options):
-    '''
-    This is being duplicated in a few locations
-    Check the current Loop node against a number of
-    rule patterns to confirm whether we transform
-    or not
-    '''
-
-    valid_loop = False
-    check_struct = False
-    check_struct = string_match_ref_var(loop_node)
-
-    if not check_struct:
-        n_collapse = work_out_collapse_depth(loop_node)
-        if n_collapse > 1:
-            options["collapse"] = n_collapse
-        valid_loop = True
-
-    return valid_loop, options
-
-
-def work_out_collapse_depth(loop_node):
+def work_out_collapse_depth(loop_node, options):
     '''
     Generate a value for how many collapses to specifically
     do given the number of children.
@@ -803,10 +722,13 @@ def work_out_collapse_depth(loop_node):
     n_collapse = 1
     # Are there any loop children, will return array of child
     # nodes.
-    child_loop_list = get_specific_children(loop_node)
+    child_loop_list = get_descendents(loop_node, Loop)
     if child_loop_list:
         # Add the length of the node array, or the number of
         # to the n_collapse value to return
         n_collapse = n_collapse + len(child_loop_list)
 
-    return n_collapse
+    if n_collapse > 1:
+        options["collapse"] = n_collapse
+
+    return options
