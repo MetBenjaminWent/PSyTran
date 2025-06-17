@@ -6,9 +6,6 @@
 '''
 Top level function(s) intended to be callable by
 PSyclone Transmute global and override functions.
-Override classes to be used to change some settings in transmute
-functions. Override scripts will set their own versions of this
-object.
 '''
 
 from __future__ import print_function
@@ -21,106 +18,8 @@ from psytran.family import (update_ignore_list,
                             try_transformation)
 
 __all__ = [
-    "TagOverride",
-    "OverridesClass",
     "try_loop_omp_pardo"
 ]
-
-# Setup transformations and their properties
-# OMP parallel do transformation
-omp_transform_par_do = OMPLoopTrans(omp_schedule="static",
-                                    omp_directive="paralleldo")
-omp_transform_do = OMPLoopTrans(omp_schedule="static",
-                                omp_directive="do")
-
-
-class TagOverride:
-    '''
-    Class to store combined metadata of an ignore list associated with a
-    loop tag.
-    This data will be provided by a global.py or file override which calls
-    global. These will need to be found by user and manually added to this
-    object in global.py or file override for the transmute method.
-    '''
-    def __init__(
-                self,
-                loop_tag,
-                options=None
-                ):
-        '''
-        Initialise TagOverride with a loop tag and an options list
-        '''
-        # Validation checks into class
-        if options is None:
-            options = {}
-        if not isinstance(options, dict):
-            raise TypeError(f"Expected a options dict, not \
-                            '{type(options)}'.")
-
-        self._loop_tag = loop_tag
-        self._options = options
-
-    # Getters
-    def get_loop_tag(self):
-        '''
-        Return the loop tag of the class, name of the loop index.
-        Name tag has been set by Loop.set_loop_type_inference_rules
-        in the global script.
-        '''
-        return self._loop_tag
-
-    def options(self):
-        '''
-        Return the options list of the class
-        '''
-        return self._options
-
-
-class OverridesClass:
-    '''
-    Class to act as a full override for the global script.
-    This will adjust settings used functions later on.
-    This will contain a list of specific overrides for given loop tags.
-    '''
-    def __init__(self,
-                 loop_max_qty=None,
-                 tag_overrides=None
-                 ):
-
-        # Validation checks into class
-        # if function_overrides_dict == None:
-        #     function_overrides_dict = {}
-        if tag_overrides is None:
-            self._tag_overrides = []
-        else:
-            for override in tag_overrides:
-                if not isinstance(override, TagOverride):
-                    raise TypeError(f"Expected a tag_override object, not "
-                                    f"'{type(override)}'.")
-            # Pass through the list of accepted loop tag overrides
-            self._tag_overrides = tag_overrides
-
-        # setup default values for object properties
-        self._loop_max_qty = 12
-
-        # Override the defaults with provided values
-        if loop_max_qty:
-            self._loop_max_qty = loop_max_qty
-
-    # Getters
-    def get_loop_max_qty(self):
-        '''
-        Return the loop max value for number of loops that a parallel section
-        will span over in span_parallel.
-        '''
-        return self._loop_max_qty
-
-    def get_tag_overrides(self):
-        '''
-        A list of TagOverride objects. Set the loop_tag which the object is for
-        and it's associated options list for the transformation.
-        '''
-        return self._tag_overrides
 
 
 def try_loop_omp_pardo(loop_node,
