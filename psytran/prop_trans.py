@@ -21,7 +21,7 @@ class PropTrans:
         '''
         Initialise class with default properties
         '''
-        
+
         # Setup transformations and their properties
         # OMP parallel do transformation
         self._omp_transform_par_do = OMPLoopTrans(

@@ -13,3 +13,4 @@ from psytran.directives import *  # noqa
 from psytran.family import *  # noqa
 from psytran.loop import *  # noqa
 from psytran.transmute_cpu import *  # noqa
+from psytran.transmute_rules import *  # noqa

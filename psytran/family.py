@@ -15,10 +15,7 @@ from psyclone.psyir.nodes import (
     OMPParallelDirective,
     OMPParallelDoDirective)
 from psyclone.psyGen import Transformation
-from psyclone.transformations import (
-    TransformationError,
-    OMPLoopTrans,
-    OMPParallelTrans)
+from psyclone.transformations import TransformationError
 from psytran.prop_trans import PropTrans
 
 

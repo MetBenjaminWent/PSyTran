@@ -9,18 +9,16 @@ PSyclone Transmute global and override functions.
 '''
 
 from __future__ import print_function
-from psyclone.transformations import OMPLoopTrans
 from psyclone.psyir.nodes import Loop
 from psytran.family import (
     update_ignore_list,
     check_omp_ancestry,
     span_parallel,
-    validate_rules,
     try_transformation)
 from psytran.transmute_rules import (
     OverridesClass,
     validate_rules)
-from prop_trans import PropTrans
+from psytran.prop_trans import PropTrans
 
 __all__ = [
     "try_loop_omp_pardo"

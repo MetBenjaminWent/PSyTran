@@ -11,7 +11,7 @@ Also contains functions which are called to work through a series of known
 rules to check the validity of applying a loop.
 '''
 
-from psytran.transmute_omp_functions import (
+from psytran.family import (
     string_match_ref_var,
     work_out_collapse_depth)
 
