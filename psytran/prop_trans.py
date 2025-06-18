@@ -32,21 +32,23 @@ class PropTrans:
             omp_schedule="static",
             omp_directive="do")
 
-
     # Getters
     def omp_transform_par_do(self):
+
         '''
         Get pre configured omp_transform_par_do
         '''
         return self._omp_transform_par_do
 
     def omp_parallel(self):
+
         '''
         Get pre configured omp_parallel
         '''
         return self._omp_parallel
 
     def omp_transform_do(self):
+
         '''
         Get pre configured omp_transform_do
         '''
