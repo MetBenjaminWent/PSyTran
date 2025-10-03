@@ -4,7 +4,7 @@
 # See LICENSE in the root of the repository for full licensing details.
 
 r"""
-This module implements functions for querying clauses. 
+This module implements functions for querying clauses.
 This includes whether :py:class:`Node`\s have OpenACC clauses
 associated with them, as well as for applying such clauses, or a workaround
 for the firstprivate issues on 3.1 version of PSyclone.
@@ -110,7 +110,7 @@ def first_priv_red_init(node_target, init_scalars):
     Software stack version of psyclone is adding firstprivates which fail
     with CCE.
     This is mostly fixed with PSyclone release 3.2, however that fix
-    may still have unforeseen edge-cases. 
+    may still have unforeseen edge-cases.
 
     Parameters
     ----------
