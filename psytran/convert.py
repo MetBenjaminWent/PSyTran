@@ -88,4 +88,5 @@ def replace_n_threads(psyir, n_threads_var_name):
                     # Replace the rhs of the reference with the
                     # omp_get_max_threads symbol
                     assign.rhs.replace_with(
+                        # pylint: disable=possibly-used-before-assignment
                         nodes.Call.create(omp_get_max_threads))
