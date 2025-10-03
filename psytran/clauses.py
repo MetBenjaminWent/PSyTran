@@ -4,10 +4,13 @@
 # See LICENSE in the root of the repository for full licensing details.
 
 r"""
-This module implements functions for querying whether :py:class:`Node`\s have
-OpenACC clauses associated with them, as well as for applying such clauses.
+This module implements functions for querying clauses. 
+This includes whether :py:class:`Node`\s have OpenACC clauses
+associated with them, as well as for applying such clauses, or a workaround
+for the firstprivate issues on 3.1 version of PSyclone.
 """
 
+from psyclone.psyir import nodes
 from psytran.directives import (
     has_loop_directive,
     _check_directive,
@@ -15,11 +18,13 @@ from psytran.directives import (
 from psytran.family import get_ancestors
 from psytran.loop import _check_loop
 
+
 __all__ = [
     "has_seq_clause",
     "has_gang_clause",
     "has_vector_clause",
     "has_collapse_clause",
+    "first_priv_red_init",
 ]
 
 
@@ -96,3 +101,35 @@ def has_collapse_clause(loop):
                 continue
             return collapse > i
     return False
+
+
+def first_priv_red_init(node_target, init_scalars):
+    '''
+    Add redundant initialisation before a Node, generally a Loop, where
+    a OMP clause has firstprivate added by PSyclone.
+    Software stack version of psyclone is adding firstprivates which fail
+    with CCE.
+    This is mostly fixed with PSyclone release 3.2, however that fix
+    may still have unforeseen edge-cases. 
+
+    Parameters
+    ----------
+    Node : Target Node to reference from, adds redundant initialisation before.
+    str list: List of str variable indexes to reference against.
+
+    Returns
+    ----------
+    None : Note the tree has been modified
+    '''
+    # Ensure scalars that may be emitted as FIRSTPRIVATE have a value
+    parent = node_target.parent
+    insert_at = parent.children.index(node_target)
+    for nm in init_scalars:  # e.g., ("jdir", "k")
+        try:
+            sym = node_target.scope.symbol_table.lookup(nm)
+        except KeyError:
+            continue
+        init = nodes.Assignment.create(
+            nodes.Reference(sym), nodes.Literal("0", sym.datatype))
+        parent.children.insert(insert_at, init)
+        insert_at += 1
