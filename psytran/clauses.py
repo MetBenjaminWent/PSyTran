@@ -11,6 +11,7 @@ for the firstprivate issues on 3.1 version of PSyclone.
 """
 
 from psyclone.psyir import nodes
+from psyclone.psyir import symbols
 from psytran.directives import (
     has_loop_directive,
     _check_directive,
@@ -127,9 +128,17 @@ def first_priv_red_init(node_target, init_scalars):
     for nm in init_scalars:  # e.g., ("jdir", "k")
         try:
             sym = node_target.scope.symbol_table.lookup(nm)
+            # ensure character variables are initialised with CHARACTER_TYPE
+            # rather than UnsupportedFortranType
+            if isinstance(sym.datatype, symbols.UnsupportedFortranType):
+                init = nodes.Assignment.create(
+                    nodes.Reference(sym),
+                    nodes.Literal("", symbols.CHARACTER_TYPE))
+            else:
+                init = nodes.Assignment.create(
+                    nodes.Reference(sym),
+                    nodes.Literal("0", sym.datatype))
+            parent.children.insert(insert_at, init)
+            insert_at += 1
         except KeyError:
-            continue
-        init = nodes.Assignment.create(
-            nodes.Reference(sym), nodes.Literal("0", sym.datatype))
-        parent.children.insert(insert_at, init)
-        insert_at += 1
+            continue        
