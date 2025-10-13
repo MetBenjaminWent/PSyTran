@@ -141,4 +141,4 @@ def first_priv_red_init(node_target, init_scalars):
             parent.children.insert(insert_at, init)
             insert_at += 1
         except KeyError:
-            continue        
+            continue
